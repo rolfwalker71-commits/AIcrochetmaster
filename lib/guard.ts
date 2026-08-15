@@ -1,5 +1,6 @@
 import { ACCESS_COOKIE, accessSecret, sessionToken, tokensMatch } from "@/lib/access";
-import { cookies } from "next/headers";
+import { publicOrigin } from "@/lib/public-url";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 export async function hasValidSession(): Promise<boolean> {
@@ -13,9 +14,9 @@ export async function hasValidSession(): Promise<boolean> {
 }
 
 export async function requirePageAccess(): Promise<void> {
-  if (!(await hasValidSession())) {
-    redirect("/login");
-  }
+  if (await hasValidSession()) return;
+  const origin = publicOrigin(await headers());
+  redirect(origin ? `${origin}/login` : "/login");
 }
 
 export async function requireApiAccess(): Promise<Response | null> {

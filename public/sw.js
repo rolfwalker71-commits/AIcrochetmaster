@@ -1,5 +1,5 @@
-const CACHE = "aicrochetmaster-v1";
-const PRECACHE = ["/", "/cards", "/settings", "/import", "/manifest.webmanifest"];
+const CACHE = "aicrochetmaster-v2";
+const PRECACHE = ["/manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -22,7 +22,8 @@ self.addEventListener("fetch", (event) => {
   const { request } = event;
   if (request.method !== "GET") return;
   const url = new URL(request.url);
-  if (url.pathname.startsWith("/api/")) return;
+  if (request.mode === "navigate") return;
+  if (url.pathname.startsWith("/api/") || url.pathname === "/login") return;
 
   event.respondWith(
     fetch(request)

@@ -1,4 +1,5 @@
 import { ACCESS_COOKIE, ACCESS_MAX_AGE, accessSecret, sessionToken } from "@/lib/access";
+import { requestIsHttps } from "@/lib/public-url";
 import { NextResponse } from "next/server";
 
 const fails = new Map<string, { count: number; blockedUntil: number }>();
@@ -40,9 +41,7 @@ export async function POST(request: Request) {
 
   fails.delete(ip);
   const token = await sessionToken(secret);
-  const secure =
-    request.headers.get("x-forwarded-proto") === "https" ||
-    new URL(request.url).protocol === "https:";
+  const secure = requestIsHttps(request.headers, request.url);
 
   const response = NextResponse.json({ ok: true });
   response.cookies.set(ACCESS_COOKIE, token, {
