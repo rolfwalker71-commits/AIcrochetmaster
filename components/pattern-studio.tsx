@@ -18,7 +18,7 @@ const SECTIONS: {
   color: string;
   icon: "play" | "info" | "steps";
 }[] = [
-  { id: "projekt", title: "Projekt & Video", hint: "Überblick und YouTube", color: "#C45C26", icon: "play" },
+  { id: "projekt", title: "Projekt", hint: "Überblick und Quelle", color: "#C45C26", icon: "play" },
   { id: "infos", title: "Material & Infos", hint: "Garn, Lücken, Karten", color: "#4C7A62", icon: "info" },
   { id: "schritte", title: "Schritte", hint: "Runden häkeln", color: "#D4A04A", icon: "steps" },
 ];
@@ -184,23 +184,33 @@ export function PatternStudio({
               </div>
             </div>
           </div>
-          <div className="overflow-hidden rounded-3xl bg-ink">
-            <iframe
-              title="YouTube"
-              className="aspect-video w-full"
-              src={youtubeEmbedUrl(pattern.videoId, currentStep?.timestampSec)}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          </div>
-          <a
-            href={pattern.youtubeUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="block text-center text-sm text-muted underline"
-          >
-            Auf YouTube öffnen
-          </a>
+          {pattern.source === "pdf" || !pattern.videoId ? (
+            <div className="rounded-3xl bg-foam p-4 card-shadow">
+              <p className="text-xs uppercase tracking-wide text-terracotta">Quelle</p>
+              <p className="mt-1 font-display text-xl">PDF-Anleitung</p>
+              <p className="mt-1 text-sm text-muted">{pattern.sourceName || "Hochgeladene Datei"}</p>
+            </div>
+          ) : (
+            <>
+              <div className="overflow-hidden rounded-3xl bg-ink">
+                <iframe
+                  title="YouTube"
+                  className="aspect-video w-full"
+                  src={youtubeEmbedUrl(pattern.videoId, currentStep?.timestampSec)}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+              <a
+                href={pattern.youtubeUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="block text-center text-sm text-muted underline"
+              >
+                Auf YouTube öffnen
+              </a>
+            </>
+          )}
           <button
             type="button"
             className="w-full text-sm text-rose"

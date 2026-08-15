@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { openAiJson } from "./openai";
-import { EXTRACT_SYSTEM, extractUserPrompt } from "./prompts";
+import { EXTRACT_SYSTEM, PDF_EXTRACT_SYSTEM, extractPdfUserPrompt, extractUserPrompt } from "./prompts";
 import type { ExtractedPattern, TextModel, TranscriptResult } from "./types";
 
 const optionalString = z.string().nullish().transform((value) => value ?? undefined);
@@ -115,5 +115,58 @@ export async function extractPatternFromTranscript(
     throw new Error("Es konnten keine Häkel-Schritte erkannt werden.");
   }
 
+  return extracted;
+}
+
+interface ResponsesResult {
+  output_text?: string;
+  output?: { content?: { type?: string; text?: string }[] }[];
+}
+
+function textFromResponses(data: ResponsesResult): string {
+  if (data.output_text?.trim()) return data.output_text;
+  const parts = data.output?.flatMap((item) => item.content ?? []) ?? [];
+  const text = parts
+    .filter((part) => part.type === "output_text" && part.text)
+    .map((part) => part.text)
+    .join("\n")
+    .trim();
+  return text;
+}
+
+export async function extractPatternFromPdf(
+  key: string,
+  model: TextModel,
+  fileName: string,
+  pdfBytes: Uint8Array,
+): Promise<ExtractedPattern> {
+  const fileData = `data:application/pdf;base64,${Buffer.from(pdfBytes).toString("base64")}`;
+  const data = await openAiJson<ResponsesResult>(key, "responses", {
+    model,
+    temperature: 0.2,
+    store: false,
+    text: { format: { type: "json_object" } },
+    input: [
+      { role: "system", content: PDF_EXTRACT_SYSTEM },
+      {
+        role: "user",
+        content: [
+          {
+            type: "input_file",
+            filename: fileName,
+            file_data: fileData,
+            detail: "high",
+          },
+          { type: "input_text", text: extractPdfUserPrompt(fileName) },
+        ],
+      },
+    ],
+  });
+  const content = textFromResponses(data);
+  if (!content) throw new Error("Das Modell hat keine Anleitung aus dem PDF geliefert.");
+  const extracted = parseContent(content);
+  if (extracted.steps.length === 0) {
+    throw new Error("Es konnten keine Häkel-Schritte im PDF erkannt werden.");
+  }
   return extracted;
 }

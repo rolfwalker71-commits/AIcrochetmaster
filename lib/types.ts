@@ -1,4 +1,5 @@
 export type PatternStatus = "inbox" | "in_progress" | "done";
+export type PatternSource = "youtube" | "pdf";
 export type Difficulty = "anfänger" | "mittel" | "fortgeschritten";
 export type TextModel = "gpt-4o" | "gpt-4.1" | "gpt-4o-mini";
 export type ImageModel = "gpt-image-1" | "dall-e-3";
@@ -22,6 +23,8 @@ export interface Pattern {
   description: string;
   youtubeUrl: string;
   videoId: string;
+  source?: PatternSource;
+  sourceName?: string;
   headerImage?: string;
   difficulty: Difficulty;
   estimatedDuration?: string;

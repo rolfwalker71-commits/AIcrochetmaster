@@ -18,6 +18,52 @@ Weitere Regeln:
 - Sprache: Deutsch. US/UK-Abkürzungen in der Legende nur erklären, wenn sie im Transkript vorkommen.
 - Eine genannte Runde/Reihe = ein Schritt. Montage nur als Schritt, wenn sie im Transkript vorkommt.`;
 
+export const PDF_EXTRACT_SYSTEM = `Du bist eine erfahrene Häkelmeisterin und wandelst schriftliche Häkel-PDFs (auch Russisch, Englisch, Bildseiten, Tabellen, Diagramme) in nachhäkelbare deutsche Werkstatt-Schritte um.
+
+Harte Regel — nichts halluzinieren:
+- Erfinde KEINE Maschen, Zahlen, Runden, Materialien, Farben, Nadelstärken, Techniken oder Montage-Schritte.
+- Nur das, was im PDF-Text oder eindeutig auf den Seiten/Fotos/Diagrammen steht.
+- Andere Sprache ins Deutsche übersetzen, Zahlen und Reihenfolgen exakt behalten.
+- Wenn etwas unsicher, unleserlich, widersprüchlich oder fehlend ist: NICHT raten.
+- Stattdessen sichtbar machen: Schritt mit "uncertain": true, instruction mit „Unsicher: …“, plus Eintrag in gaps.
+- Lieber eine Lücke anzeigen als eine plausible, aber erfundene Anweisung.
+- Keine üblichen Amigurumi-Standards ergänzen, wenn sie nicht im PDF stehen.
+- stitchCount nur setzen, wenn die Zahl im PDF steht oder sich zwingend aus einer explizit genannten Rechnung ergibt.
+- timestampSec weglassen (kein Video).
+- Materialien nur, wenn genannt. Keine Mengen oder Farben dazudichten.
+- Diagramme und Fotos mitlesen: Teile (Kopf, Körper, Ohren …) als eigene Schrittgruppen.
+
+Weitere Regeln:
+- Antworte ausschließlich mit gültigem JSON, ohne Markdown.
+- Optionale Felder weglassen, wenn unbekannt. Niemals null schreiben.
+- Sprache der Anleitung: Deutsch.
+- Eine genannte Runde/Reihe = ein Schritt. Montage nur, wenn sie im PDF vorkommt.`;
+
+export function extractPdfUserPrompt(fileName: string): string {
+  return `PDF-Dateiname: ${fileName}
+
+Lies das gesamte PDF (Text und Seitenbilder). Erzeuge dieses JSON-Schema:
+{
+  "title": "kurzer deutscher Projekttitel",
+  "description": "2-3 Sätze, was entsteht",
+  "difficulty": "anfänger" | "mittel" | "fortgeschritten",
+  "estimatedDuration": "z. B. 3-4 Stunden",
+  "abbreviations": [{ "short": "fm", "meaning": "feste Masche", "us": "sc", "uk": "dc" }],
+  "motifTags": ["Amigurumi", "Tiger"],
+  "materials": [{ "name": "Baumwollgarn", "quantity": "50 g, Farbe Beige" }],
+  "steps": [{
+    "roundLabel": "Kopf · Runde 1",
+    "instruction": "nur Belegtes aus dem PDF; bei Zweifel: Unsicher: …",
+    "stitchCount": 6,
+    "colorChange": "nur wenn genannt",
+    "uncertain": false
+  }],
+  "gaps": [{ "stepOrder": 3, "reason": "was unklar ist", "suggestion": "nur wenn im PDF angedeutet, sonst weglassen" }]
+}
+
+uncertain ist Pflichtfeld pro Schritt (true/false). Jede Unsicherheit zusätzlich in gaps.`;
+}
+
 export function extractUserPrompt(input: {
   videoTitle: string;
   language: string;
