@@ -12,6 +12,19 @@ const nextConfig: NextConfig = {
   experimental: {
     proxyClientMaxBodySize: "20mb",
   },
+  async headers() {
+    return [
+      {
+        source: "/((?!_next/static|_next/image|icons/|sw\\.js|manifest\\.webmanifest).*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "private, no-store, max-age=0, must-revalidate",
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

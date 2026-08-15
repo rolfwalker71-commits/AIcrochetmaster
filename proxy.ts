@@ -28,13 +28,14 @@ function redirectToLogin(request: NextRequest, pathname: string) {
   const next = pathname.startsWith("/") ? pathname : `/${pathname}`;
   const location = `/login?next=${encodeURIComponent(next)}`;
   const origin = publicOrigin(request.headers, request.url);
-  if (origin) {
-    return NextResponse.redirect(new URL(location, origin));
-  }
-  return new NextResponse(null, {
-    status: 307,
-    headers: { Location: location },
-  });
+  const response = origin
+    ? NextResponse.redirect(new URL(location, origin))
+    : new NextResponse(null, {
+        status: 307,
+        headers: { Location: location },
+      });
+  response.headers.set("Cache-Control", "private, no-store, max-age=0, must-revalidate");
+  return response;
 }
 
 export function proxy(request: NextRequest) {

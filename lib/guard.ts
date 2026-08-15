@@ -1,6 +1,7 @@
 import { ACCESS_COOKIE, accessSecret, sessionToken, tokensMatch } from "@/lib/access";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 
 export async function hasValidSession(): Promise<boolean> {
   const secret = accessSecret();
@@ -13,6 +14,7 @@ export async function hasValidSession(): Promise<boolean> {
 }
 
 export async function requirePageAccess(): Promise<void> {
+  await connection();
   if (await hasValidSession()) return;
   redirect("/login");
 }
