@@ -548,17 +548,19 @@ export function MotifGraphic({
 }: {
   id: string;
   color: string;
-  size?: "list" | "detail";
+  size?: "list" | "detail" | "step";
 }) {
   const graphic = GRAPHICS[id] ?? GRAPHICS.generic;
+  const box = size === "detail" ? "h-44" : size === "step" ? "h-16" : "h-28";
+  const art = size === "detail" ? "h-36 w-56" : size === "step" ? "h-14 w-24" : "h-24 w-40";
   return (
     <div
-      className={`flex items-center justify-center ${size === "detail" ? "h-44" : "h-28"}`}
+      className={`flex items-center justify-center ${box}`}
       style={{ background: color }}
       role="img"
       aria-label="Hilfsgrafik"
     >
-      <div className={size === "detail" ? "h-36 w-56" : "h-24 w-40"}>{graphic}</div>
+      <div className={art}>{graphic}</div>
     </div>
   );
 }

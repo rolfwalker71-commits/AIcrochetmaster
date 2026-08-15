@@ -11,9 +11,19 @@ export const STEP_SPLIT_RULES = `Schritt-Schnitt — eine nachhäkelbare Werksta
 - Lieber 80–150 einzelne Schritte als 3 Sammelkarten.
 - Reihenfolge = Reihenfolge im Transkript oder PDF. Nichts umsortieren.`;
 
+export const INSTRUCTION_ONLY_RULES = `Nur Anleitung — kein Privatleben:
+- Extrahiere ausschließlich häkelrelevante Anweisungen: Maschen, Runden, Reihen, Materialien, Nadeln, Farben, Maße, Spannung, Markierer, Füllen, Montage, Vernähen, Abketten.
+- Weglassen und NICHT übersetzen: Begrüßung, Abschied, Anekdoten, Familie, Gesundheit, Reisen, Gefühle, Meinungen, Witze, Smalltalk, Wetter, Alltag, Kanalwerbung, Abo/Like, Sponsoren-Plaudereien, Danksagungen.
+- Ein Satz mit beidem: nur den Anleitungsteil behalten. Den privaten Rest streichen.
+- Kein steps-Eintrag für „Hallo“, „heute erzähle ich…“, „wie geht es euch“, „das erinnert mich an…“.
+- title, description und materials beschreiben nur das Häkelstück, nie die Person hinter der Kamera.
+- Praktische Tipps nur, wenn sie die Arbeit ändern (z. B. „Markierer setzen“, „nicht zu fest ziehen“).`;
+
 export const EXTRACT_SYSTEM = `Du bist eine erfahrene Häkelmeisterin und wandelst gesprochene YouTube-Anleitungen in lückenlose, nachhäkelbare Schriftanleitungen um. Jemand soll ohne das Video häkeln können.
 
 ${STEP_SPLIT_RULES}
+
+${INSTRUCTION_ONLY_RULES}
 
 Harte Regel — nichts halluzinieren:
 - Erfinde KEINE Maschen, Zahlen, Runden, Materialien, Farben, Nadelstärken, Techniken oder Montage-Schritte.
@@ -23,7 +33,7 @@ Harte Regel — nichts halluzinieren:
 - Lieber eine Lücke anzeigen als eine plausible, aber erfundene Anweisung.
 - Keine „üblichen“ Amigurumi- oder Granny-Standards ergänzen, wenn sie nicht im Transkript vorkommen.
 - Maschenzahl (stitchCount) nur setzen, wenn die Zahl wörtlich genannt wird oder sich zwingend aus einer explizit genannten Rechnung ergibt. Sonst weglassen und gap.
-- Zeitstempel nur aus den [mm:ss]-Markern im Transkript. Keine Schätzungen.
+- Zeitstempel (timestampSec) bei JEDEM Schritt setzen: ganze Sekunden aus dem [mm:ss]-Marker dieser Anweisung. Nicht weglassen. Keine Schätzungen außerhalb der Marker.
 - Materialien nur, wenn genannt. Keine Mengen oder Farben dazudichten.
 - Transkripte haben oft Hörfehler. Bei Zweifel zwischen Maschenarten: uncertain + gap, nicht entscheiden.
 - Wenn das Video „bis zur gewünschten Höhe“ sagt und keine Reihenzahl nennt: EIN Schritt mit genau diesem Wortlaut, nicht weglassen und nicht Reihen erfinden.
@@ -36,6 +46,9 @@ Weitere Regeln:
 export const PDF_EXTRACT_SYSTEM = `Du bist eine erfahrene Häkelmeisterin und wandelst schriftliche Häkel-PDFs (auch Russisch, Englisch, Bildseiten, Tabellen, Diagramme) in lückenlose, nachhäkelbare deutsche Werkstatt-Schritte um. Jemand soll ohne das PDF häkeln können.
 
 ${STEP_SPLIT_RULES}
+
+${INSTRUCTION_ONLY_RULES}
+Vorworte, Widmungen und persönliche Notizen im PDF weglassen.
 
 Harte Regel — nichts halluzinieren:
 - Erfinde KEINE Maschen, Zahlen, Runden, Materialien, Farben, Nadelstärken, Techniken oder Montage-Schritte.
@@ -105,7 +118,7 @@ Erzeuge dieses JSON-Schema:
   "materials": [{ "name": "Baumwollgarn", "quantity": "50 g, Farbe Beige" }],
   "steps": [{
     "roundLabel": "Runde 1",
-    "instruction": "nur Belegtes aus dem Transkript; bei Zweifel: Unsicher: …",
+    "instruction": "nur die Häkelanweisung aus dem Transkript, ohne Smalltalk; bei Zweifel: Unsicher: …",
     "stitchCount": 6,
     "timestampSec": 42,
     "colorChange": "nur wenn genannt",
@@ -114,8 +127,9 @@ Erzeuge dieses JSON-Schema:
   "gaps": [{ "stepOrder": 3, "reason": "was unklar ist", "suggestion": "nur wenn im Transkript angedeutet, sonst weglassen" }]
 }
 
-Verboten: eine Zusammenfassung in wenigen Kapiteln.
-Geboten: jeder im Transkript genannte Arbeitsschritt als eigener steps-Eintrag, in Zeitreihenfolge.
+Verboten: eine Zusammenfassung in wenigen Kapiteln. Verboten: persönliche Geschichten, Smalltalk und Kanal-Geplauder.
+Geboten: jeder häkelrelevante Arbeitsschritt als eigener steps-Eintrag, in Zeitreihenfolge. Privates weglassen.
+timestampSec ist die Startsekunde dieser Anweisung als ganze Zahl, abgeleitet vom [mm:ss]-Marker. Falsch: "26:12". Richtig: 1572. Nicht bei jedem Schritt 0.
 quantity weglassen oder "" setzen, wenn die Menge nicht genannt ist.
 uncertain ist Pflichtfeld pro Schritt (true/false). Jede Unsicherheit zusätzlich in gaps.`;
 }
@@ -137,7 +151,7 @@ export function extractChunkUserPrompt(input: {
 
   return `Video-Titel: ${input.videoTitle}
 Transkript-Sprache: ${input.language}
-Das ist Teil ${input.part} von ${input.parts} des Transkripts. Extrahiere NUR die neuen Schritte aus DIESEM Abschnitt — vollständig, keine Kapitel-Zusammenfassung.
+Das ist Teil ${input.part} von ${input.parts} des Transkripts. Extrahiere NUR die neuen häkelrelevanten Schritte aus DIESEM Abschnitt — vollständig, keine Kapitel-Zusammenfassung, kein Privatleben.
 
 ${previous}
 
@@ -150,7 +164,8 @@ steps nur für diesen Abschnitt, jede Runde/Reihe/Aktion einzeln, in der Reihenf
 
 export function extractRetryUserPrompt(previousStepCount: number): string {
   return `Deine vorherige Antwort hatte nur ${previousStepCount} Schritte und war eine Zusammenfassung. Das ist falsch.
-Liefere JETZT die komplette Anleitung erneut: jede Runde, Reihe und Montage-Aktion als eigenen steps-Eintrag, in Original-Reihenfolge. Keine Kapitelkarten.`;
+Liefere JETZT die komplette Anleitung erneut: jede Runde, Reihe und Montage-Aktion als eigenen steps-Eintrag, in Original-Reihenfolge. Keine Kapitelkarten.
+Weiterhin nur Anleitung, keine persönlichen Erzählungen.`;
 }
 
 export const GAP_SYSTEM = `Du darfst Lücken NICHT schließen, wenn etwas unsicher ist. Antworte nur mit JSON.

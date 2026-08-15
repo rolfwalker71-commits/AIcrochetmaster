@@ -87,7 +87,7 @@ export function ImportWizard({
           segments: [],
         },
         settings,
-        180_000,
+        300_000,
       );
 
       setPhase("image");

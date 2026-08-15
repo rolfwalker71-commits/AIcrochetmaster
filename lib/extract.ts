@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { openAiJson } from "./openai";
 import {
   EXTRACT_SYSTEM,
@@ -8,95 +7,169 @@ import {
   extractRetryUserPrompt,
   extractUserPrompt,
 } from "./prompts";
-import type { ExtractedPattern, TextModel, TranscriptResult } from "./types";
-
-const optionalString = z.string().nullish().transform((value) => value ?? undefined);
-const stringOrEmpty = z
-  .union([z.string(), z.number()])
-  .nullish()
-  .transform((value) => (value == null ? "" : String(value).trim()));
-const optionalNumber = z
-  .union([z.number(), z.string()])
-  .nullish()
-  .transform((value) => {
-    if (value == null || value === "") return undefined;
-    const parsed = typeof value === "number" ? value : Number(value);
-    return Number.isFinite(parsed) ? parsed : undefined;
-  });
-const optionalBoolean = z.boolean().nullish().transform((value) => value ?? undefined);
-
-const extractedSchema = z.object({
-  title: stringOrEmpty.transform((value) => value || "Ohne Titel"),
-  description: stringOrEmpty,
-  difficulty: z.preprocess((value) => {
-    const text = String(value ?? "").toLowerCase();
-    if (/(anfänger|beginner|leicht|easy)/.test(text)) return "anfänger";
-    if (/(fortgeschritten|advanced|schwer|hard)/.test(text)) return "fortgeschritten";
-    return "mittel";
-  }, z.enum(["anfänger", "mittel", "fortgeschritten"])),
-  estimatedDuration: optionalString,
-  abbreviations: z
-    .array(
-      z.object({
-        short: stringOrEmpty,
-        meaning: stringOrEmpty,
-        us: optionalString,
-        uk: optionalString,
-      }),
-    )
-    .default([])
-    .transform((items) => items.filter((item) => item.short && item.meaning)),
-  motifTags: z.array(z.string()).default([]),
-  materials: z
-    .array(z.object({ name: stringOrEmpty, quantity: stringOrEmpty }))
-    .default([])
-    .transform((items) => items.filter((item) => item.name.length > 0)),
-  steps: z
-    .array(
-      z.object({
-        roundLabel: stringOrEmpty.transform((value) => value || "Schritt"),
-        instruction: stringOrEmpty,
-        stitchCount: optionalNumber,
-        timestampSec: optionalNumber,
-        colorChange: optionalString,
-        uncertain: optionalBoolean,
-      }),
-    )
-    .default([])
-    .transform((items) => items.filter((item) => item.instruction.length > 0)),
-  gaps: z
-    .array(
-      z.object({
-        stepOrder: optionalNumber,
-        reason: stringOrEmpty,
-        suggestion: optionalString,
-      }),
-    )
-    .default([])
-    .transform((items) => items.filter((item) => item.reason.length > 0)),
-});
+import type { Difficulty, ExtractedPattern, TextModel, TranscriptResult } from "./types";
+import { assignStepTimestamps, parseTimestamp } from "./youtube";
 
 interface ChatCompletion {
-  choices?: { message?: { content?: string } }[];
+  choices?: { message?: { content?: string }; finish_reason?: string }[];
 }
 
-function stripNulls(value: unknown): unknown {
-  if (value === null) return undefined;
-  if (Array.isArray(value)) return value.map(stripNulls);
-  if (value && typeof value === "object") {
-    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, stripNulls(item)]));
+function asList(value: unknown): unknown[] {
+  if (Array.isArray(value)) return value;
+  if (value && typeof value === "object") return Object.values(value);
+  return [];
+}
+
+function asText(value: unknown): string {
+  if (value == null) return "";
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+    return String(value).trim();
   }
-  return value;
+  return "";
+}
+
+function asNumber(value: unknown): number | undefined {
+  if (value == null || value === "") return undefined;
+  const parsed = typeof value === "number" ? value : Number(String(value).replace(",", "."));
+  return Number.isFinite(parsed) ? parsed : undefined;
+}
+
+function asBool(value: unknown): boolean | undefined {
+  if (value == null || value === "") return undefined;
+  if (typeof value === "boolean") return value;
+  if (typeof value === "number") return value !== 0;
+  const text = String(value).toLowerCase().trim();
+  if (["true", "ja", "yes", "1"].includes(text)) return true;
+  if (["false", "nein", "no", "0"].includes(text)) return false;
+  return undefined;
+}
+
+function asRecord(value: unknown): Record<string, unknown> {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
+}
+
+function repairTruncatedJson(text: string): string {
+  let source = text.trim().replace(/,?\s*"[^"\\]*$/, "").replace(/,\s*$/, "");
+  const stack: string[] = [];
+  let inString = false;
+  let escape = false;
+  for (const char of source) {
+    if (inString) {
+      if (escape) {
+        escape = false;
+        continue;
+      }
+      if (char === "\\") {
+        escape = true;
+        continue;
+      }
+      if (char === '"') inString = false;
+      continue;
+    }
+    if (char === '"') {
+      inString = true;
+      continue;
+    }
+    if (char === "{") stack.push("}");
+    else if (char === "[") stack.push("]");
+    else if (char === "}" || char === "]") stack.pop();
+  }
+  if (inString) source += '"';
+  source = source.replace(/,\s*$/, "");
+  while (stack.length > 0) source += stack.pop();
+  return source;
+}
+
+function parseJsonLoose(content: string): unknown {
+  const cleaned = content.replace(/^```json\s*/i, "").replace(/```$/i, "").trim();
+  const start = cleaned.indexOf("{");
+  const body = start >= 0 ? cleaned.slice(start) : cleaned;
+  try {
+    return JSON.parse(body) as unknown;
+  } catch {
+    return JSON.parse(repairTruncatedJson(body)) as unknown;
+  }
+}
+
+function normalizeExtracted(raw: unknown): ExtractedPattern {
+  const obj = asRecord(raw);
+  let abbreviations = asList(obj.abbreviations).flatMap((item) => {
+    const rec = asRecord(item);
+    const short = asText(rec.short ?? rec.abbr);
+    const meaning = asText(rec.meaning ?? rec.de);
+    return short && meaning
+      ? [{ short, meaning, us: asText(rec.us) || undefined, uk: asText(rec.uk) || undefined }]
+      : [];
+  });
+  if (abbreviations.length === 0 && obj.abbreviations && !Array.isArray(obj.abbreviations)) {
+    abbreviations = Object.entries(asRecord(obj.abbreviations)).flatMap(([short, meaning]) => {
+      const text = asText(meaning);
+      return text ? [{ short, meaning: text }] : [];
+    });
+  }
+  const difficultyText = asText(obj.difficulty).toLowerCase();
+  const difficulty: Difficulty = /(anfänger|beginner|leicht|easy)/.test(difficultyText)
+    ? "anfänger"
+    : /(fortgeschritten|advanced|schwer|hard)/.test(difficultyText)
+      ? "fortgeschritten"
+      : "mittel";
+
+  return {
+    title: asText(obj.title) || "Ohne Titel",
+    description: asText(obj.description),
+    difficulty,
+    estimatedDuration: asText(obj.estimatedDuration) || undefined,
+    abbreviations,
+    motifTags: asList(obj.motifTags).flatMap((tag) =>
+      asText(tag)
+        .split(/[,;]/)
+        .map((part) => part.trim())
+        .filter(Boolean),
+    ),
+    materials: asList(obj.materials).flatMap((item) => {
+      const rec = asRecord(item);
+      const name = asText(rec.name ?? rec.material ?? (typeof item === "string" ? item : ""));
+      return name ? [{ name, quantity: asText(rec.quantity ?? rec.menge) }] : [];
+    }),
+    steps: asList(obj.steps).flatMap((item) => {
+      const rec = asRecord(item);
+      const instruction = asText(rec.instruction ?? rec.text ?? rec.anweisung);
+      if (!instruction) return [];
+      return [
+        {
+          roundLabel: asText(rec.roundLabel ?? rec.label ?? rec.title) || "Schritt",
+          instruction,
+          stitchCount: asNumber(rec.stitchCount),
+          timestampSec: parseTimestamp(rec.timestampSec ?? rec.timestamp),
+          colorChange: asText(rec.colorChange) || undefined,
+          uncertain: asBool(rec.uncertain),
+        },
+      ];
+    }),
+    gaps: asList(obj.gaps).flatMap((item) => {
+      const rec = asRecord(item);
+      const reason = asText(rec.reason ?? rec.text);
+      return reason
+        ? [
+            {
+              stepOrder: asNumber(rec.stepOrder),
+              reason,
+              suggestion: asText(rec.suggestion) || undefined,
+            },
+          ]
+        : [];
+    }),
+  };
 }
 
 function parseContent(content: string): ExtractedPattern {
-  const cleaned = content.replace(/^```json\s*/i, "").replace(/```$/i, "").trim();
-  const parsed = stripNulls(JSON.parse(cleaned) as unknown);
-  const result = extractedSchema.safeParse(parsed);
-  if (!result.success) {
+  try {
+    return normalizeExtracted(parseJsonLoose(content));
+  } catch {
     throw new Error("Die extrahierte Anleitung war unvollständig. Bitte noch einmal versuchen.");
   }
-  return result.data;
 }
 
 async function completeJson(
@@ -121,7 +194,7 @@ async function completeJson(
 }
 
 const MAX_TRANSCRIPT_CHARS = 90000;
-const CHUNK_CHARS = 7000;
+const CHUNK_CHARS = 9000;
 const SUMMARY_STEP_LIMIT = 8;
 
 function transcriptText(transcript: TranscriptResult): string {
@@ -175,6 +248,9 @@ function similarStep(
 }
 
 function mergeExtractions(parts: ExtractedPattern[]): ExtractedPattern {
+  if (parts.length === 0) {
+    throw new Error("Es konnten keine Häkel-Schritte erkannt werden.");
+  }
   const [first, ...rest] = parts;
   const steps = expandCombinedSteps(
     parts.flatMap((part) => part.steps).reduce<ExtractedPattern["steps"]>((list, step) => {
@@ -236,14 +312,33 @@ export async function extractPatternFromTranscript(
             parts: chunks.length,
             previousSteps,
           });
-    let part = await completeJson(key, model, EXTRACT_SYSTEM, user);
+    let part: ExtractedPattern | undefined;
+    try {
+      part = await completeJson(key, model, EXTRACT_SYSTEM, user);
+    } catch {
+      try {
+        part = await completeJson(
+          key,
+          model,
+          EXTRACT_SYSTEM,
+          `${user}\n\n${extractRetryUserPrompt(0)}`,
+        );
+      } catch {
+        continue;
+      }
+    }
     if (chunks.length > 1 && looksLikeSummary(part.steps, chunks[index].length)) {
-      part = await completeJson(
-        key,
-        model,
-        EXTRACT_SYSTEM,
-        `${user}\n\n${extractRetryUserPrompt(part.steps.length)}`,
-      );
+      try {
+        const again = await completeJson(
+          key,
+          model,
+          EXTRACT_SYSTEM,
+          `${user}\n\n${extractRetryUserPrompt(part.steps.length)}`,
+        );
+        if (again.steps.length >= part.steps.length) part = again;
+      } catch {
+        // keep the first successful part
+      }
     }
     parts.push(part);
   }
@@ -267,6 +362,7 @@ export async function extractPatternFromTranscript(
     throw new Error("Es konnten keine Häkel-Schritte erkannt werden.");
   }
 
+  extracted.steps = assignStepTimestamps(extracted.steps, text);
   return extracted;
 }
 

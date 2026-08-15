@@ -1,10 +1,13 @@
 "use client";
 
 import { CompanionStrip } from "@/components/companion-cards";
+import { StepHelpGraphic } from "@/components/step-help-graphic";
+import { VideoPopout } from "@/components/video-popout";
 import { companionCardsForPattern, companionCardsForStep } from "@/lib/companion-cards";
+import { apiPost } from "@/lib/api";
 import { db, deletePattern, getSettings, statusFromSteps } from "@/lib/db";
 import type { Progress, Step } from "@/lib/types";
-import { formatTimestamp, youtubeEmbedUrl } from "@/lib/youtube";
+import { assignStepTimestamps, formatTimestamp, parseTimestamp } from "@/lib/youtube";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -32,7 +35,9 @@ export function PatternStudio({
 }) {
   const router = useRouter();
   const [section, setSection] = useState<Section>(initialSection);
+  const [videoStart, setVideoStart] = useState<number | null>(null);
   const jumpedToOpenStep = useRef(false);
+  const repairedTimes = useRef(false);
   const pattern = useLiveQuery(() => db.patterns.get(id), [id]);
   const steps = useLiveQuery(() => db.steps.where("patternId").equals(id).sortBy("order"), [id]);
   const materials = useLiveQuery(() => db.materials.where("patternId").equals(id).toArray(), [id]);
@@ -63,6 +68,7 @@ export function PatternStudio({
 
   const currentIndex = progress?.currentStepIndex ?? 0;
   const currentStep = steps?.[currentIndex];
+  const hasVideo = Boolean(pattern?.videoId) && pattern?.source !== "pdf";
   const percent = useMemo(() => {
     if (!steps?.length) return 0;
     return Math.round((steps.filter((step) => step.done).length / steps.length) * 100);
@@ -104,6 +110,30 @@ export function PatternStudio({
     })();
   }, [section, steps, progress, id]);
 
+  useEffect(() => {
+    if (repairedTimes.current || !pattern || !steps?.length) return;
+    if (!pattern.videoId || pattern.source === "pdf") return;
+    const noneHaveTime = steps.every((step) => {
+      const time = parseTimestamp(step.timestampSec);
+      return time == null || time === 0;
+    });
+    if (!noneHaveTime) return;
+    repairedTimes.current = true;
+    void (async () => {
+      try {
+        const transcript = await apiPost<{ fullText: string }>("/api/transcript", {
+          url: pattern.youtubeUrl || pattern.videoId,
+        });
+        const next = assignStepTimestamps(steps, transcript.fullText);
+        if (next.some((step, index) => step.timestampSec !== steps[index].timestampSec)) {
+          await db.steps.bulkPut(next);
+        }
+      } catch {
+        repairedTimes.current = false;
+      }
+    })();
+  }, [pattern, steps]);
+
   const go = async (index: number) => {
     if (!steps?.length) return;
     const current = await ensureProgress();
@@ -134,7 +164,7 @@ export function PatternStudio({
   if (!pattern) return <p>Anleitung nicht gefunden.</p>;
 
   return (
-    <div className="space-y-4">
+    <div className={`space-y-4 ${hasVideo && videoStart != null ? "pb-64" : ""}`}>
       <div className="grid grid-cols-3 gap-2">
         {SECTIONS.map((item) => {
           const active = section === item.id;
@@ -191,25 +221,13 @@ export function PatternStudio({
               <p className="mt-1 text-sm text-muted">{pattern.sourceName || "Hochgeladene Datei"}</p>
             </div>
           ) : (
-            <>
-              <div className="overflow-hidden rounded-3xl bg-ink">
-                <iframe
-                  title="YouTube"
-                  className="aspect-video w-full"
-                  src={youtubeEmbedUrl(pattern.videoId, currentStep?.timestampSec)}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              </div>
-              <a
-                href={pattern.youtubeUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="block text-center text-sm text-muted underline"
-              >
-                Auf YouTube öffnen
-              </a>
-            </>
+            <button
+              type="button"
+              className="flex w-full items-center justify-center gap-2 rounded-3xl bg-terracotta py-4 text-sm font-bold text-white"
+              onClick={() => setVideoStart(parseTimestamp(currentStep?.timestampSec) ?? 0)}
+            >
+              Video öffnen
+            </button>
           )}
           <button
             type="button"
@@ -289,14 +307,22 @@ export function PatternStudio({
             Schritt {currentIndex + 1} von {steps?.length ?? 0} · {percent}%
           </p>
           <h3 className="font-display text-xl">Schritte</h3>
-          <p className="text-sm text-muted">Tippe einen Schritt an. Vor, Zurück und Erledigt sitzen darunter.</p>
+          <p className="text-sm text-muted">
+            Tippe einen Schritt an. Vor, Zurück und Erledigt sitzen darunter.
+            {hasVideo ? " Das Kamerasymbol springt zur Stelle im Video." : ""}
+          </p>
           {(steps ?? []).map((step, index) => (
             <StepCard
               key={step.id}
               step={step}
               index={index}
               current={index === currentIndex}
+              canPlayVideo={hasVideo}
               onSelect={() => void go(index)}
+              onPlayVideo={() => {
+                void go(index);
+                setVideoStart(parseTimestamp(step.timestampSec) ?? 0);
+              }}
               onBack={() => void go(index - 1)}
               onNext={() => void go(index + 1)}
               onToggleDone={() => void toggleDone()}
@@ -353,6 +379,13 @@ export function PatternStudio({
           )}
         </section>
       )}
+      {hasVideo && videoStart != null && pattern.videoId && (
+        <VideoPopout
+          videoId={pattern.videoId}
+          startSec={videoStart}
+          onClose={() => setVideoStart(null)}
+        />
+      )}
     </div>
   );
 }
@@ -361,7 +394,9 @@ function StepCard({
   step,
   index,
   current,
+  canPlayVideo,
   onSelect,
+  onPlayVideo,
   onBack,
   onNext,
   onToggleDone,
@@ -369,12 +404,14 @@ function StepCard({
   step: Step;
   index: number;
   current: boolean;
+  canPlayVideo: boolean;
   onSelect: () => void;
+  onPlayVideo: () => void;
   onBack: () => void;
   onNext: () => void;
   onToggleDone: () => void;
 }) {
-  const companions = current ? companionCardsForStep(step) : [];
+  const companions = companionCardsForStep(step);
   return (
     <article
       id={`step-${index}`}
@@ -397,20 +434,37 @@ function StepCard({
         </p>
         <p className="mt-1 font-display text-xl leading-snug">{step.instruction}</p>
         <p className={`mt-2 text-xs ${current ? "text-cream/80" : "text-muted"}`}>
-          {step.stitchCount != null ? `${step.stitchCount} Maschen` : ""}
-          {step.timestampSec != null ? ` · ${formatTimestamp(step.timestampSec)}` : ""}
-          {step.colorChange ? ` · ${step.colorChange}` : ""}
+          {[
+            step.stitchCount != null ? `${step.stitchCount} Maschen` : "",
+            parseTimestamp(step.timestampSec) != null
+              ? formatTimestamp(parseTimestamp(step.timestampSec))
+              : "",
+            step.colorChange ?? "",
+          ]
+            .filter(Boolean)
+            .join(" · ")}
         </p>
-        {companions.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-2">
-            {companions.map((card) => (
-              <span key={card.id} className="rounded-full bg-cream px-2 py-0.5 text-xs text-ink">
-                {card.title}
-              </span>
-            ))}
-          </div>
-        )}
       </button>
+      <StepHelpGraphic step={step} companions={companions} current={current} />
+      {canPlayVideo && (
+        <button
+          type="button"
+          aria-label={
+            parseTimestamp(step.timestampSec) != null
+              ? `Video bei ${formatTimestamp(parseTimestamp(step.timestampSec))} öffnen`
+              : "Video öffnen"
+          }
+          className={`mt-3 inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-bold ${
+            current ? "bg-cream text-ink" : "bg-terracotta text-white"
+          }`}
+          onClick={onPlayVideo}
+        >
+          <PlayGlyph />
+          {parseTimestamp(step.timestampSec) != null
+            ? formatTimestamp(parseTimestamp(step.timestampSec))
+            : "Video"}
+        </button>
+      )}
       {current && (
         <div className="mt-4 flex gap-2">
           <button
@@ -437,6 +491,14 @@ function StepCard({
         </div>
       )}
     </article>
+  );
+}
+
+function PlayGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden>
+      <path d="M8 5.5v13l11-6.5L8 5.5Z" />
+    </svg>
   );
 }
 
