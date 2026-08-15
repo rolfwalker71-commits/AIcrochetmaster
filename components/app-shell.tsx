@@ -35,9 +35,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className={`mx-auto flex min-h-dvh max-w-lg flex-col px-4 pt-6 ${locked ? "pb-8" : "pb-28"}`}>
       {!locked && <RegisterSW />}
       <header className="mb-6 flex items-end justify-between">
-        <div>
-          <p className="text-xs uppercase tracking-[0.22em] text-terracotta">AIcrochetmaster</p>
-          <h1 className="font-display text-3xl font-semibold tracking-tight">Häkelmeister</h1>
+        <div className="flex items-center gap-3">
+          <img
+            src="/icons/app.png"
+            alt=""
+            width={48}
+            height={48}
+            className="h-12 w-12 shrink-0 object-contain"
+          />
+          <div>
+            <p className="text-xs uppercase tracking-[0.22em] text-terracotta">AIcrochetmaster</p>
+            <h1 className="font-display text-3xl font-semibold tracking-tight">Häkelmeister</h1>
+          </div>
         </div>
         {!locked && (
           <Link

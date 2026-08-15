@@ -9,13 +9,18 @@ const PUBLIC = new Set([
   "/api/access",
   "/api/session",
   "/icon",
+  "/apple-icon",
   "/manifest.webmanifest",
   "/sw.js",
 ]);
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  if (PUBLIC.has(pathname) || pathname.startsWith("/_next/")) {
+  if (
+    PUBLIC.has(pathname) ||
+    pathname.startsWith("/_next/") ||
+    pathname.startsWith("/icons/")
+  ) {
     return NextResponse.next();
   }
 
