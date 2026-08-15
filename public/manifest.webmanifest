@@ -1,0 +1,36 @@
+{
+  "name": "AIcrochetmaster",
+  "short_name": "Häkelmeister",
+  "description": "YouTube-Häkelvideos in lückenlose Anleitungen verwandeln.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F4EAD8",
+  "theme_color": "#C45C26",
+  "lang": "de",
+  "share_target": {
+    "action": "/import",
+    "method": "GET",
+    "enctype": "application/x-www-form-urlencoded",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "icons": [
+    {
+      "src": "/icon",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

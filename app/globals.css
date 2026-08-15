@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@theme {
+  --color-cream: #f4ead8;
+  --color-foam: #fffaf2;
+  --color-ink: #2b2118;
+  --color-muted: #6d5c4d;
+  --color-line: #e4d4be;
+  --color-terracotta: #c45c26;
+  --color-terracotta-dark: #9a4318;
+  --color-sage: #4c7a62;
+  --color-yarn: #d4a04a;
+  --color-rose: #c97b7b;
+  --font-display: var(--font-fraunces), "Fraunces", serif;
+  --font-sans: var(--font-nunito), "Nunito", sans-serif;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--color-ink);
+  background:
+    radial-gradient(1200px 500px at 10% -10%, #f8d9b8 0%, transparent 55%),
+    radial-gradient(900px 400px at 110% 0%, #e7d7b0 0%, transparent 50%),
+    var(--color-cream);
+  font-family: var(--font-sans);
+}
+
+body.large-text {
+  font-size: 1.125rem;
+}
+
+body.large-text h1 {
+  font-size: 2.35rem;
+}
+
+::selection {
+  background: #f0c9a0;
+}
+
+a {
+  color: inherit;
+}
+
+.font-display {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+}
+
+.card-shadow {
+  box-shadow: 0 12px 32px -18px rgba(80, 48, 20, 0.35);
+}
+
+.yarn-stripe {
+  background-image: repeating-linear-gradient(
+    -18deg,
+    transparent,
+    transparent 10px,
+    rgba(196, 92, 38, 0.05) 10px,
+    rgba(196, 92, 38, 0.05) 11px
+  );
+}

@@ -1,0 +1,493 @@
+[
+  {
+    "id": "magischer-ring",
+    "title": "Magischer Ring",
+    "category": "Grundlagen",
+    "summary": "Verschließbarer Startkreis für Amigurumi und runde Motive. Die Mitte bleibt ohne Loch.",
+    "steps": [
+      "Garnende über die nicht-dominante Hand legen, Arbeitsfaden kreuzt darüber — es entsteht eine Schlaufe.",
+      "Häkelnadel unter beide Fäden, Arbeitsfaden holen, eine Luftmasche zum Sichern.",
+      "Die gewünschte Zahl fester Maschen (meist 6) in den Ring häkeln, beide Fäden umarbeiten.",
+      "Am Garnende ziehen, bis die Mitte fest geschlossen ist.",
+      "Mit Kettmasche in die erste feste Masche schließen oder spiralig weiterarbeiten."
+    ],
+    "stitchHint": "Klassischer Amigurumi-Start: 6 fm im Ring.",
+    "relatedHelp": ["kein-loch-im-ring", "spirale-oder-schlussrunde"],
+    "color": "#C45C26"
+  },
+  {
+    "id": "luftmaschenkette",
+    "title": "Luftmaschenkette",
+    "category": "Grundlagen",
+    "summary": "Die Basis für Reihen, Quadrate und Gurte. Gleichmäßiger Zug entscheidet über die Kantenlänge.",
+    "steps": [
+      "Einen Anfangsknoten auf die Nadel setzen.",
+      "Faden holen und durch die Schlaufe ziehen — das ist eine Luftmasche (Lm).",
+      "Wiederholen, bis die Kette die nötige Länge hat.",
+      "Die letzte Lm nicht zu fest ziehen, sonst wird die erste Reihe eng."
+    ],
+    "stitchHint": "Zählmasche: die Schlaufe auf der Nadel zählt nicht mit.",
+    "relatedHelp": ["maschen-zaehlen", "nadelwahl"],
+    "color": "#D4A04A"
+  },
+  {
+    "id": "wendeluftmaschen",
+    "title": "Wendeluftmaschen",
+    "category": "Grundlagen",
+    "summary": "Bringen die Nadel auf die Höhe der nächsten Reihe, ohne die Kante zu verzerren.",
+    "steps": [
+      "Am Reihenende die Nadel umdrehen.",
+      "Je nach Masche: 1 Lm für fm, 2 Lm für hStb, 3 Lm für Stb, 4 Lm für DStb.",
+      "Entscheiden, ob die Wende-Lm als erste Masche zählt (steht in der Anleitung).",
+      "Erste Arbeitsmasche in die richtige Masche der Vorreihe setzen — oft die zweite von der Nadel."
+    ],
+    "stitchHint": "Bei fm oft 1 Lm, die nicht als Masche zählt.",
+    "relatedHelp": ["reihen-lesen", "kanten-gerade"],
+    "color": "#4F7A63"
+  },
+  {
+    "id": "kettmasche",
+    "title": "Kettmasche",
+    "category": "Maschen",
+    "summary": "Flache Verbindungsmasche zum Schließen von Runden, Versetzen und unsichtbarem Weiterarbeiten.",
+    "steps": [
+      "Nadel in die Zielmasche einstechen.",
+      "Faden holen und direkt durch Masche und Schlaufe auf der Nadel ziehen.",
+      "Nicht zu fest — sonst zieht sich die Naht zusammen."
+    ],
+    "stitchHint": "Km / sl st. Zählt meist nicht als Höhenmasche.",
+    "relatedHelp": ["spirale-oder-schlussrunde"],
+    "color": "#7A6A53"
+  },
+  {
+    "id": "feste-masche",
+    "title": "Feste Masche",
+    "category": "Maschen",
+    "summary": "Dichte Grundmasche für Amigurumi, Körbe und feste Stoffe.",
+    "steps": [
+      "Nadel in die nächste Masche einstechen.",
+      "Faden holen (2 Schlaufen auf der Nadel).",
+      "Faden holen und durch beide Schlaufen ziehen."
+    ],
+    "stitchHint": "fm = US sc = UK dc.",
+    "relatedHelp": ["us-uk-abkuerzungen", "zu-fest-haekeln"],
+    "color": "#C45C26"
+  },
+  {
+    "id": "halbes-staebchen",
+    "title": "Halbes Stäbchen",
+    "category": "Maschen",
+    "summary": "Mittlere Höhe, weicher Fall — gut für Mützen, Pullover und Übergänge.",
+    "steps": [
+      "Faden einmal um die Nadel holen (Umschlag).",
+      "In die Masche einstechen, Faden holen (3 Schlaufen).",
+      "Faden holen und durch alle 3 Schlaufen ziehen."
+    ],
+    "stitchHint": "hStb = US hdc = UK htr. Wende-Lm: 2.",
+    "relatedHelp": ["us-uk-abkuerzungen"],
+    "color": "#C97B7B"
+  },
+  {
+    "id": "staebchen",
+    "title": "Stäbchen",
+    "category": "Maschen",
+    "summary": "Klassische offene Masche für Decken, Granny Squares und luftige Teile.",
+    "steps": [
+      "Umschlag holen.",
+      "Einstechen, Faden holen (3 Schlaufen).",
+      "Faden durch 2 Schlaufen, dann noch einmal durch die restlichen 2."
+    ],
+    "stitchHint": "Stb = US dc = UK tr. Wende-Lm: 3.",
+    "relatedHelp": ["us-uk-abkuerzungen", "loecher-im-stoff"],
+    "color": "#4F7A63"
+  },
+  {
+    "id": "doppelstaebchen",
+    "title": "Doppelstäbchen",
+    "category": "Maschen",
+    "summary": "Hohe, luftige Masche für schnelle Flächen und lacy Motive.",
+    "steps": [
+      "Zweimal umschlagen.",
+      "Einstechen, Faden holen (4 Schlaufen).",
+      "Dreimal je durch 2 Schlaufen abmaschen."
+    ],
+    "stitchHint": "DStb = US tr = UK dtr. Wende-Lm: 4.",
+    "relatedHelp": ["us-uk-abkuerzungen"],
+    "color": "#6B8E9F"
+  },
+  {
+    "id": "zunahme",
+    "title": "Zunahme",
+    "category": "Maschen",
+    "summary": "Zwei Maschen in dieselbe Einstichstelle — so wird eine Runde weiter.",
+    "steps": [
+      "Die nächste Masche wie gewohnt häkeln.",
+      "In dieselbe Masche eine zweite gleiche Masche häkeln.",
+      "In Amigurumi-Runden Zunahmen gleichmäßig verteilen, sonst entsteht eine Ecke."
+    ],
+    "stitchHint": "Zun / inc. 6 fm + 6 Zun = 12.",
+    "relatedHelp": ["maschen-zaehlen", "amirugumi-rund"],
+    "color": "#C45C26"
+  },
+  {
+    "id": "abnahme",
+    "title": "Abnahme",
+    "category": "Maschen",
+    "summary": "Zwei Maschen zu einer zusammenfassen, damit sich die Form verjüngt.",
+    "steps": [
+      "Nadel nur durch das vordere Glied der nächsten Masche.",
+      "Gleich danach durch das vordere Glied der übernächsten (2 Schlaufen).",
+      "Faden holen und durch beide ziehen, dann noch einmal abmaschen — unsichtbare Abnahme.",
+      "Klassisch: beide Maschen ganz einstechen und gemeinsam abmaschen."
+    ],
+    "stitchHint": "Abn / dec / invdec. Unsichtbare Abnahme wirkt glatter.",
+    "relatedHelp": ["unsichtbare-abnahme", "zu-wenige-maschen"],
+    "color": "#8B4D4D"
+  },
+  {
+    "id": "unsichtbare-abnahme-motiv",
+    "title": "Unsichtbare Abnahme",
+    "category": "Maschen",
+    "summary": "Die bevorzugte Amigurumi-Abnahme: kaum Stufe, kaum Loch.",
+    "steps": [
+      "Nur die vorderen Glieder der nächsten zwei Maschen auf die Nadel nehmen.",
+      "Faden holen und durch beide Glieder ziehen.",
+      "Faden holen und die beiden Schlaufen abmaschen.",
+      "Leicht nach hinten kippen, dann verschwindet die Naht im Stoff."
+    ],
+    "stitchHint": "invdec. Immer in derselben Richtung arbeiten.",
+    "relatedHelp": ["unsichtbare-abnahme", "amirugumi-rund"],
+    "color": "#8B4D4D"
+  },
+  {
+    "id": "granny-square",
+    "title": "Granny Square",
+    "category": "Motive",
+    "summary": "Klassisches Viereck aus Stäbchen-Gruppen und Ecken-Luftmaschen.",
+    "steps": [
+      "Magischer Ring oder 4 Lm zum Ring schließen.",
+      "Runde 1: 3 Lm (erstes Stb), 2 Stb, 2 Lm, *3 Stb, 2 Lm* dreimal, schließen.",
+      "Jede weitere Runde: in die Seitenlücken 3 Stb, in die Ecken 3 Stb + 2 Lm + 3 Stb.",
+      "Farbe wechseln am Rundenende, Fäden mitnehmen oder vernähen."
+    ],
+    "stitchHint": "Ecken immer 2 Lm (manchmal 1 Lm für dichtere Quadrate).",
+    "relatedHelp": ["farbwechsel", "faeden-vernaehen"],
+    "color": "#D4A04A"
+  },
+  {
+    "id": "granny-streifen",
+    "title": "Granny-Streifen",
+    "category": "Motive",
+    "summary": "Dieselbe 3-Stäbchen-Gruppe, aber in Reihen statt im Quadrat.",
+    "steps": [
+      "Luftmaschenkette in Vielfachen von 3 plus Rand.",
+      "Reihe: 3 Stb in dieselbe Lücke, 1–2 Lm überspringen, nächste Gruppe.",
+      "Wenden, Gruppen sitzen versetzt in die Lücken der Vorreihe.",
+      "Rand gerade halten mit festen Maschen oder Stäbchen."
+    ],
+    "stitchHint": "Gut für Decken, Schals und Farbverläufe.",
+    "relatedHelp": ["kanten-gerade", "farbwechsel"],
+    "color": "#D4A04A"
+  },
+  {
+    "id": "cluster",
+    "title": "Cluster",
+    "category": "Motive",
+    "summary": "Mehrere unvollständige Stäbchen, die oben gemeinsam abgemascht werden.",
+    "steps": [
+      "Jedes Stäbchen nur bis zur letzten Schlaufe häkeln, Schlaufen auf der Nadel lassen.",
+      "Wenn alle Beine sitzen: Faden holen und durch alle Schlaufen ziehen.",
+      "Mit 1 Lm sichern, falls die Anleitung das verlangt."
+    ],
+    "stitchHint": "3er- oder 4er-Cluster sind üblich. Zählt als eine Masche.",
+    "relatedHelp": ["maschen-zaehlen"],
+    "color": "#6B8E9F"
+  },
+  {
+    "id": "popcorn",
+    "title": "Popcorn",
+    "category": "Motive",
+    "summary": "Aufstehende Noppe aus mehreren Stäbchen, die nach vorn geklappt wird.",
+    "steps": [
+      "4–5 Stäbchen in dieselbe Masche.",
+      "Nadel aus der Schlaufe nehmen, in das erste Stäbchen einstechen.",
+      "Die ruhende Schlaufe wieder aufnehmen und durchziehen — die Noppe springt nach vorn.",
+      "Mit 1 Lm sichern."
+    ],
+    "stitchHint": "Immer auf die gleiche Seite klappen, sonst wirken Noppen unruhig.",
+    "relatedHelp": [],
+    "color": "#C97B7B"
+  },
+  {
+    "id": "reliefmaschen",
+    "title": "Reliefmaschen",
+    "category": "Motive",
+    "summary": "Stäbchen um den Schaft der Vorreihe — Rippen, Körbe, Zöpfe.",
+    "steps": [
+      "Umschlag holen.",
+      "Nadel von vorn (erhaben) oder von hinten (vertieft) um den Stäbchenschaft führen.",
+      "Wie ein normales Stäbchen abmaschen.",
+      "Nicht in die Kopfmasche einstechen, sonst entsteht keine Rippe."
+    ],
+    "stitchHint": "FPhdc/FPdc = vorn, BPhdc/BPdc = hinten.",
+    "relatedHelp": ["us-uk-abkuerzungen"],
+    "color": "#4F7A63"
+  },
+  {
+    "id": "bluete",
+    "title": "Blüte",
+    "category": "Motive",
+    "summary": "Kleines Flachmotiv: Mitte fest, Blütenblätter aus Stäbchen-Bögen.",
+    "steps": [
+      "Magischer Ring, 6–8 fm, schließen.",
+      "Für jedes Blatt: 1 Km, 3 Lm, 2–3 Stb in dieselbe oder die nächste Masche, 3 Lm, Km.",
+      "Blätter gleichmäßig auf die Runde verteilen.",
+      "Zweite Lage versetzt in die Runde darunter häkeln, wenn die Blüte voller werden soll."
+    ],
+    "stitchHint": "5 Blätter: oft 10 fm in der Mitte, jedes zweite als Blattbasis.",
+    "relatedHelp": ["faeden-vernaehen"],
+    "color": "#C97B7B"
+  },
+  {
+    "id": "blatt",
+    "title": "Blatt",
+    "category": "Motive",
+    "summary": "Längliches Blatt um eine Mittelkette, beidseitig ansteigend und abfallend.",
+    "steps": [
+      "Kette aus 8–12 Lm.",
+      "Zurück: fm, hStb, Stb, DStb in der Mitte, dann spiegeln.",
+      "Um die Kette herum auf der anderen Seite dieselben Maschen.",
+      "Spitze mit 3 fm oder Picot, Stiel mit ein paar Lm."
+    ],
+    "stitchHint": "Beide Seiten in einem Rutsch, dann liegt das Blatt flach.",
+    "relatedHelp": [],
+    "color": "#4F7A63"
+  },
+  {
+    "id": "herz",
+    "title": "Herz",
+    "category": "Motive",
+    "summary": "Kleines Herz aus einem Ring mit zwei Bogenhälften und einer Spitze.",
+    "steps": [
+      "Magischer Ring.",
+      "3 Lm, 3 DStb, 3 Stb, 1 DStb (Spitze), 3 Stb, 3 DStb, 3 Lm, Km in den Ring.",
+      "Ring fest zuziehen, Form mit den Fingern nachziehen.",
+      "Rundherum fm für einen glatten Rand, in der Spitze 3 fm."
+    ],
+    "stitchHint": "Zu lockerer Ring lässt die Mitte offen — fest zuziehen.",
+    "relatedHelp": ["kein-loch-im-ring"],
+    "color": "#C45C26"
+  },
+  {
+    "id": "stern",
+    "title": "Stern",
+    "category": "Motive",
+    "summary": "Fünf- oder sechszackiger Stern aus Gruppen und Picot-Spitzen.",
+    "steps": [
+      "Ring mit 5 oder 6 fm bzw. Stb, schließen.",
+      "Pro Zacke: 3–5 Lm, zurück fm/hStb, mit Km in die nächste Basismasche.",
+      "Alle Zacken gleich lang halten.",
+      "Optional eine Runde fm um den ganzen Stern für Stabilität."
+    ],
+    "stitchHint": "5 Zacken: Basis durch 5 teilbar.",
+    "relatedHelp": ["maschen-zaehlen"],
+    "color": "#D4A04A"
+  },
+  {
+    "id": "spirale",
+    "title": "Spirale",
+    "category": "Motive",
+    "summary": "Runde ohne Schlussrunde — die Naht wandert, ideal für Amigurumi.",
+    "steps": [
+      "Start im magischen Ring, nicht mit Km schließen.",
+      "Erste Masche der neuen Runde direkt in die erste Masche der alten.",
+      "Maschenmarkierer in die erste Masche jeder Runde setzen.",
+      "Markierer jedes Mal mitnehmen, sonst verlierst du den Rundenanfang."
+    ],
+    "stitchHint": "Kein sichtbarer Nahtstreifen, dafür unverzichtbarer Markierer.",
+    "relatedHelp": ["spirale-oder-schlussrunde", "maschen-zaehlen"],
+    "color": "#6B8E9F"
+  },
+  {
+    "id": "amigurumi-kopf",
+    "title": "Amigurumi-Kopf",
+    "category": "Amigurumi",
+    "summary": "Kugel: zunehmen bis zum Äquator, gerade Runden, dann abnehmen.",
+    "steps": [
+      "Runde 1: 6 fm im magischen Ring.",
+      "Jede Runde 6 gleichmäßige Zunahmen, bis der Durchmesser stimmt (12, 18, 24, 30, 36 …).",
+      "Einige Runden ohne Zu-/Abnahme für die Höhe.",
+      "Augen einsetzen, bevor die Öffnung zu klein wird.",
+      "Mit 6 Abnahmen pro Runde schließen, fest stopfen, Faden vernähen."
+    ],
+    "stitchHint": "Zunahmen versetzen (nicht übereinander), sonst entstehen Ecken.",
+    "relatedHelp": ["amirugumi-rund", "augen-sicherheit", "fuellen"],
+    "color": "#C45C26"
+  },
+  {
+    "id": "amigurumi-koerper",
+    "title": "Amigurumi-Körper",
+    "category": "Amigurumi",
+    "summary": "Zylinder oder Tropfen, oft etwas länger als der Kopf und fest gestopft.",
+    "steps": [
+      "Wie der Kopf starten und auf die Körperweite zunehmen.",
+      "Gerade Runden für die Länge.",
+      "Oben leicht abnehmen, wenn die Schulter schmaler werden soll.",
+      "Fest stopfen, besonders den Boden, damit die Figur steht.",
+      "Lange Fadenende zum Annähen am Kopf stehen lassen."
+    ],
+    "stitchHint": "Körper oft 1–2 Runden weiter als der Kopf.",
+    "relatedHelp": ["fuellen", "gliedmassen-annaehen"],
+    "color": "#C45C26"
+  },
+  {
+    "id": "amigurumi-bein",
+    "title": "Amigurumi-Bein",
+    "category": "Amigurumi",
+    "summary": "Schmale Röhre, oft mit Farbwechsel für Schuhe oder Socken.",
+    "steps": [
+      "Wenige fm im Ring (4–8), wenig oder gar nicht zunehmen.",
+      "Gerade Runden bis zur Länge.",
+      "Farbwechsel für Schuh/Bein vor der gewünschten Runde.",
+      "Leicht stopfen, Knie nicht überfüllen, sonst knickt nichts.",
+      "Paarweise häkeln und Maschenzahl vergleichen."
+    ],
+    "stitchHint": "Beide Beine gleich lang: Runden mitzählen oder zweite danach nachzählen.",
+    "relatedHelp": ["farbwechsel", "gliedmassen-annaehen"],
+    "color": "#8B4D4D"
+  },
+  {
+    "id": "amigurumi-arm",
+    "title": "Amigurumi-Arm",
+    "category": "Amigurumi",
+    "summary": "Noch schmaler als das Bein, oft ungefüttert oder nur in der Hand gestopft.",
+    "steps": [
+      "4–6 fm im Ring.",
+      "1–2 Zunahmerunden, dann gerade.",
+      "Hand optional mit 1 Abnahme formen.",
+      "Faden lang lassen zum Annähen in Schulterhöhe."
+    ],
+    "stitchHint": "Arme oft eine Nadelstärke kleiner für festeren Stoff.",
+    "relatedHelp": ["gliedmassen-annaehen", "zu-fest-haekeln"],
+    "color": "#8B4D4D"
+  },
+  {
+    "id": "schnauze",
+    "title": "Schnauze / Maul",
+    "category": "Amigurumi",
+    "summary": "Flaches oder leicht gewölbtes Oval, das auf den Kopf genäht wird.",
+    "steps": [
+      "Kette aus 4–6 Lm, rundherum fm (Oval-Start).",
+      "1–2 Runden zunehmen an den beiden Enden.",
+      "Optional eine Runde ohne Zunahme für Wölbung.",
+      "Fadenende zum Annähen, vor dem Festnähen Nase und Mund sticken."
+    ],
+    "stitchHint": "Vor dem Vernähen mit Stecknadeln mittig ausrichten.",
+    "relatedHelp": ["gliedmassen-annaehen"],
+    "color": "#C97B7B"
+  },
+  {
+    "id": "ohren",
+    "title": "Ohren",
+    "category": "Amigurumi",
+    "summary": "Halbkugel, Tropfen oder flaches Blatt — immer als Paar.",
+    "steps": [
+      "Kleine Kugel: 6 fm, zunehmen auf 12, 1–2 gerade Runden, leicht abnehmen.",
+      "Flaches Ohr: hin und zurück in Reihen, am Rand fm.",
+      "Beide Ohren spiegelgleich, Fäden gleich lang lassen.",
+      "Am Kopf erst heften, Abstand zur Mitte und zu den Augen prüfen."
+    ],
+    "stitchHint": "Zu tief angesetzt wirkt der Kopf älter, zu hoch jünger.",
+    "relatedHelp": ["gliedmassen-annaehen"],
+    "color": "#C97B7B"
+  },
+  {
+    "id": "farbwechsel",
+    "title": "Farbwechsel",
+    "category": "Finishing",
+    "summary": "Die neue Farbe kommt in der letzten Abmaschung der alten Masche.",
+    "steps": [
+      "Alte Farbe bis auf die letzte Schlaufe häkeln.",
+      "Neue Farbe holen und damit abmaschen.",
+      "Alten Faden 4–6 Maschen mitführen oder abschneiden und später vernähen.",
+      "In der Runde den Wechsel an die unauffällige Seite legen (hinten / Naht)."
+    ],
+    "stitchHint": "Nicht in der Mitte der Brust wechseln, wenn es sich vermeiden lässt.",
+    "relatedHelp": ["farbwechsel", "faeden-vernaehen"],
+    "color": "#6B8E9F"
+  },
+  {
+    "id": "faeden-vernaehen-motiv",
+    "title": "Fäden vernähen",
+    "category": "Finishing",
+    "summary": "Sichere Enden, die weder aufgehen noch jucken.",
+    "steps": [
+      "Faden auf Stopfnadel, mindestens 15 cm lassen.",
+      "Durch die Rückseite mehrerer Maschen, Richtung wechseln (Z-Weg).",
+      "Bei Amigurumi ins Innere ziehen und verknoten, bevor du schließt.",
+      "Rest knapp abschneiden, Stoff leicht dehnen, damit der Stummel verschwindet."
+    ],
+    "stitchHint": "Nie nur einmal durchziehen — mindestens zwei Richtungswechsel.",
+    "relatedHelp": ["faeden-vernaehen"],
+    "color": "#7A6A53"
+  },
+  {
+    "id": "fuellen-motiv",
+    "title": "Auffüllen",
+    "category": "Finishing",
+    "summary": "Fest, gleichmäßig, ohne Kugel-Dellen — besonders an Hals und Gelenken.",
+    "steps": [
+      "Kleine Faserbäusche formen, nicht einen großen Klumpen stopfen.",
+      "Zuerst den Boden bzw. die Kuppe, dann die Seiten.",
+      "Hals und Gelenke extra fest, sonst wackelt der Kopf.",
+      "Nicht überfüllen: die Maschen dürfen sich nicht aufspreizen."
+    ],
+    "stitchHint": "Polyester-Füllwatte, waschbar. Reste Garnknäuel nur tief innen.",
+    "relatedHelp": ["fuellen", "loecher-im-stoff"],
+    "color": "#D4A04A"
+  },
+  {
+    "id": "gliedmassen-annaehen-motiv",
+    "title": "Gliedmaßen annähen",
+    "category": "Finishing",
+    "summary": "Arme, Beine und Ohren sitzen symmetrisch und halten Belastung aus.",
+    "steps": [
+      "Teile mit Stecknadeln heften, Front und Profil prüfen.",
+      "Mit Matratzenstich oder Whipstitch Masche für Masche fassen.",
+      "Zweimal rundherum bei belasteten Beinen.",
+      "Faden im Körper versenken und gegenläufig vernähen."
+    ],
+    "stitchHint": "Beine leicht nach vorn kippen, dann sitzt die Figur stabiler.",
+    "relatedHelp": ["gliedmassen-annaehen"],
+    "color": "#4F7A63"
+  },
+  {
+    "id": "picot",
+    "title": "Picot",
+    "category": "Motive",
+    "summary": "Kleine Zacke aus Luftmaschen, geschlossen mit Kettmasche.",
+    "steps": [
+      "3 Lm häkeln (manchmal 2 oder 4).",
+      "Km in die erste dieser Lm oder in die Masche darunter.",
+      "Danach mit der nächsten Arbeitsmasche weiter."
+    ],
+    "stitchHint": "Gleichmäßige Picots: immer dieselbe Lm-Zahl und denselben Einstich.",
+    "relatedHelp": [],
+    "color": "#C97B7B"
+  },
+  {
+    "id": "vorderes-hinteres-glied",
+    "title": "Vorderes / hinteres Glied",
+    "category": "Grundlagen",
+    "summary": "Jede Masche hat zwei Fäden oben: vorn zur dir, hinten weg.",
+    "steps": [
+      "Standard: Nadel unter beide Glieder.",
+      "Nur vorderes Glied (BLO/FLO umgekehrt je nach Haltung): Rippen nach vorn.",
+      "Nur hinteres Glied: Rippe nach hinten, oft für Klappkanten.",
+      "In der Anleitung genau lesen — es ändert Höhe und Dehnung."
+    ],
+    "stitchHint": "FLO = front loop, BLO = back loop.",
+    "relatedHelp": ["us-uk-abkuerzungen"],
+    "color": "#7A6A53"
+  }
+]

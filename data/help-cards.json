@@ -1,0 +1,404 @@
+[
+  {
+    "id": "us-uk-abkuerzungen",
+    "title": "Abkürzungen DE / US / UK",
+    "category": "Abkürzungen",
+    "body": "Dieselben Buchstaben meinen oft verschiedene Maschen. US single crochet ist die deutsche feste Masche — UK nennt dieselbe Masche double crochet. Immer die Herkunft der Anleitung prüfen.",
+    "tips": [
+      "fm = US sc = UK dc",
+      "hStb = US hdc = UK htr",
+      "Stb = US dc = UK tr",
+      "DStb = US tr = UK dtr",
+      "Lm = ch, Km = sl st, Zun = inc, Abn = dec"
+    ],
+    "color": "#4F7A63"
+  },
+  {
+    "id": "deutsche-abkuerzungen",
+    "title": "Deutsche Abkürzungen",
+    "category": "Abkürzungen",
+    "body": "In deutschsprachigen Videos und Heften sind diese Kürzel üblich. Groß/Kleinschreibung variiert (fM/fm).",
+    "tips": [
+      "Lm Luftmasche, Km Kettmasche, fm feste Masche",
+      "hStb halbes Stäbchen, Stb Stäbchen, DStb Doppelstäbchen",
+      "Wlm Wendeluftmasche, Rd Runde, R Reihe",
+      "Zun Zunahme, Abn Abnahme, * … * Wiederholung"
+    ],
+    "color": "#4F7A63"
+  },
+  {
+    "id": "wiederholungen-lesen",
+    "title": "Sterne, Klammern, Wiederholungen",
+    "category": "Abkürzungen",
+    "body": "Alles zwischen * * oder ( ) wird so oft wiederholt, wie die Zahl dahinter sagt. ' *2 fm, 1 Zun* 6× ' bedeutet sechs gleiche Blöcke, nicht sechs Zunahmen am Stück.",
+    "tips": [
+      "Zuerst einen Block häkeln, dann zählen, dann wiederholen.",
+      "Maschenzahl am Rundenende muss zur Angabe passen."
+    ],
+    "color": "#4F7A63"
+  },
+  {
+    "id": "maschenprobe",
+    "title": "Maschenprobe",
+    "category": "Material",
+    "body": "Ein 10×10 cm Quadrat in der Arbeitsmasche zeigt, ob Nadel und Garn zur Anleitung passen. Bei Amigurumi zählt eher die Dichte (kein Untergrund sichtbar) als das exakte Maß.",
+    "tips": [
+      "Probe waschen, wenn das fertige Stück gewaschen wird.",
+      "Zu grob: kleinere Nadel. Zu steif: größere Nadel."
+    ],
+    "color": "#D4A04A"
+  },
+  {
+    "id": "nadelwahl",
+    "title": "Nadelwahl",
+    "category": "Material",
+    "body": "Die Banderole ist ein Start, kein Gesetz. Amigurumi meist 0,5–1,0 mm unter der Empfehlung, damit kein Füllmaterial schaut. Decken oft genau auf Empfehlung oder lockerer.",
+    "tips": [
+      "Metall gleitet schnell, Bambus bremst und hilft Anfängern.",
+      "Häkelnadel-Größe steht in mm, US-Buchstaben sind eine andere Skala."
+    ],
+    "color": "#D4A04A"
+  },
+  {
+    "id": "garnstaerken",
+    "title": "Garnstärken",
+    "category": "Material",
+    "body": "Lace, Fine, Light, Medium (Worsted), Bulky, Super Bulky. Für Figuren eignet sich glattes Baumwoll- oder Baumwollmischgarn in Sport/DK — die Maschen bleiben lesbar.",
+    "tips": [
+      "Lauflänge (Meter pro 50 g) vergleichen, nicht nur 'DK'.",
+      "Flausch versteckt Fehler, zeigt aber Zunahmen schlechter."
+    ],
+    "color": "#D4A04A"
+  },
+  {
+    "id": "garn-ersetzen",
+    "title": "Garn ersetzen",
+    "category": "Material",
+    "body": "Wenn das Videogarn fehlt: ähnliche Lauflänge, ähnliche Faser, gleiche oder eine Nadelstufe Differenz. Die Figur wird sonst größer oder kleiner, die Maschenzahl bleibt gleich.",
+    "tips": [
+      "Acryl ist leicht und waschbar, Baumwolle hält Form besser.",
+      "Farbpartien verschiedener Chargen mischen, sonst Streifen."
+    ],
+    "color": "#D4A04A"
+  },
+  {
+    "id": "reihen-lesen",
+    "title": "Reihenanleitungen lesen",
+    "category": "Technik",
+    "body": "Reihen gehen hin und zurück. Am Ende wenden. Die Wendeluftmasche hebt auf die neue Höhe. Die erste echte Masche sitzt oft in der zweiten Masche der Vorreihe — sonst wird die Kante breiter.",
+    "tips": [
+      "Rechte und linke Seite merken (Markierer in Reihe 1).",
+      "Kantenmaschen bewusst setzen, dann bleiben Decken gerade."
+    ],
+    "color": "#6B8E9F"
+  },
+  {
+    "id": "runden-lesen",
+    "title": "Rundenanleitungen lesen",
+    "category": "Technik",
+    "body": "Runden starten in der Mitte und wachsen nach außen. Entweder spiralig (kein Schluss) oder mit Kettmasche plus Luftmaschen in neuer Höhe. Die Anleitung sagt, welche Variante gilt.",
+    "tips": [
+      "Maschenmarkierer in die erste Masche jeder Runde.",
+      "Soll-Maschenzahl am Rundenende immer prüfen."
+    ],
+    "color": "#6B8E9F"
+  },
+  {
+    "id": "spirale-oder-schlussrunde",
+    "title": "Spirale oder Schlussrunde",
+    "category": "Technik",
+    "body": "Spirale: unsichtbare Naht, Markierer Pflicht, leichte Schräge. Schlussrunde: sichtbare Naht, Runden sitzen waagerecht, gut bei Streifen. Nicht mitten im Projekt wechseln, ohne die Naht zu planen.",
+    "tips": [
+      "Streifen klarer mit Schlussrunde.",
+      "Gesichter oft schöner in der Spirale."
+    ],
+    "color": "#6B8E9F"
+  },
+  {
+    "id": "maschen-zaehlen",
+    "title": "Maschen zählen, ohne den Faden zu verlieren",
+    "category": "Technik",
+    "body": "Zähle die Köpfe der Maschen, nicht die Löcher. In der Runde nach jeder Zunahme-Serie kurz stoppen. Ein laufender Markierer alle 10 Maschen rettet lange Runden.",
+    "tips": [
+      "Bei Zweifel eine Runde zurückzählen, bevor du weiter zunimmst.",
+      "Video pausieren, sobald eine Zahl genannt wird — notieren."
+    ],
+    "color": "#6B8E9F"
+  },
+  {
+    "id": "markierer-setzen",
+    "title": "Maschenmarkierer",
+    "category": "Technik",
+    "body": "In die erste Masche der Runde, nicht in die Luftmasche davor. Verschließbare Markierer fliegen seltener aus Amigurumi-Stoff als offene Büroklammern.",
+    "tips": [
+      "Zweite Farbe für Zunahmen-Positionen.",
+      "Sicherheitsnadel geht in der Not, knickt aber Garn."
+    ],
+    "color": "#6B8E9F"
+  },
+  {
+    "id": "amirugumi-rund",
+    "title": "Amigurumi rund halten",
+    "category": "Technik",
+    "body": "Sechs Zunahmen pro Runde ergeben eine Kugel. Liegen sie immer an derselben Stelle, wird ein Sechseck daraus. Zunahmen um 2–3 Maschen versetzen oder nach dem Schema 1 Zun, n fm / n fm, 1 Zun abwechseln.",
+    "tips": [
+      "Zu wenige Zunahmen: Schale. Zu viele: Welle.",
+      "Festeres Häkeln hält die Kugel runder."
+    ],
+    "color": "#C45C26"
+  },
+  {
+    "id": "kein-loch-im-ring",
+    "title": "Magischer Ring schließt nicht",
+    "category": "Fehler",
+    "body": "Meist wurde nur der Arbeitsfaden umhäkelt, nicht das Ende. Beide Fäden müssen in den ersten Maschen liegen. Danach am kurzen Ende ziehen, nicht am Knäuel.",
+    "tips": [
+      "Nach dem Zuziehen das Ende noch durch ein paar Maschen sichern.",
+      "Alternative: 2 Lm, 6 fm in die erste Lm — etwas größeres Loch."
+    ],
+    "color": "#8B4D4D"
+  },
+  {
+    "id": "zu-wenige-maschen",
+    "title": "Zu wenige Maschen",
+    "category": "Fehler",
+    "body": "Häufige Ursachen: eine Zunahme vergessen, die erste Masche nach dem Markierer übersprungen, unsichtbare Abnahme als zwei Maschen gezählt. Eine Runde auftrennen ist schneller als drei Runden schief weiter.",
+    "tips": [
+      "Soll-Zahl der aktuellen Runde laut Anleitung prüfen.",
+      "Markierer sitzt oft in der ersten Masche — die zählt mit."
+    ],
+    "color": "#8B4D4D"
+  },
+  {
+    "id": "zu-viele-maschen",
+    "title": "Zu viele Maschen",
+    "category": "Fehler",
+    "body": "Klassiker: Wendeluftmasche extra gezählt, zweimal in dieselbe Masche am Rundenanfang, oder in das Schluss-Km eingestochen. Der Stoff wellt sich oder die Kugel wird eckig-platt.",
+    "tips": [
+      "Km der Schlussrunde nicht als Arbeitsmasche nutzen.",
+      "Am Anfang und Ende jeder Runde besonders langsam."
+    ],
+    "color": "#8B4D4D"
+  },
+  {
+    "id": "loecher-im-stoff",
+    "title": "Löcher im Stoff",
+    "category": "Fehler",
+    "body": "Nadel zu groß, Zug zu locker oder Abnahmen mit ganzen Maschen statt unsichtbarer Abnahme. Füllwatte darf nicht durchschimmern.",
+    "tips": [
+      "Eine Nadelgröße runter.",
+      "Unsichtbare Abnahme verwenden.",
+      "Nicht so fest stopfen, dass Maschen aufreißen."
+    ],
+    "color": "#8B4D4D"
+  },
+  {
+    "id": "zu-fest-haekeln",
+    "title": "Zu fest gehäkelt",
+    "category": "Fehler",
+    "body": "Die Nadel quält sich, die Hände schmerzen, Zunahmen werden unsichtbar. Lockere die Fadenführung über den Zeigefinger, nicht die Nadelgewalt. Eine Nummer größer hilft sofort.",
+    "tips": [
+      "Schultern senken, Nadel eher führen als stopfen.",
+      "Pausen: Hände öffnen, strecken."
+    ],
+    "color": "#8B4D4D"
+  },
+  {
+    "id": "kanten-gerade",
+    "title": "Kanten laufen schief",
+    "category": "Fehler",
+    "body": "In Reihen wächst oder schrumpft die Seite, wenn am Rand eine Masche dazukommt oder fehlt. Immer dieselbe Regel: zählt die Wlm oder nicht? Die Regel gilt für das ganze Stück.",
+    "tips": [
+      "Erste und letzte Masche markieren.",
+      "Nach 5 Reihen Breite messen, nicht erst am Ende."
+    ],
+    "color": "#8B4D4D"
+  },
+  {
+    "id": "unsichtbare-abnahme",
+    "title": "Unsichtbare Abnahme im Detail",
+    "category": "Technik",
+    "body": "Nur die vorderen Glieder der nächsten zwei Maschen aufnehmen, einmal durch beide holen, dann abmaschen. Die Abnahme legt sich flach und reißt seltener ein Loch als die klassische 2-fm-zusammen.",
+    "tips": [
+      "Immer in Arbeitsrichtung, nicht verdreht aufnehmen.",
+      "Bei sehr dunklem Garn tastend zählen."
+    ],
+    "color": "#6B8E9F"
+  },
+  {
+    "id": "farbwechsel",
+    "title": "Sauberer Farbwechsel",
+    "category": "Technik",
+    "body": "Neue Farbe in der letzten Bewegung der alten Masche. In der Runde wirkt der Wechsel eine halbe Masche versetzt — das ist normal. Fäden mitführen nur, wenn die Innenseite nicht sichtbar wird.",
+    "tips": [
+      "Alte Farbe nicht fest abschneiden, bevor 2 cm mitgeführt wurden.",
+      "Intarsien: beide Knäuel, nicht quer mitführen über weite Strecken."
+    ],
+    "color": "#6B8E9F"
+  },
+  {
+    "id": "faeden-vernaehen",
+    "title": "Fäden dauerhaft vernähen",
+    "category": "Technik",
+    "body": "Mindestens zwei Richtungswechsel auf der Rückseite. Bei Spielzeug zusätzlich im Füllraum verknoten. Kurze Stummel von 2 mm nach dem Dehnen des Stoffes verschwinden im Garn.",
+    "tips": [
+      "Stopfnadel mit großem Öhr für Baumwolle.",
+      "Keine Schere am Stoff entlang — nur den Faden kappen."
+    ],
+    "color": "#7A6A53"
+  },
+  {
+    "id": "fuellen",
+    "title": "Richtig stopfen",
+    "category": "Technik",
+    "body": "Viele kleine Bäusche, von außen nach innen fest. Hals und Gelenk fest, Backen gleichmäßig. Wenn die Figur nach rechts kippt, links nachstopfen — nicht die Naht verbiegen.",
+    "tips": [
+      "Erst stopfen, dann die letzte Abnahmerunde.",
+      "Augen vorher setzen, sonst sitzen sie auf einem zu vollen Kopf schief."
+    ],
+    "color": "#7A6A53"
+  },
+  {
+    "id": "gliedmassen-annaehen",
+    "title": "Teile annähen",
+    "category": "Technik",
+    "body": "Heften, Distanz Augen–Ohren–Arme vergleichen (Fadenmaß). Matratzenstich fasst je eine Masche von Körper und Teil. Beine, die sitzen sollen, zweimal rundnähen.",
+    "tips": [
+      "Beide Arme in derselben Runde ansetzen.",
+      "Kopf erst drehbar heften, Mimik prüfen, dann fest."
+    ],
+    "color": "#7A6A53"
+  },
+  {
+    "id": "augen-sicherheit",
+    "title": "Augen und Kleinkinder",
+    "category": "Sicherheit",
+    "body": "Sicherheitsaugen mit Unterlegscheibe nur, solange die Öffnung noch groß genug ist. Für Kinder unter 3 Jahren: Augen sticken oder fest vernähen. Nichts kleben, das sich lösen kann.",
+    "tips": [
+      "Scheibe fest gegen den Stoff drücken, bis sie einrastet.",
+      "Knöpfe, Perlen und Draht bei Spielzeug vermeiden."
+    ],
+    "color": "#C45C26"
+  },
+  {
+    "id": "kleine-teile",
+    "title": "Kleine Teile und Verschlucken",
+    "category": "Sicherheit",
+    "body": "Blumen, Knöpfe, Schleifen und abnehmbare Schals sind bei Baby-Geschenken riskant. Lieber aufsticken oder fest einhäkeln. Fertiges Stück kräftig ziehen — was abgeht, geht auch im Gebrauch ab.",
+    "tips": [
+      "Geschenke mit Alterskennzeichnung versehen.",
+      "Keine Magnete in Spielzeug."
+    ],
+    "color": "#C45C26"
+  },
+  {
+    "id": "draht-sicherheit",
+    "title": "Draht in Armen und Beinen",
+    "category": "Sicherheit",
+    "body": "Floristen- oder Chenilledraht nur in Dekofiguren, nie in Spielzeug. Enden umbiegen und mit Tape/Garn umwickeln, damit nichts durch den Stoff sticht.",
+    "tips": [
+      "Draht kürzer als das Glied, damit er nicht am Ende durchsticht.",
+      "Alternative: fest gestopfte Gelenke ohne Draht."
+    ],
+    "color": "#C45C26"
+  },
+  {
+    "id": "waschen",
+    "title": "Waschen und Pflege",
+    "category": "Pflege",
+    "body": "Banderole lesen. Baumwolle oft 30 °C schonend, Acryl ebenfalls, Wolle meist Handwäsche. Amigurumi in einem Wäschenetz, wenig Schleudern, in Form ziehen und liegend trocknen.",
+    "tips": [
+      "Keine heiße Luft direkt auf Sicherheitsaugen.",
+      "Flecken punktuell, bevor die ganze Figur nass wird."
+    ],
+    "color": "#7A6A53"
+  },
+  {
+    "id": "formen-blocken",
+    "title": "Blocken / in Form spannen",
+    "category": "Pflege",
+    "body": "Flache Motive (Granny, Blätter, Sterne) nach dem Waschen oder Dämpfen auf Nadeln in Form spannen. Amigurumi nicht blocken — stopfen formt besser.",
+    "tips": [
+      "Rostfreie Nadeln, Schaumstoffmatte.",
+      "Dampf von oben, Eisen nicht auf das Garn legen."
+    ],
+    "color": "#7A6A53"
+  },
+  {
+    "id": "maschenprobe-amirugumi",
+    "title": "Dichte statt Maß",
+    "category": "Technik",
+    "body": "Bei Figuren ist das Ziel ein geschlossener Stoff. Wenn du zwischen den Maschen die Füllwatte siehst, Nadel verkleinern oder fester häkeln — unabhängig davon, was die Garnbanderole sagt.",
+    "tips": [
+      "Ein 8-fm-Kreis auf dem Tisch: kein Untergrund sichtbar.",
+      "Lockeres Häkeln lässt sich selten durch Mehr-Stopfen retten."
+    ],
+    "color": "#6B8E9F"
+  },
+  {
+    "id": "video-tempo",
+    "title": "Mit dem Video mithalten",
+    "category": "Technik",
+    "body": "Geschwindigkeit auf 0,75, Kapitelmarken nutzen, und jede genannte Maschenzahl sofort in die Anleitung schreiben. In dieser App springt der Zeitstempel am Schritt zurück ins Video.",
+    "tips": [
+      "Erst die Runde lesen, dann häkeln, dann das Video weiterlaufen lassen.",
+      "Lücken in der extrahierten Anleitung vor dem Start schließen."
+    ],
+    "color": "#6B8E9F"
+  },
+  {
+    "id": "linke-haender",
+    "title": "Linkshändig häkeln",
+    "category": "Technik",
+    "body": "Videos spiegeln oder gegenübersitzen. Die Maschen selbst sind dieselben, nur die Fadenhaltung wechselt. Schriftanleitungen musst du nicht spiegeln — nur die Bewegungsrichtung.",
+    "tips": [
+      "Spiralen drehen sich optisch anders, die Zahlen bleiben.",
+      "Reliefmaschen 'vorn' ist weiterhin die Seite, die dir zugewandt ist."
+    ],
+    "color": "#6B8E9F"
+  },
+  {
+    "id": "spannung-halten",
+    "title": "Gleichmäßige Spannung",
+    "category": "Technik",
+    "body": "Der Faden läuft über den Zeigefinger, der Knäuel liegt frei. Ruckartige Züge machen hohe und niedrige Maschen. Nach einer Pause die letzte Reihe vergleichen, bevor du weitermachst.",
+    "tips": [
+      "Immer dasselbe Garn vom selben Knäuelende (innen oder außen).",
+      "Müde Hände = festere Maschen — lieber Pause."
+    ],
+    "color": "#6B8E9F"
+  },
+  {
+    "id": "anleitung-pruefen",
+    "title": "Extrahierte Anleitung prüfen",
+    "category": "Technik",
+    "body": "Die KI kann Maschenzahlen überhören. Vor dem ersten Stich: Startkreis, Zunahme-Schema (meist +6) und die letzte Runde vor dem Abnehmen gegen das Video halten. Markierte Lücken zuerst klären.",
+    "tips": [
+      "Summe der Runden-Maschen notieren: 6-12-18-24 …",
+      "Montage-Schritte oft am Videoende — nicht überspringen."
+    ],
+    "color": "#C45C26"
+  },
+  {
+    "id": "nadel-verlieren",
+    "title": "Masche von der Nadel gerutscht",
+    "category": "Fehler",
+    "body": "Nicht am Faden ziehen. Nadel von vorn in die offene Schlaufe, Zug wieder aufnehmen. Wenn eine ganze Masche aufging: mit der Nadel den Fadenweg zurückverfolgen (wie bei einer Laufmasche).",
+    "tips": [
+      "Maschenfänger oder Sicherheitsnadel in die aktuelle Schlaufe, sobald das Telefon klingelt.",
+      "Helle Unterlage hilft, die richtige Schlaufe zu sehen."
+    ],
+    "color": "#8B4D4D"
+  },
+  {
+    "id": "auftrennen",
+    "title": "Sauber auftrennen",
+    "category": "Fehler",
+    "body": "Nadel heraus, am Arbeitsfaden langsam zurückziehen. Nicht mit der Schere in den Stoff. Bei Farbwechseln nur bis zum Wechsel auftrennen und dort neu ansetzen.",
+    "tips": [
+      "Aufgetrennten Faden einmal glätten, nicht knäueln — er verzieht sonst die nächsten Maschen.",
+      "Mehr als 3 Runden Fehler: lieber jetzt trennen."
+    ],
+    "color": "#8B4D4D"
+  }
+]

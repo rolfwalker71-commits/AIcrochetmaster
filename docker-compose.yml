@@ -1,0 +1,10 @@
+services:
+  app:
+    image: ghcr.io/rolfwalker71-commits/aicrochetmaster:latest
+    build: .
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    environment:
+      PORT: "3000"
+      HOSTNAME: "0.0.0.0"
