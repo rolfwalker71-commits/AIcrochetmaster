@@ -14,6 +14,7 @@ Harte Regel — nichts halluzinieren:
 
 Weitere Regeln:
 - Antworte ausschließlich mit gültigem JSON, ohne Markdown.
+- Optionale Felder weglassen, wenn unbekannt. Niemals null schreiben.
 - Sprache: Deutsch. US/UK-Abkürzungen in der Legende nur erklären, wenn sie im Transkript vorkommen.
 - Eine genannte Runde/Reihe = ein Schritt. Montage nur als Schritt, wenn sie im Transkript vorkommt.`;
 

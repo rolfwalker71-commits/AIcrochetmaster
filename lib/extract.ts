@@ -3,18 +3,22 @@ import { openAiJson } from "./openai";
 import { EXTRACT_SYSTEM, extractUserPrompt } from "./prompts";
 import type { ExtractedPattern, TextModel, TranscriptResult } from "./types";
 
+const optionalString = z.string().nullish().transform((value) => value ?? undefined);
+const optionalNumber = z.number().nullish().transform((value) => value ?? undefined);
+const optionalBoolean = z.boolean().nullish().transform((value) => value ?? undefined);
+
 const extractedSchema = z.object({
   title: z.string(),
   description: z.string(),
   difficulty: z.enum(["anfänger", "mittel", "fortgeschritten"]),
-  estimatedDuration: z.string().optional(),
+  estimatedDuration: optionalString,
   abbreviations: z
     .array(
       z.object({
         short: z.string(),
         meaning: z.string(),
-        us: z.string().optional(),
-        uk: z.string().optional(),
+        us: optionalString,
+        uk: optionalString,
       }),
     )
     .default([]),
@@ -27,19 +31,19 @@ const extractedSchema = z.object({
       z.object({
         roundLabel: z.string(),
         instruction: z.string(),
-        stitchCount: z.number().optional(),
-        timestampSec: z.number().optional(),
-        colorChange: z.string().optional(),
-        uncertain: z.boolean().optional(),
+        stitchCount: optionalNumber,
+        timestampSec: optionalNumber,
+        colorChange: optionalString,
+        uncertain: optionalBoolean,
       }),
     )
     .default([]),
   gaps: z
     .array(
       z.object({
-        stepOrder: z.number().optional(),
+        stepOrder: optionalNumber,
         reason: z.string(),
-        suggestion: z.string().optional(),
+        suggestion: optionalString,
       }),
     )
     .default([]),
@@ -49,9 +53,18 @@ interface ChatCompletion {
   choices?: { message?: { content?: string } }[];
 }
 
+function stripNulls(value: unknown): unknown {
+  if (value === null) return undefined;
+  if (Array.isArray(value)) return value.map(stripNulls);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, stripNulls(item)]));
+  }
+  return value;
+}
+
 function parseContent(content: string): ExtractedPattern {
   const cleaned = content.replace(/^```json\s*/i, "").replace(/```$/i, "").trim();
-  const parsed = JSON.parse(cleaned) as unknown;
+  const parsed = stripNulls(JSON.parse(cleaned) as unknown);
   return extractedSchema.parse(parsed);
 }
 
