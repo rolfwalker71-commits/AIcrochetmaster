@@ -13,6 +13,7 @@ const PUBLIC = new Set([
   "/apple-icon",
   "/manifest.webmanifest",
   "/sw.js",
+  "/ok.html",
 ]);
 
 function isPublic(pathname: string): boolean {

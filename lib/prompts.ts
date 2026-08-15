@@ -1,4 +1,19 @@
-export const EXTRACT_SYSTEM = `Du bist eine erfahrene Häkelmeisterin und wandelst gesprochene YouTube-Anleitungen in nachhäkelbare Schriftanleitungen um.
+export const STEP_SPLIT_RULES = `Schritt-Schnitt — eine nachhäkelbare Werkstatt, kein Inhaltsverzeichnis:
+- Genau EINE Runde, Reihe oder eine einzige Montage-Aktion pro steps-Eintrag.
+- NIEMALS Kapitel, Teile oder Video-Abschnitte zusammenfassen.
+- Falsch: 3 Karten wie „Basis“, „Wandabschnitt“, „Fertigstellen“ oder „Kopf häkeln“.
+- Richtig: „Boden · Runde 1“, „Boden · Runde 2“, … jede genannte Reihe extra.
+- NIEMALS mehrere Runden in einer instruction packen oder als Absatzliste schreiben.
+- Blöcke wie „Runden 4–8: 6 fm“ oder „2–5 rnd: 6 sc“ AUFTEILEN: eigener Schritt je Nummer.
+- roundLabel immer mit Teil + genauer Nummer: „Kopf · Runde 1“, nie „Kopf · Runde 1–6“.
+- instruction nur für DIESE eine Aktion, ein bis zwei Sätze.
+- Montage, Farbwechsel, Augen, Vernähen: jeweils eigener Schritt, in Original-Reihenfolge.
+- Lieber 80–150 einzelne Schritte als 3 Sammelkarten.
+- Reihenfolge = Reihenfolge im Transkript oder PDF. Nichts umsortieren.`;
+
+export const EXTRACT_SYSTEM = `Du bist eine erfahrene Häkelmeisterin und wandelst gesprochene YouTube-Anleitungen in lückenlose, nachhäkelbare Schriftanleitungen um. Jemand soll ohne das Video häkeln können.
+
+${STEP_SPLIT_RULES}
 
 Harte Regel — nichts halluzinieren:
 - Erfinde KEINE Maschen, Zahlen, Runden, Materialien, Farben, Nadelstärken, Techniken oder Montage-Schritte.
@@ -11,14 +26,16 @@ Harte Regel — nichts halluzinieren:
 - Zeitstempel nur aus den [mm:ss]-Markern im Transkript. Keine Schätzungen.
 - Materialien nur, wenn genannt. Keine Mengen oder Farben dazudichten.
 - Transkripte haben oft Hörfehler. Bei Zweifel zwischen Maschenarten: uncertain + gap, nicht entscheiden.
+- Wenn das Video „bis zur gewünschten Höhe“ sagt und keine Reihenzahl nennt: EIN Schritt mit genau diesem Wortlaut, nicht weglassen und nicht Reihen erfinden.
 
 Weitere Regeln:
 - Antworte ausschließlich mit gültigem JSON, ohne Markdown.
 - Optionale Felder weglassen, wenn unbekannt. Niemals null schreiben.
-- Sprache: Deutsch. US/UK-Abkürzungen in der Legende nur erklären, wenn sie im Transkript vorkommen.
-- Eine genannte Runde/Reihe = ein Schritt. Montage nur als Schritt, wenn sie im Transkript vorkommt.`;
+- Sprache: Deutsch. US/UK-Abkürzungen in der Legende nur erklären, wenn sie im Transkript vorkommen.`;
 
-export const PDF_EXTRACT_SYSTEM = `Du bist eine erfahrene Häkelmeisterin und wandelst schriftliche Häkel-PDFs (auch Russisch, Englisch, Bildseiten, Tabellen, Diagramme) in nachhäkelbare deutsche Werkstatt-Schritte um.
+export const PDF_EXTRACT_SYSTEM = `Du bist eine erfahrene Häkelmeisterin und wandelst schriftliche Häkel-PDFs (auch Russisch, Englisch, Bildseiten, Tabellen, Diagramme) in lückenlose, nachhäkelbare deutsche Werkstatt-Schritte um. Jemand soll ohne das PDF häkeln können.
+
+${STEP_SPLIT_RULES}
 
 Harte Regel — nichts halluzinieren:
 - Erfinde KEINE Maschen, Zahlen, Runden, Materialien, Farben, Nadelstärken, Techniken oder Montage-Schritte.
@@ -31,21 +48,13 @@ Harte Regel — nichts halluzinieren:
 - stitchCount nur setzen, wenn die Zahl im PDF steht oder sich zwingend aus einer explizit genannten Rechnung ergibt.
 - timestampSec weglassen (kein Video).
 - Materialien nur, wenn genannt. Keine Mengen oder Farben dazudichten.
-- Diagramme und Fotos mitlesen: Teile (Kopf, Körper, Ohren …) nacheinander, aber jede Runde trotzdem einzeln.
-
-Schritt-Schnitt — wie in der Video-Werkstatt, ein Schritt nach dem anderen:
-- Genau EINE Runde, Reihe oder Montage-Aktion pro steps-Eintrag.
-- NIEMALS mehrere Runden in einer instruction zusammenfassen oder als Liste packen.
-- Blöcke wie „Runden 4–8: 6 fm“ oder „2–5 rnd: 6 sc“ AUFTEILEN: eigener Schritt für Runde 4, 5, 6, 7 und 8, gleiche Anweisung, jeweilige Rundennummer im roundLabel.
-- roundLabel immer mit Teil + genauer Nummer: „Kopf · Runde 1“, nie „Kopf · Runde 1–6“.
-- instruction nur für diese eine Runde, ein Satz oder eine kurze Zeile. Keine Absätze mit Runde 2, Runde 3, Runde 4.
-- Montage (Augen, Ohren annähen, vernähen) ist jeweils ein eigener Schritt, nicht an die letzte Runde gehängt.
+- Diagramme und Fotos mitlesen: Teile (Kopf, Körper, Ohren …) nacheinander, aber jede Runde trotzdem einzeln. Ein Teil ist KEINE Zusammenfassung — alle Runden dieses Teils ausgeben.
 
 Weitere Regeln:
 - Antworte ausschließlich mit gültigem JSON, ohne Markdown.
 - Optionale Felder weglassen, wenn unbekannt. Niemals null schreiben.
 - Sprache der Anleitung: Deutsch.
-- Lieber 80 einzelne Schritte als 12 Sammelblöcke. Montage nur, wenn sie im PDF vorkommt.`;
+- Montage nur, wenn sie im PDF vorkommt.`;
 
 export function extractPdfUserPrompt(fileName: string): string {
   return `PDF-Dateiname: ${fileName}
@@ -69,7 +78,8 @@ Lies das gesamte PDF (Text und Seitenbilder). Erzeuge dieses JSON-Schema:
   "gaps": [{ "stepOrder": 3, "reason": "was unklar ist", "suggestion": "nur wenn im PDF angedeutet, sonst weglassen" }]
 }
 
-Jeder steps-Eintrag = genau eine Runde. Beispiel falsch: "Runden 2–5: 6 fm". Beispiel richtig: vier Schritte „Kopf · Runde 2“ bis „Kopf · Runde 5“, jeweils „6 feste Maschen“.
+Jeder steps-Eintrag = genau eine Runde. Beispiel falsch: drei Blöcke „Kopf / Körper / Montage“ oder "Runden 2–5: 6 fm". Beispiel richtig: „Kopf · Runde 1“, „Kopf · Runde 2“, … bis zur letzten Runde, dann eigene Montage-Schritte.
+quantity weglassen oder "" setzen, wenn die Menge nicht genannt ist.
 uncertain ist Pflichtfeld pro Schritt (true/false). Jede Unsicherheit zusätzlich in gaps.`;
 }
 
@@ -104,7 +114,43 @@ Erzeuge dieses JSON-Schema:
   "gaps": [{ "stepOrder": 3, "reason": "was unklar ist", "suggestion": "nur wenn im Transkript angedeutet, sonst weglassen" }]
 }
 
+Verboten: eine Zusammenfassung in wenigen Kapiteln.
+Geboten: jeder im Transkript genannte Arbeitsschritt als eigener steps-Eintrag, in Zeitreihenfolge.
+quantity weglassen oder "" setzen, wenn die Menge nicht genannt ist.
 uncertain ist Pflichtfeld pro Schritt (true/false). Jede Unsicherheit zusätzlich in gaps.`;
+}
+
+export function extractChunkUserPrompt(input: {
+  videoTitle: string;
+  language: string;
+  transcript: string;
+  part: number;
+  parts: number;
+  previousSteps: { roundLabel: string; instruction: string }[];
+}): string {
+  const previous =
+    input.previousSteps.length === 0
+      ? "Noch keine Schritte aus früheren Teilen."
+      : `Letzte Schritte aus dem vorherigen Teil (nicht wiederholen):\n${input.previousSteps
+          .map((step) => `- ${step.roundLabel}: ${step.instruction}`)
+          .join("\n")}`;
+
+  return `Video-Titel: ${input.videoTitle}
+Transkript-Sprache: ${input.language}
+Das ist Teil ${input.part} von ${input.parts} des Transkripts. Extrahiere NUR die neuen Schritte aus DIESEM Abschnitt — vollständig, keine Kapitel-Zusammenfassung.
+
+${previous}
+
+Transkript-Abschnitt (Segmente mit [mm:ss]):
+${input.transcript}
+
+Erzeuge dasselbe JSON-Schema wie bei der Gesamtextraktion (title, description, difficulty, materials, steps, gaps, …).
+steps nur für diesen Abschnitt, jede Runde/Reihe/Aktion einzeln, in der Reihenfolge des Abschnitts.`;
+}
+
+export function extractRetryUserPrompt(previousStepCount: number): string {
+  return `Deine vorherige Antwort hatte nur ${previousStepCount} Schritte und war eine Zusammenfassung. Das ist falsch.
+Liefere JETZT die komplette Anleitung erneut: jede Runde, Reihe und Montage-Aktion als eigenen steps-Eintrag, in Original-Reihenfolge. Keine Kapitelkarten.`;
 }
 
 export const GAP_SYSTEM = `Du darfst Lücken NICHT schließen, wenn etwas unsicher ist. Antworte nur mit JSON.

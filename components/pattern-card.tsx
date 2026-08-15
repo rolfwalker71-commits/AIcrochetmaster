@@ -27,7 +27,7 @@ export function PatternCard({ pattern, steps }: { pattern: Pattern; steps: Step[
             {STATUS[pattern.status]}
           </span>
         </div>
-        <div className="space-y-2 p-4 pr-16">
+        <div className="space-y-2 p-4">
           <h2 className="font-display text-xl leading-tight">{pattern.title}</h2>
           <p className="line-clamp-2 text-sm text-muted">{pattern.description}</p>
           <div className="h-1.5 overflow-hidden rounded-full bg-line">
@@ -38,7 +38,8 @@ export function PatternCard({ pattern, steps }: { pattern: Pattern; steps: Step[
       </Link>
       <button
         type="button"
-        className="absolute bottom-4 right-4 rounded-full bg-rose/15 px-3 py-1.5 text-xs font-bold text-rose"
+        aria-label="Anleitung löschen"
+        className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full bg-foam/95 text-rose shadow-sm"
         onClick={async (event) => {
           event.preventDefault();
           event.stopPropagation();
@@ -46,8 +47,18 @@ export function PatternCard({ pattern, steps }: { pattern: Pattern; steps: Step[
           await deletePattern(pattern.id);
         }}
       >
-        Löschen
+        <TrashGlyph />
       </button>
     </div>
+  );
+}
+
+function TrashGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M5 7h14" />
+      <path d="M10 7V5h4v2" />
+      <path d="M8 7l1 13h6l1-13" />
+    </svg>
   );
 }

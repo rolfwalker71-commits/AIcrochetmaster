@@ -33,7 +33,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className={`mx-auto flex min-h-dvh max-w-lg flex-col px-4 pt-6 ${locked ? "pb-8" : "pb-32"}`}>
-      {!locked && <RegisterSW />}
+      <RegisterSW />
       <header className="mb-6 flex items-end justify-between">
         <div className="flex items-center gap-3">
           <img
@@ -52,17 +52,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div className="flex shrink-0 gap-2">
             <Link
               href="/import?kind=video"
-              className="flex flex-col items-center justify-center rounded-2xl bg-terracotta px-3 py-1.5 text-white"
+              aria-label="Video importieren"
+              className="flex h-12 w-12 items-center justify-center rounded-2xl bg-terracotta text-white"
             >
               <VideoGlyph />
-              <span className="text-xs font-bold leading-none">Video</span>
             </Link>
             <Link
               href="/import?kind=pdf"
-              className="flex flex-col items-center justify-center rounded-2xl bg-terracotta px-3 py-1.5 text-white"
+              aria-label="PDF importieren"
+              className="flex h-12 w-12 items-center justify-center rounded-2xl bg-terracotta text-white"
             >
               <PdfGlyph />
-              <span className="text-xs font-bold leading-none">PDF</span>
             </Link>
           </div>
         )}
@@ -99,7 +99,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
 function VideoGlyph() {
   return (
-    <svg viewBox="0 0 24 24" className="mb-0.5 h-6 w-6" fill="currentColor" aria-hidden>
+    <svg viewBox="0 0 24 24" className="h-7 w-7" fill="currentColor" aria-hidden>
       <path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h7A2.5 2.5 0 0 1 16 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 4 17.5v-11Z" />
       <path d="M17 9.2 21 7v10l-4-2.2V9.2Z" />
     </svg>
@@ -108,7 +108,7 @@ function VideoGlyph() {
 
 function PdfGlyph() {
   return (
-    <svg viewBox="0 0 24 24" className="mb-0.5 h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+    <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
       <path d="M7 3h7l5 5v13H7z" />
       <path d="M14 3v5h5" />
       <path d="M9 14h6M9 18h4" />
