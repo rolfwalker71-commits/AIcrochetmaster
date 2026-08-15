@@ -426,12 +426,6 @@ const GRAPHICS: Record<string, ReactNode> = {
       <path d="M80 36v48" />
     </Svg>
   ),
-  farbwechsel: (
-    <Svg>
-      <circle cx="62" cy="56" r="22" />
-      <circle cx="98" cy="56" r="22" />
-    </Svg>
-  ),
   "faeden-vernaehen": (
     <Svg>
       <path d="M28 70c16-16 16-16 32 0s16 16 32 0 16-16 32 0" />
