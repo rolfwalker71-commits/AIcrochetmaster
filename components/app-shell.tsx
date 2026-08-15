@@ -1,6 +1,7 @@
 "use client";
 
 import { db, getSettings } from "@/lib/db";
+import { startLibrarySync } from "@/lib/sync";
 import { RegisterSW } from "@/components/register-sw";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -29,7 +30,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     void db.open();
-  }, []);
+    if (!locked) startLibrarySync();
+  }, [locked]);
 
   return (
     <div className={`mx-auto flex min-h-dvh max-w-lg flex-col px-4 pt-6 ${locked ? "pb-8" : "pb-32"}`}>

@@ -5,6 +5,8 @@ PWA, die einen YouTube-Häkel-Link (einfügen oder Android-Share) in eine lücke
 Der OpenAI-Key kommt aus der `.env` (`OPENAI_API_KEY`) und gilt für den Container.
 In der App unter **Mehr** ist er nur noch optional, falls ein anderer Key genutzt werden soll.
 
+Anleitungen, Fortschritt und Werkstatt liegen im Container (`DATA_DIR`, Docker-Volume `crochet-data`). Nach dem Login sieht jedes Gerät dieselbe Bibliothek. Offline bleibt eine lokale Kopie.
+
 ## Zugangsschutz
 
 Hinter einem Reverse-Proxy ist die App sonst öffentlich. Setze in einer `.env` neben der `docker-compose.yml` ein Passwort **oder** eine PIN:
@@ -49,6 +51,8 @@ Image von GHCR ziehen (nach dem ersten Push auf `main`):
 docker pull ghcr.io/rolfwalker71-commits/aicrochetmaster:latest
 docker compose up
 ```
+
+Die Bibliothek bleibt im Volume `crochet-data` erhalten, auch wenn das Image neu gezogen wird.
 
 Oder ohne Compose:
 

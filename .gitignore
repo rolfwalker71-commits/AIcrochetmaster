@@ -43,3 +43,6 @@ CLAUDE.md
 
 # copied from pdfjs-dist on install
 /public/pdf.worker.min.mjs
+
+# shared library on disk
+/data/

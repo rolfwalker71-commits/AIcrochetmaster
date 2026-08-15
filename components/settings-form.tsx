@@ -129,7 +129,9 @@ export function SettingsForm() {
       <section className="rounded-3xl bg-foam p-4 card-shadow">
         <h2 className="font-display text-2xl">Zugang</h2>
         <p className="mt-1 text-sm text-muted">
-          Die App ist mit Passwort oder PIN geschützt. Abmelden löscht nur das Zugangs-Cookie.
+          Die App ist mit Passwort oder PIN geschützt. Anleitungen, Fortschritt und Werkstatt
+          liegen auf dem Server und sind auf jedem Gerät gleich. Abmelden löscht nur das
+          Zugangs-Cookie.
         </p>
         <button
           type="button"

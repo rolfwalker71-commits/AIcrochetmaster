@@ -2,9 +2,10 @@
 
 import { PatternCard } from "@/components/pattern-card";
 import { db } from "@/lib/db";
-import type { Pattern, PatternStatus, Step } from "@/lib/types";
+import type { PatternStatus, Step } from "@/lib/types";
+import { useLiveQuery } from "dexie-react-hooks";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 const FILTERS: { id: "all" | PatternStatus; label: string }[] = [
   { id: "all", label: "Alle" },
@@ -14,20 +15,10 @@ const FILTERS: { id: "all" | PatternStatus; label: string }[] = [
 ];
 
 export function LibraryView() {
-  const [patterns, setPatterns] = useState<Pattern[]>([]);
-  const [steps, setSteps] = useState<Step[]>([]);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<(typeof FILTERS)[number]["id"]>("all");
-
-  useEffect(() => {
-    const load = async () => {
-      setPatterns(await db.patterns.orderBy("createdAt").reverse().toArray());
-      setSteps(await db.steps.toArray());
-    };
-    void load();
-    const interval = window.setInterval(load, 2000);
-    return () => window.clearInterval(interval);
-  }, []);
+  const patterns = useLiveQuery(() => db.patterns.orderBy("createdAt").reverse().toArray(), []) ?? [];
+  const steps = useLiveQuery(() => db.steps.toArray(), []) ?? [];
 
   const stepsByPattern = useMemo(() => {
     const map = new Map<string, Step[]>();

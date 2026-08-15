@@ -1,6 +1,7 @@
 "use client";
 
 import Dexie, { type Table } from "dexie";
+import { emptyLibrary, type LibrarySnapshot } from "./library";
 import {
   DEFAULT_SETTINGS,
   type Material,
@@ -43,6 +44,50 @@ export async function saveSettings(partial: Partial<Settings>): Promise<Settings
   const next = { ...current, ...partial, id: "settings" as const };
   await db.settings.put(next);
   return next;
+}
+
+export async function localLibrary(): Promise<LibrarySnapshot> {
+  const [patterns, steps, materials, progress, settings] = await Promise.all([
+    db.patterns.toArray(),
+    db.steps.toArray(),
+    db.materials.toArray(),
+    db.progress.toArray(),
+    getSettings(),
+  ]);
+  return {
+    version: 1,
+    updatedAt: Date.now(),
+    patterns,
+    steps,
+    materials,
+    progress,
+    settings: {
+      textModel: settings.textModel,
+      imageModel: settings.imageModel,
+      showRowCounter: settings.showRowCounter,
+      largeText: settings.largeText,
+    },
+  };
+}
+
+export async function applyLibrary(snapshot: LibrarySnapshot, openaiKey: string): Promise<void> {
+  const data = snapshot ?? emptyLibrary();
+  await db.transaction("rw", db.patterns, db.steps, db.materials, db.progress, db.settings, async () => {
+    await db.patterns.clear();
+    await db.steps.clear();
+    await db.materials.clear();
+    await db.progress.clear();
+    if (data.patterns.length) await db.patterns.bulkPut(data.patterns);
+    if (data.steps.length) await db.steps.bulkPut(data.steps);
+    if (data.materials.length) await db.materials.bulkPut(data.materials);
+    if (data.progress.length) await db.progress.bulkPut(data.progress);
+    await db.settings.put({
+      ...DEFAULT_SETTINGS,
+      ...data.settings,
+      openaiKey,
+      id: "settings",
+    });
+  });
 }
 
 export async function deletePattern(patternId: string): Promise<void> {
