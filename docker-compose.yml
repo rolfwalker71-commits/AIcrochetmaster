@@ -3,8 +3,8 @@ services:
     image: ghcr.io/rolfwalker71-commits/aicrochetmaster:latest
     build: .
     ports:
-      - "3000:3000"
+      - "3010:3010"
     restart: unless-stopped
     environment:
-      PORT: "3000"
+      PORT: "3010"
       HOSTNAME: "0.0.0.0"

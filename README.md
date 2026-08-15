@@ -11,7 +11,7 @@ npm install
 npm run dev
 ```
 
-App: [http://localhost:3000](http://localhost:3000)
+App: [http://localhost:3010](http://localhost:3010)
 
 Unter **Mehr** den OpenAI-API-Key eintragen. Default-Modell: `gpt-4o`, Bild: `gpt-image-1`.
 
@@ -33,7 +33,7 @@ docker compose up
 Oder ohne Compose:
 
 ```bash
-docker run --rm -p 3000:3000 ghcr.io/rolfwalker71-commits/aicrochetmaster:latest
+docker run --rm -p 3010:3010 ghcr.io/rolfwalker71-commits/aicrochetmaster:latest
 ```
 
 Das Image wird bei jedem Push auf `main` und bei Tags `v*` nach [ghcr.io/rolfwalker71-commits/aicrochetmaster](https://github.com/rolfwalker71-commits/AIcrochetmaster/pkgs/container/aicrochetmaster) veröffentlicht.
