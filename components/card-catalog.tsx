@@ -1,5 +1,6 @@
 "use client";
 
+import { MotifGraphic } from "@/components/motif-graphic";
 import { HELP_CARDS, MOTIF_CARDS, uniqueCategories } from "@/lib/cards";
 import type { HelpCard, MotifCard } from "@/lib/types";
 import Link from "next/link";
@@ -60,13 +61,13 @@ export function CardCatalog() {
         onChange={(event) => setQuery(event.target.value)}
       />
 
-      <div className="flex gap-2 overflow-x-auto pb-1">
+      <div className="flex flex-wrap gap-1.5">
         {["alle", ...categories].map((item) => (
           <button
             key={item}
             type="button"
             onClick={() => setCategory(item)}
-            className={`whitespace-nowrap rounded-full px-3 py-1 text-sm ${
+            className={`rounded-full px-2 py-0.5 text-[11px] leading-tight ${
               category === item ? "bg-ink text-cream" : "bg-foam"
             }`}
           >
@@ -100,7 +101,7 @@ function CatalogCard({
       href={href}
       className="card-shadow block overflow-hidden rounded-3xl bg-foam"
     >
-      <div className="h-2" style={{ background: card.color }} />
+      <MotifGraphic id={card.id} color={card.color} />
       <div className="p-4">
         <p className="text-xs uppercase tracking-wide text-muted">{card.category}</p>
         <h2 className="font-display text-xl">{card.title}</h2>

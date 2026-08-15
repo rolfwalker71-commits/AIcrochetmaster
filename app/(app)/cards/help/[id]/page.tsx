@@ -1,3 +1,4 @@
+import { MotifGraphic } from "@/components/motif-graphic";
 import { getHelpCard } from "@/lib/cards";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -13,9 +14,9 @@ export default async function HelpCardPage({
 
   return (
     <article className="overflow-hidden rounded-3xl bg-foam card-shadow">
-      <div className="h-3" style={{ background: card.color }} />
+      <MotifGraphic id={card.id} color={card.color} size="detail" />
       <div className="space-y-4 p-5">
-        <p className="text-xs uppercase tracking-wide text-muted">{card.category}</p>
+        <p className="text-xs uppercase tracking-wide text-muted">Hilfsgrafik · {card.category}</p>
         <h2 className="font-display text-3xl">{card.title}</h2>
         <p>{card.body}</p>
         {card.tips && card.tips.length > 0 && (
