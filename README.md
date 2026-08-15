@@ -2,7 +2,8 @@
 
 PWA, die einen YouTube-Häkel-Link (einfügen oder Android-Share) in eine lückenlose Schriftanleitung verwandelt. Mit KI-Headerbild, Motiv- und Hilfekarten, Werkstatt, optionalem Reihenzähler und Materialliste.
 
-Der OpenAI-Key liegt nur im Browser (IndexedDB), nicht im Container.
+Der OpenAI-Key kommt aus der `.env` (`OPENAI_API_KEY`) und gilt für den Container.
+In der App unter **Mehr** ist er nur noch optional, falls ein anderer Key genutzt werden soll.
 
 ## Zugangsschutz
 
@@ -16,6 +17,8 @@ cp .env.example .env
 APP_PASSWORD=bitte-aendern
 # oder
 # APP_PIN=1234
+
+OPENAI_API_KEY=sk-...
 ```
 
 Ohne gesetztes Geheimnis bleibt Production gesperrt (nur Login-Hinweis). Lokal (`npm run dev`) läuft die App ohne Passwort weiter. Abmelden geht unter **Mehr**.
@@ -29,7 +32,8 @@ npm run dev
 
 App: [http://localhost:3010](http://localhost:3010)
 
-Unter **Mehr** den OpenAI-API-Key eintragen. Default-Modell: `gpt-4o`, Bild: `gpt-image-1`.
+`OPENAI_API_KEY` in der `.env` eintragen. Default-Modell: `gpt-4o`, Bild: `gpt-image-1`.
+Einen abweichenden Key kannst du optional unter **Mehr** setzen.
 
 ## Docker
 

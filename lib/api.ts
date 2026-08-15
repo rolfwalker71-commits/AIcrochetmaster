@@ -7,8 +7,10 @@ export async function apiPost<T>(
   timeoutMs = 180_000,
 ): Promise<T> {
   const headers: Record<string, string> = { "Content-Type": "application/json" };
-  if (settings?.openaiKey) {
-    headers["x-openai-key"] = settings.openaiKey;
+  if (settings) {
+    if (settings.openaiKey) {
+      headers["x-openai-key"] = settings.openaiKey;
+    }
     headers["x-text-model"] = settings.textModel;
     headers["x-image-model"] = settings.imageModel;
   }
@@ -41,10 +43,12 @@ export async function apiPostForm<T>(
   timeoutMs = 180_000,
 ): Promise<T> {
   const headers: Record<string, string> = {
-    "x-openai-key": settings.openaiKey,
     "x-text-model": settings.textModel,
     "x-image-model": settings.imageModel,
   };
+  if (settings.openaiKey) {
+    headers["x-openai-key"] = settings.openaiKey;
+  }
 
   let response: Response;
   try {

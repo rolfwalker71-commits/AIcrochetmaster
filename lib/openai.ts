@@ -1,9 +1,20 @@
 import type { ImageModel, TextModel } from "./types";
 
+export function serverOpenAiKey(): string {
+  return (process.env.OPENAI_API_KEY || "").trim();
+}
+
+export function hasServerOpenAiKey(): boolean {
+  return Boolean(serverOpenAiKey());
+}
+
 export function readOpenAiKey(request: Request): string {
-  const key = request.headers.get("x-openai-key")?.trim();
+  const override = request.headers.get("x-openai-key")?.trim();
+  const key = override || serverOpenAiKey();
   if (!key) {
-    throw new Error("Kein OpenAI-Key im Request. Bitte in den Einstellungen hinterlegen.");
+    throw new Error(
+      "Kein OpenAI-Key. Bitte OPENAI_API_KEY in der .env setzen oder optional in den Einstellungen hinterlegen.",
+    );
   }
   return key;
 }

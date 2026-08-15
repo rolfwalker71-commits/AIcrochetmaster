@@ -45,7 +45,14 @@ export function ImportWizard({
   const [usage, setUsage] = useState<AnalysisUsage | null>(null);
 
   useEffect(() => {
-    getSettings().then((settings) => setHasKey(Boolean(settings.openaiKey)));
+    Promise.all([
+      getSettings(),
+      fetch("/api/access")
+        .then((response) => response.json())
+        .catch(() => ({ openaiConfigured: false })),
+    ]).then(([settings, access]: [Awaited<ReturnType<typeof getSettings>>, { openaiConfigured?: boolean }]) => {
+      setHasKey(Boolean(settings.openaiKey) || Boolean(access.openaiConfigured));
+    });
   }, []);
 
   useEffect(() => {
@@ -71,10 +78,6 @@ export function ImportWizard({
   const run = async () => {
     setError("");
     const settings = await getSettings();
-    if (!settings.openaiKey) {
-      setError("Bitte zuerst den OpenAI-Key in den Einstellungen hinterlegen.");
-      return;
-    }
     if (!parsedId) {
       setError("Bitte einen gültigen YouTube-Link einfügen.");
       return;
@@ -146,10 +149,6 @@ export function ImportWizard({
   const runPdf = async () => {
     setError("");
     const settings = await getSettings();
-    if (!settings.openaiKey) {
-      setError("Bitte zuerst den OpenAI-Key in den Einstellungen hinterlegen.");
-      return;
-    }
     if (!pdfFile) {
       setError("Bitte eine PDF-Anleitung wählen.");
       return;
@@ -236,7 +235,8 @@ export function ImportWizard({
         </p>
         {hasKey === false && (
           <p className="mt-3 rounded-2xl bg-rose/10 px-3 py-2 text-sm">
-            Ohne OpenAI-Key kein Import. Bitte unter Mehr hinterlegen.
+            Ohne OpenAI-Key kein Import. Bitte OPENAI_API_KEY in der .env setzen
+            oder optional unter Mehr einen anderen Key hinterlegen.
           </p>
         )}
         {error && <p className="mt-3 text-sm text-terracotta-dark">{error}</p>}

@@ -9,9 +9,14 @@ export function SettingsForm() {
   const [settings, setSettings] = useState<Settings | null>(null);
   const [showKey, setShowKey] = useState(false);
   const [test, setTest] = useState("");
+  const [serverKey, setServerKey] = useState<boolean | null>(null);
 
   useEffect(() => {
     getSettings().then(setSettings);
+    fetch("/api/access")
+      .then((response) => response.json())
+      .then((data: { openaiConfigured?: boolean }) => setServerKey(Boolean(data.openaiConfigured)))
+      .catch(() => setServerKey(false));
   }, []);
 
   if (!settings) return <p className="text-muted">Einstellungen werden geladen …</p>;
@@ -37,11 +42,14 @@ export function SettingsForm() {
       <section className="rounded-3xl bg-foam p-4 card-shadow">
         <h2 className="font-display text-2xl">OpenAI</h2>
         <p className="mt-1 text-sm text-muted">
-          Der Key bleibt nur auf diesem Gerät. Er wird nicht auf einem Server gespeichert.
-          Du bekommst ihn unter platform.openai.com.
+          {serverKey
+            ? "Der Key aus der Server-.env gilt automatisch. Hier nur eintragen, wenn du einen anderen Key nutzen willst."
+            : "Kein Server-Key gefunden. Trage OPENAI_API_KEY in der .env ein oder optional hier einen Key für dieses Gerät."}
         </p>
         <label className="mt-4 block space-y-1">
-          <span className="text-xs uppercase tracking-wide text-muted">API-Key</span>
+          <span className="text-xs uppercase tracking-wide text-muted">
+            Anderer API-Key (optional)
+          </span>
           <div className="flex gap-2">
             <input
               className="w-full rounded-2xl border border-line px-3 py-2"
@@ -49,7 +57,7 @@ export function SettingsForm() {
               autoComplete="off"
               value={settings.openaiKey}
               onChange={(event) => void update({ openaiKey: event.target.value.trim() })}
-              placeholder="sk-…"
+              placeholder={serverKey ? "leer = Server-Key" : "sk-…"}
             />
             <button
               type="button"
