@@ -18,7 +18,13 @@ const PHASE_LABEL: Record<Phase, string> = {
   saving: "Wird in der Bibliothek gespeichert …",
 };
 
-export function ImportWizard({ initialText = "" }: { initialText?: string }) {
+export function ImportWizard({
+  initialText = "",
+  initialKind = "video",
+}: {
+  initialText?: string;
+  initialKind?: "video" | "pdf";
+}) {
   const router = useRouter();
   const [url, setUrl] = useState(initialText);
   const [pdfName, setPdfName] = useState("");
@@ -31,6 +37,11 @@ export function ImportWizard({ initialText = "" }: { initialText?: string }) {
   useEffect(() => {
     getSettings().then((settings) => setHasKey(Boolean(settings.openaiKey)));
   }, []);
+
+  useEffect(() => {
+    const id = initialKind === "pdf" ? "import-pdf" : "import-video";
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [initialKind]);
 
   const busy = phase !== "idle";
   useEffect(() => {
@@ -169,7 +180,7 @@ export function ImportWizard({ initialText = "" }: { initialText?: string }) {
 
   return (
     <div className="space-y-5">
-      <div className="rounded-3xl bg-foam p-4 card-shadow">
+      <div id="import-video" className="rounded-3xl bg-foam p-4 card-shadow">
         <p className="font-display text-2xl">YouTube-Link</p>
         <p className="mt-1 text-sm text-muted">
           Link einfügen oder — nach Installation — ein Video aus YouTube teilen.
@@ -200,7 +211,7 @@ export function ImportWizard({ initialText = "" }: { initialText?: string }) {
         </button>
       </div>
 
-      <div className="rounded-3xl bg-foam p-4 card-shadow">
+      <div id="import-pdf" className="rounded-3xl bg-foam p-4 card-shadow">
         <p className="font-display text-2xl">PDF-Anleitung</p>
         <p className="mt-1 text-sm text-muted">
           Schriftliche Anleitung hochladen. Text, Fotos und Diagramme werden gelesen und ins

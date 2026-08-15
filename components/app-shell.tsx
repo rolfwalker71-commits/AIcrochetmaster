@@ -32,7 +32,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div className={`mx-auto flex min-h-dvh max-w-lg flex-col px-4 pt-6 ${locked ? "pb-8" : "pb-28"}`}>
+    <div className={`mx-auto flex min-h-dvh max-w-lg flex-col px-4 pt-6 ${locked ? "pb-8" : "pb-32"}`}>
       {!locked && <RegisterSW />}
       <header className="mb-6 flex items-end justify-between">
         <div className="flex items-center gap-3">
@@ -49,18 +49,28 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </div>
         {!locked && (
-          <Link
-            href="/import"
-            className="rounded-full bg-terracotta px-3 py-1.5 text-sm font-semibold text-white"
-          >
-            Video holen
-          </Link>
+          <div className="flex shrink-0 gap-2">
+            <Link
+              href="/import?kind=video"
+              className="flex flex-col items-center justify-center rounded-2xl bg-terracotta px-3 py-1.5 text-white"
+            >
+              <VideoGlyph />
+              <span className="text-xs font-bold leading-none">Video</span>
+            </Link>
+            <Link
+              href="/import?kind=pdf"
+              className="flex flex-col items-center justify-center rounded-2xl bg-terracotta px-3 py-1.5 text-white"
+            >
+              <PdfGlyph />
+              <span className="text-xs font-bold leading-none">PDF</span>
+            </Link>
+          </div>
         )}
       </header>
       <main className="flex-1">{children}</main>
       {!locked && (
-      <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-foam/95 backdrop-blur">
-        <ul className="mx-auto grid max-w-lg grid-cols-4 px-2 py-2">
+      <nav className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-line bg-foam/95 backdrop-blur">
+        <ul className="mx-auto grid max-w-lg grid-cols-4 gap-1 px-2 py-3">
           {NAV.map((item) => {
             const active =
               item.href === "/"
@@ -70,12 +80,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className={`flex flex-col items-center gap-0.5 rounded-2xl px-2 py-2 text-xs ${
-                    active ? "bg-cream text-terracotta" : "text-muted"
+                  className={`flex flex-col items-center gap-1 rounded-2xl px-2 py-2.5 ${
+                    active ? "bg-terracotta text-white" : "text-ink"
                   }`}
                 >
-                  <span className="text-lg leading-none">{item.icon}</span>
-                  {item.label}
+                  <span className="text-3xl font-bold leading-none">{item.icon}</span>
+                  <span className="text-sm font-bold leading-tight">{item.label}</span>
                 </Link>
               </li>
             );
@@ -84,5 +94,24 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </nav>
       )}
     </div>
+  );
+}
+
+function VideoGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" className="mb-0.5 h-6 w-6" fill="currentColor" aria-hidden>
+      <path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h7A2.5 2.5 0 0 1 16 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 4 17.5v-11Z" />
+      <path d="M17 9.2 21 7v10l-4-2.2V9.2Z" />
+    </svg>
+  );
+}
+
+function PdfGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" className="mb-0.5 h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M7 3h7l5 5v13H7z" />
+      <path d="M14 3v5h5" />
+      <path d="M9 14h6M9 18h4" />
+    </svg>
   );
 }

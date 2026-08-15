@@ -97,15 +97,14 @@ function EmptyState({ hasAny }: { hasAny: boolean }) {
         {hasAny ? "Nichts zu diesem Filter" : "Noch keine Anleitung"}
       </h2>
       <p className="mt-2 text-sm text-muted">
-        Importierte YouTube-Anleitungen erscheinen hier, sobald die Analyse fertig ist.
-        Motiv- und Hilfekarten liegen unter Karten — die sind unabhängig vom Import.
+        Importierte YouTube- und PDF-Anleitungen erscheinen hier, sobald die Analyse fertig ist.
       </p>
       <div className="mt-4 flex flex-wrap justify-center gap-2">
         <Link
           href="/import"
           className="inline-block rounded-full bg-terracotta px-4 py-2 font-semibold text-white"
         >
-          Video importieren
+          Video oder PDF holen
         </Link>
         <Link
           href="/cards"

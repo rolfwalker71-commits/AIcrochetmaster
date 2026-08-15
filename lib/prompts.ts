@@ -31,13 +31,21 @@ Harte Regel — nichts halluzinieren:
 - stitchCount nur setzen, wenn die Zahl im PDF steht oder sich zwingend aus einer explizit genannten Rechnung ergibt.
 - timestampSec weglassen (kein Video).
 - Materialien nur, wenn genannt. Keine Mengen oder Farben dazudichten.
-- Diagramme und Fotos mitlesen: Teile (Kopf, Körper, Ohren …) als eigene Schrittgruppen.
+- Diagramme und Fotos mitlesen: Teile (Kopf, Körper, Ohren …) nacheinander, aber jede Runde trotzdem einzeln.
+
+Schritt-Schnitt — wie in der Video-Werkstatt, ein Schritt nach dem anderen:
+- Genau EINE Runde, Reihe oder Montage-Aktion pro steps-Eintrag.
+- NIEMALS mehrere Runden in einer instruction zusammenfassen oder als Liste packen.
+- Blöcke wie „Runden 4–8: 6 fm“ oder „2–5 rnd: 6 sc“ AUFTEILEN: eigener Schritt für Runde 4, 5, 6, 7 und 8, gleiche Anweisung, jeweilige Rundennummer im roundLabel.
+- roundLabel immer mit Teil + genauer Nummer: „Kopf · Runde 1“, nie „Kopf · Runde 1–6“.
+- instruction nur für diese eine Runde, ein Satz oder eine kurze Zeile. Keine Absätze mit Runde 2, Runde 3, Runde 4.
+- Montage (Augen, Ohren annähen, vernähen) ist jeweils ein eigener Schritt, nicht an die letzte Runde gehängt.
 
 Weitere Regeln:
 - Antworte ausschließlich mit gültigem JSON, ohne Markdown.
 - Optionale Felder weglassen, wenn unbekannt. Niemals null schreiben.
 - Sprache der Anleitung: Deutsch.
-- Eine genannte Runde/Reihe = ein Schritt. Montage nur, wenn sie im PDF vorkommt.`;
+- Lieber 80 einzelne Schritte als 12 Sammelblöcke. Montage nur, wenn sie im PDF vorkommt.`;
 
 export function extractPdfUserPrompt(fileName: string): string {
   return `PDF-Dateiname: ${fileName}
@@ -53,7 +61,7 @@ Lies das gesamte PDF (Text und Seitenbilder). Erzeuge dieses JSON-Schema:
   "materials": [{ "name": "Baumwollgarn", "quantity": "50 g, Farbe Beige" }],
   "steps": [{
     "roundLabel": "Kopf · Runde 1",
-    "instruction": "nur Belegtes aus dem PDF; bei Zweifel: Unsicher: …",
+    "instruction": "nur DIESE eine Runde aus dem PDF; bei Zweifel: Unsicher: …",
     "stitchCount": 6,
     "colorChange": "nur wenn genannt",
     "uncertain": false
@@ -61,6 +69,7 @@ Lies das gesamte PDF (Text und Seitenbilder). Erzeuge dieses JSON-Schema:
   "gaps": [{ "stepOrder": 3, "reason": "was unklar ist", "suggestion": "nur wenn im PDF angedeutet, sonst weglassen" }]
 }
 
+Jeder steps-Eintrag = genau eine Runde. Beispiel falsch: "Runden 2–5: 6 fm". Beispiel richtig: vier Schritte „Kopf · Runde 2“ bis „Kopf · Runde 5“, jeweils „6 feste Maschen“.
 uncertain ist Pflichtfeld pro Schritt (true/false). Jede Unsicherheit zusätzlich in gaps.`;
 }
 

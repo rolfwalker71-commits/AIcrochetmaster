@@ -165,8 +165,72 @@ export async function extractPatternFromPdf(
   const content = textFromResponses(data);
   if (!content) throw new Error("Das Modell hat keine Anleitung aus dem PDF geliefert.");
   const extracted = parseContent(content);
+  extracted.steps = expandCombinedPdfSteps(extracted.steps);
   if (extracted.steps.length === 0) {
     throw new Error("Es konnten keine Häkel-Schritte im PDF erkannt werden.");
   }
   return extracted;
+}
+
+const RANGE_RE =
+  /(?:Runden?|Reihen?|Rd\.?|rounds?|rows?|ряд(?:ы|а)?|ряды)\s*(\d+)\s*(?:[-–—]|bis|to|до)\s*(\d+)/i;
+const ROUND_LINE_RE =
+  /(?:^|[;\n•·]|,\s*)(?:Runde|Reihe|Rd\.?|round|row|ряд)\s*(\d+)\s*[:.\-–—)]\s*/gi;
+
+function partPrefix(label: string): string {
+  const cleaned = label.replace(RANGE_RE, "").replace(/\s*[·\-–—:]\s*$/, "").trim();
+  const cut = cleaned.search(/\b(?:Runde|Reihe|Rd\.?|round|row|ряд)\b/i);
+  if (cut <= 0) return "";
+  return cleaned.slice(0, cut).replace(/\s*[·\-–—:]\s*$/, "").trim();
+}
+
+function labeledRound(part: string, n: number): string {
+  return part ? `${part} · Runde ${n}` : `Runde ${n}`;
+}
+
+function expandRangeStep(step: ExtractedPattern["steps"][number]): ExtractedPattern["steps"] {
+  const fromLabel = step.roundLabel.match(RANGE_RE);
+  const fromText = !fromLabel ? step.instruction.match(RANGE_RE) : null;
+  const match = fromLabel ?? fromText;
+  if (!match) return [step];
+  const start = Number(match[1]);
+  const end = Number(match[2]);
+  if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start || end - start > 40) {
+    return [step];
+  }
+  const part = partPrefix(step.roundLabel);
+  const instruction = step.instruction.replace(RANGE_RE, "").replace(/^\s*[:.\-–—]\s*/, "").trim() || step.instruction;
+  return Array.from({ length: end - start + 1 }, (_, index) => ({
+    ...step,
+    roundLabel: labeledRound(part, start + index),
+    instruction,
+  }));
+}
+
+function splitRoundList(step: ExtractedPattern["steps"][number]): ExtractedPattern["steps"] {
+  const matches = [...step.instruction.matchAll(new RegExp(ROUND_LINE_RE.source, "gi"))];
+  if (matches.length < 2) return [step];
+  const part = partPrefix(step.roundLabel);
+  const pieces: ExtractedPattern["steps"] = [];
+  for (let i = 0; i < matches.length; i += 1) {
+    const current = matches[i];
+    const next = matches[i + 1];
+    const start = (current.index ?? 0) + current[0].length;
+    const stop = next?.index ?? step.instruction.length;
+    const instruction = step.instruction.slice(start, stop).replace(/^[;\n•·,\s]+|[;\n•·,\s]+$/g, "").trim();
+    if (!instruction) continue;
+    pieces.push({
+      ...step,
+      roundLabel: labeledRound(part, Number(current[1])),
+      instruction,
+      stitchCount: undefined,
+    });
+  }
+  return pieces.length > 1 ? pieces : [step];
+}
+
+export function expandCombinedPdfSteps(
+  steps: ExtractedPattern["steps"],
+): ExtractedPattern["steps"] {
+  return steps.flatMap((step) => splitRoundList(step)).flatMap((step) => expandRangeStep(step));
 }
