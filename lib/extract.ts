@@ -106,7 +106,7 @@ function normalizeExtracted(raw: unknown): ExtractedPattern {
   if (abbreviations.length === 0 && obj.abbreviations && !Array.isArray(obj.abbreviations)) {
     abbreviations = Object.entries(asRecord(obj.abbreviations)).flatMap(([short, meaning]) => {
       const text = asText(meaning);
-      return text ? [{ short, meaning: text }] : [];
+      return text ? [{ short, meaning: text, us: undefined, uk: undefined }] : [];
     });
   }
   const difficultyText = asText(obj.difficulty).toLowerCase();
