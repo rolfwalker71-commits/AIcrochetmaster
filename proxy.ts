@@ -1,4 +1,4 @@
-import { ACCESS_COOKIE, accessSecret, sessionToken, tokensMatch } from "@/lib/access";
+import { ACCESS_COOKIE } from "@/lib/access";
 import { publicOrigin } from "@/lib/public-url";
 import { NextResponse, type NextRequest } from "next/server";
 
@@ -37,7 +37,7 @@ function redirectToLogin(request: NextRequest, pathname: string) {
   });
 }
 
-export async function proxy(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   if (isPublic(pathname)) {
     return NextResponse.next();
@@ -47,16 +47,9 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const secret = accessSecret();
-  if (!secret) {
-    if (pathname.startsWith("/api/")) {
-      return NextResponse.json({ error: "Nicht angemeldet." }, { status: 401 });
-    }
-    return redirectToLogin(request, pathname);
-  }
-
-  const token = request.cookies.get(ACCESS_COOKIE)?.value || "";
-  if (token && tokensMatch(token, await sessionToken(secret))) {
+  // Only look at cookie presence here. The PIN itself is checked in Node
+  // (login + layout), because proxy would freeze an empty APP_PIN at image build.
+  if (request.cookies.get(ACCESS_COOKIE)?.value) {
     return NextResponse.next();
   }
 
@@ -68,5 +61,7 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|api/login|api/logout|api/access|api/health|api/session).*)",
+  ],
 };

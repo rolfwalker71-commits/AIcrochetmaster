@@ -1,10 +1,9 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 
 function LoginForm() {
-  const router = useRouter();
   const params = useSearchParams();
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -22,7 +21,7 @@ function LoginForm() {
     setError("");
     const response = await fetch("/api/login", {
       method: "POST",
-      credentials: "same-origin",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ password }),
     });
@@ -31,8 +30,8 @@ function LoginForm() {
       setError(data.error || "Anmeldung fehlgeschlagen.");
       return;
     }
-    router.replace(params.get("next") || "/");
-    router.refresh();
+    const next = params.get("next") || "/";
+    window.location.assign(next.startsWith("/") ? next : "/");
   };
 
   return (

@@ -2,7 +2,8 @@ export const ACCESS_COOKIE = "acm_session";
 export const ACCESS_MAX_AGE = 60 * 60 * 24 * 30;
 
 export function accessSecret(): string {
-  return (process.env.APP_PASSWORD || process.env.APP_PIN || "").trim();
+  const env = process.env;
+  return (env["APP_PASSWORD"] || env["APP_PIN"] || "").trim();
 }
 
 export async function sessionToken(secret: string): Promise<string> {
