@@ -1,5 +1,7 @@
 "use client";
 
+import { CompanionStrip } from "@/components/companion-cards";
+import { companionCardsForStep } from "@/lib/companion-cards";
 import { db, statusFromSteps } from "@/lib/db";
 import type { Material, Pattern, Progress, Step } from "@/lib/types";
 import { formatTimestamp, youtubeEmbedUrl } from "@/lib/youtube";
@@ -108,9 +110,18 @@ export function WorkshopView({
         Schritt {progress.currentStepIndex + 1} von {steps.length} · {percent}%
       </p>
 
-      <section className="rounded-3xl bg-foam p-5 card-shadow">
-        <p className="text-xs uppercase tracking-[0.18em] text-terracotta">{step.roundLabel}</p>
+      <section className={`rounded-3xl p-5 card-shadow ${step.uncertain ? "border border-rose/40 bg-rose/10" : "bg-foam"}`}>
+        <p className="text-xs uppercase tracking-[0.18em] text-terracotta">
+          {step.roundLabel}
+          {step.uncertain ? " · unsicher" : ""}
+        </p>
+        {step.uncertain && (
+          <p className="mt-2 rounded-2xl bg-foam px-3 py-2 text-sm">
+            Dieser Schritt ist unsicher — im Transkript nicht eindeutig. Nichts wurde dazu erfunden.
+          </p>
+        )}
         <p className="mt-2 font-display text-2xl leading-snug">{step.instruction}</p>
+        <CompanionStrip title="Dazu passend" cards={companionCardsForStep(step)} />
         <div className="mt-3 flex flex-wrap gap-2 text-sm text-muted">
           {step.stitchCount != null && <span>Soll: {step.stitchCount} Maschen</span>}
           {step.colorChange && <span>Farbe: {step.colorChange}</span>}
@@ -197,6 +208,37 @@ export function WorkshopView({
             Ausgeblendet — Stand {progress.rowCounter} bleibt gespeichert.
           </p>
         )}
+      </section>
+
+      <section className="space-y-2">
+        <h2 className="font-display text-xl">Alle Schritte</h2>
+        <p className="text-sm text-muted">Tippe den Schritt an, an dem du gerade arbeitest.</p>
+        {steps.map((item, index) => {
+          const current = index === progress.currentStepIndex;
+          return (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => void go(index)}
+              className={`w-full rounded-3xl p-3 text-left transition ${
+                current
+                  ? "bg-terracotta text-white shadow-lg ring-4 ring-yarn/70"
+                  : item.done
+                    ? "bg-foam text-muted"
+                    : item.uncertain
+                      ? "border border-rose/40 bg-rose/10"
+                      : "bg-foam"
+              }`}
+            >
+              <p className={`text-xs uppercase tracking-wide ${current ? "text-cream" : "text-terracotta"}`}>
+                {current ? "Jetzt dran · " : ""}
+                {item.roundLabel}
+                {item.done ? " · erledigt" : ""}
+              </p>
+              <p className="mt-1 line-clamp-2 text-sm">{item.instruction}</p>
+            </button>
+          );
+        })}
       </section>
 
       <section className="rounded-3xl bg-foam p-4">

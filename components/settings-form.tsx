@@ -117,6 +117,23 @@ export function SettingsForm() {
           gespeichert.
         </p>
       </section>
+
+      <section className="rounded-3xl bg-foam p-4 card-shadow">
+        <h2 className="font-display text-2xl">Zugang</h2>
+        <p className="mt-1 text-sm text-muted">
+          Die App ist mit Passwort oder PIN geschützt. Abmelden löscht nur das Zugangs-Cookie.
+        </p>
+        <button
+          type="button"
+          className="mt-3 rounded-full border border-line px-4 py-2 text-sm font-semibold"
+          onClick={async () => {
+            await fetch("/api/logout", { method: "POST" });
+            window.location.href = "/login";
+          }}
+        >
+          Abmelden
+        </button>
+      </section>
     </div>
   );
 }

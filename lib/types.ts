@@ -42,6 +42,7 @@ export interface Step {
   stitchCount?: number;
   timestampSec?: number;
   colorChange?: string;
+  uncertain?: boolean;
   done: boolean;
   note: string;
 }
@@ -127,6 +128,7 @@ export interface ExtractedPattern {
     stitchCount?: number;
     timestampSec?: number;
     colorChange?: string;
+    uncertain?: boolean;
   }[];
   gaps: Gap[];
 }

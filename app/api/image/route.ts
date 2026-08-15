@@ -1,3 +1,4 @@
+import { requireApiAccess } from "@/lib/guard";
 import { errorMessage, openAiJson, readImageModel, readOpenAiKey } from "@/lib/openai";
 import { headerImagePrompt } from "@/lib/prompts";
 import { NextResponse } from "next/server";
@@ -7,6 +8,8 @@ interface ImageResponse {
 }
 
 export async function POST(request: Request) {
+  const denied = await requireApiAccess();
+  if (denied) return denied;
   try {
     const key = readOpenAiKey(request);
     const model = readImageModel(request);

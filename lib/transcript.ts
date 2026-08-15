@@ -16,33 +16,47 @@ interface PlayerResponse {
   };
 }
 
-const ANDROID_CLIENT = {
-  clientName: "ANDROID",
-  clientVersion: "20.10.38",
-  androidSdkVersion: 34,
-  hl: "de",
-  gl: "DE",
-};
-
-const IOS_CLIENT = {
-  clientName: "IOS",
-  clientVersion: "20.10.4",
-  hl: "de",
-  gl: "DE",
-};
+const CLIENTS: { client: Record<string, unknown>; userAgent: string }[] = [
+  {
+    client: {
+      clientName: "IOS",
+      clientVersion: "20.10.4",
+      hl: "de",
+      gl: "DE",
+    },
+    userAgent: "com.google.ios.youtube/20.10.4 (iPhone16,2; U; CPU iOS 17_4 like Mac OS X)",
+  },
+  {
+    client: {
+      clientName: "ANDROID",
+      clientVersion: "20.10.38",
+      androidSdkVersion: 34,
+      hl: "de",
+      gl: "DE",
+    },
+    userAgent: "com.google.android.youtube/20.10.38 (Linux; U; Android 14)",
+  },
+  {
+    client: {
+      clientName: "TVHTML5",
+      clientVersion: "7.20250313.13.00",
+      hl: "de",
+      gl: "DE",
+    },
+    userAgent: "Mozilla/5.0 (ChromiumStylePlatform) Cobalt/Version",
+  },
+];
 
 async function fetchPlayer(
   videoId: string,
   client: Record<string, unknown>,
+  userAgent: string,
 ): Promise<PlayerResponse> {
   const response = await fetch("https://www.youtube.com/youtubei/v1/player?prettyPrint=false", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "User-Agent":
-        client.clientName === "IOS"
-          ? "com.google.ios.youtube/20.10.4 (iPhone16,2; U; CPU iOS 17_4 like Mac OS X)"
-          : "com.google.android.youtube/20.10.38 (Linux; U; Android 14)",
+      "User-Agent": userAgent,
     },
     body: JSON.stringify({
       context: { client },
@@ -56,18 +70,13 @@ async function fetchPlayer(
   return (await response.json()) as PlayerResponse;
 }
 
-function pickTrack(tracks: CaptionTrack[]): CaptionTrack | null {
-  if (tracks.length === 0) return null;
-  const scored = tracks.map((track) => {
-    const lang = (track.languageCode || "").toLowerCase();
-    let score = 0;
-    if (lang === "de" || lang.startsWith("de-")) score += 30;
-    if (lang === "en" || lang.startsWith("en-")) score += 10;
-    if (track.kind !== "asr") score += 5;
-    return { track, score };
-  });
-  scored.sort((a, b) => b.score - a.score);
-  return scored[0]?.track ?? null;
+function scoreTrack(track: CaptionTrack): number {
+  const lang = (track.languageCode || "").toLowerCase();
+  let score = 0;
+  if (lang === "de" || lang.startsWith("de-")) score += 40;
+  if (lang === "en" || lang.startsWith("en-")) score += 10;
+  if (track.kind !== "asr") score += 5;
+  return score;
 }
 
 function decodeEntities(text: string): string {
@@ -81,7 +90,13 @@ function decodeEntities(text: string): string {
     .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)));
 }
 
-function parseXmlTranscript(xml: string): TranscriptSegment[] {
+function cleanCaptionText(raw: string): string {
+  return decodeEntities(raw.replace(/<[^>]+>/g, " "))
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function parseClassicXml(xml: string): TranscriptSegment[] {
   const segments: TranscriptSegment[] = [];
   const re = /<text\b([^>]*)>([\s\S]*?)<\/text>/g;
   let match: RegExpExecArray | null;
@@ -89,8 +104,27 @@ function parseXmlTranscript(xml: string): TranscriptSegment[] {
     const attrs = match[1];
     const start = Number(/start="([^"]+)"/.exec(attrs)?.[1] ?? 0);
     const duration = Number(/dur="([^"]+)"/.exec(attrs)?.[1] ?? 0);
-    const text = decodeEntities(match[2].replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim();
+    const text = cleanCaptionText(match[2]);
     if (text) segments.push({ text, start, duration });
+  }
+  return segments;
+}
+
+function parseTimedTextV3(xml: string): TranscriptSegment[] {
+  const segments: TranscriptSegment[] = [];
+  const re = /<p\b([^>]*)>([\s\S]*?)<\/p>/g;
+  let match: RegExpExecArray | null;
+  while ((match = re.exec(xml))) {
+    const attrs = match[1];
+    const startMs = Number(/\bt="([^"]+)"/.exec(attrs)?.[1] ?? 0);
+    const durationMs = Number(/\bd="([^"]+)"/.exec(attrs)?.[1] ?? 0);
+    const text = cleanCaptionText(match[2]);
+    if (!text) continue;
+    segments.push({
+      text,
+      start: startMs / 1000,
+      duration: durationMs / 1000,
+    });
   }
   return segments;
 }
@@ -120,80 +154,125 @@ function parseJson3(json: string): TranscriptSegment[] {
   return segments;
 }
 
-async function downloadTrack(baseUrl: string): Promise<TranscriptSegment[]> {
-  const urls = [
-    `${baseUrl}${baseUrl.includes("?") ? "&" : "?"}fmt=json3`,
-    baseUrl,
-  ];
+function parseTranscriptBody(body: string): TranscriptSegment[] {
+  const trimmed = body.trim();
+  if (!trimmed) return [];
 
-  for (const url of urls) {
-    const response = await fetch(url, {
-      headers: { "User-Agent": "Mozilla/5.0" },
-    });
-    if (!response.ok) continue;
-    const body = await response.text();
-    if (!body.trim()) continue;
+  if (trimmed.startsWith("{")) {
     try {
-      if (body.trim().startsWith("{")) {
-        const parsed = parseJson3(body);
-        if (parsed.length) return parsed;
-      }
+      const json = parseJson3(trimmed);
+      if (json.length) return json;
     } catch {
-      // try xml
+      // fall through to XML
     }
-    const xml = parseXmlTranscript(body);
-    if (xml.length) return xml;
   }
 
-  throw new Error("Untertitel-Datei war leer oder unlesbar.");
+  if (trimmed.includes("<timedtext") || /<p\b/.test(trimmed)) {
+    const v3 = parseTimedTextV3(trimmed);
+    if (v3.length) return v3;
+  }
+
+  return parseClassicXml(trimmed);
 }
 
-async function tracksFromPlayer(videoId: string): Promise<{
-  title: string;
-  tracks: CaptionTrack[];
-}> {
-  const errors: string[] = [];
-  for (const client of [ANDROID_CLIENT, IOS_CLIENT]) {
+function withParams(baseUrl: string, params: Record<string, string>): string {
+  const url = new URL(baseUrl);
+  for (const [key, value] of Object.entries(params)) {
+    url.searchParams.set(key, value);
+  }
+  return url.toString();
+}
+
+async function downloadTrack(
+  baseUrl: string,
+  languageCode: string,
+  userAgent: string,
+): Promise<TranscriptSegment[]> {
+  const lang = languageCode.toLowerCase();
+  const wantGerman = !lang.startsWith("de");
+  const variants: string[] = [];
+
+  if (wantGerman) {
+    variants.push(withParams(baseUrl, { tlang: "de", fmt: "srv3" }));
+    variants.push(withParams(baseUrl, { tlang: "de" }));
+    variants.push(withParams(baseUrl, { tlang: "de", fmt: "json3" }));
+  }
+  variants.push(withParams(baseUrl, { fmt: "json3" }));
+  variants.push(withParams(baseUrl, { fmt: "srv3" }));
+  variants.push(baseUrl);
+
+  for (const url of variants) {
     try {
-      const player = await fetchPlayer(videoId, client);
-      const tracks = player.captions?.playerCaptionsTracklistRenderer?.captionTracks || [];
-      const title = player.videoDetails?.title || "YouTube-Video";
-      if (tracks.length) return { title, tracks };
-      errors.push(`${client.clientName}: keine Captions`);
-    } catch (error) {
-      errors.push(`${client.clientName}: ${error instanceof Error ? error.message : "Fehler"}`);
+      const response = await fetch(url, {
+        headers: { "User-Agent": userAgent },
+      });
+      if (!response.ok) continue;
+      const parsed = parseTranscriptBody(await response.text());
+      if (parsed.length) return parsed;
+    } catch {
+      // try next variant
     }
   }
-  throw new Error(errors.join(" · "));
+
+  return [];
+}
+
+async function collectTracks(videoId: string): Promise<{
+  title: string;
+  attempts: { track: CaptionTrack; userAgent: string }[];
+}> {
+  let title = "YouTube-Video";
+  const attempts: { track: CaptionTrack; userAgent: string }[] = [];
+  const seen = new Set<string>();
+
+  for (const { client, userAgent } of CLIENTS) {
+    try {
+      const player = await fetchPlayer(videoId, client, userAgent);
+      title = player.videoDetails?.title || title;
+      const tracks = player.captions?.playerCaptionsTracklistRenderer?.captionTracks || [];
+      const sorted = [...tracks].sort((a, b) => scoreTrack(b) - scoreTrack(a));
+      for (const track of sorted) {
+        if (!track.baseUrl || seen.has(track.baseUrl)) continue;
+        seen.add(track.baseUrl);
+        attempts.push({ track, userAgent });
+      }
+    } catch {
+      // next client
+    }
+  }
+
+  return { title, attempts };
 }
 
 export async function fetchYoutubeTranscript(videoId: string): Promise<TranscriptResult> {
-  const { title, tracks } = await tracksFromPlayer(videoId);
-  const track = pickTrack(tracks);
-  if (!track?.baseUrl) {
+  const { title, attempts } = await collectTracks(videoId);
+  if (attempts.length === 0) {
     throw new Error(
-      "Für dieses Video gibt es keine Untertitel. Ohne Transkript kann keine Anleitung erzeugt werden.",
+      "Für dieses Video gibt es kein Transkript. Ohne Transkript kann keine Anleitung erzeugt werden.",
     );
   }
 
-  const segments = await downloadTrack(track.baseUrl);
-  if (segments.length === 0) {
-    throw new Error("Das Transkript war leer.");
+  for (const { track, userAgent } of attempts) {
+    const segments = await downloadTrack(track.baseUrl || "", track.languageCode || "", userAgent);
+    if (segments.length === 0) continue;
+
+    const fullText = segments
+      .map((segment) => {
+        const m = Math.floor(segment.start / 60);
+        const s = Math.floor(segment.start % 60);
+        return `[${m}:${String(s).padStart(2, "0")}] ${segment.text}`;
+      })
+      .join("\n");
+
+    const originalLang = track.languageCode || "und";
+    return {
+      videoId,
+      title,
+      language: originalLang.toLowerCase().startsWith("de") ? originalLang : "de",
+      segments,
+      fullText,
+    };
   }
 
-  const fullText = segments
-    .map((segment) => {
-      const m = Math.floor(segment.start / 60);
-      const s = Math.floor(segment.start % 60);
-      return `[${m}:${String(s).padStart(2, "0")}] ${segment.text}`;
-    })
-    .join("\n");
-
-  return {
-    videoId,
-    title,
-    language: track.languageCode || "und",
-    segments,
-    fullText,
-  };
+  throw new Error("Das Transkript konnte nicht gelesen werden. Bitte einen anderen Link versuchen.");
 }

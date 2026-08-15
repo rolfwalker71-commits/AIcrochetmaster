@@ -1,7 +1,10 @@
+import { requireApiAccess } from "@/lib/guard";
 import { errorMessage, readOpenAiKey } from "@/lib/openai";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
+  const denied = await requireApiAccess();
+  if (denied) return denied;
   try {
     const key = readOpenAiKey(request);
     const response = await fetch("https://api.openai.com/v1/models", {

@@ -1,9 +1,12 @@
+import { requireApiAccess } from "@/lib/guard";
 import { errorMessage } from "@/lib/openai";
 import { fetchYoutubeTranscript } from "@/lib/transcript";
 import { extractYoutubeVideoId, youtubeWatchUrl } from "@/lib/youtube";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
+  const denied = await requireApiAccess();
+  if (denied) return denied;
   try {
     const body = (await request.json()) as { url?: string };
     const videoId = extractYoutubeVideoId(body.url || "");

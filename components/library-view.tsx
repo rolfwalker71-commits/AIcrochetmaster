@@ -97,15 +97,23 @@ function EmptyState({ hasAny }: { hasAny: boolean }) {
         {hasAny ? "Nichts zu diesem Filter" : "Noch keine Anleitung"}
       </h2>
       <p className="mt-2 text-sm text-muted">
-        Teile ein YouTube-Häkelvideo oder füge den Link ein. Daraus wird eine lückenlose
-        Schriftanleitung mit Headerbild.
+        Importierte YouTube-Anleitungen erscheinen hier, sobald die Analyse fertig ist.
+        Motiv- und Hilfekarten liegen unter Karten — die sind unabhängig vom Import.
       </p>
-      <Link
-        href="/import"
-        className="mt-4 inline-block rounded-full bg-terracotta px-4 py-2 font-semibold text-white"
-      >
-        Erstes Video importieren
-      </Link>
+      <div className="mt-4 flex flex-wrap justify-center gap-2">
+        <Link
+          href="/import"
+          className="inline-block rounded-full bg-terracotta px-4 py-2 font-semibold text-white"
+        >
+          Video importieren
+        </Link>
+        <Link
+          href="/cards"
+          className="inline-block rounded-full border border-line px-4 py-2 font-semibold"
+        >
+          Motivkarten öffnen
+        </Link>
+      </div>
     </div>
   );
 }

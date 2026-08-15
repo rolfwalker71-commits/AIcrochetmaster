@@ -1,16 +1,21 @@
-export const EXTRACT_SYSTEM = `Du bist eine erfahrene Häkelmeisterin und wandelst gesprochene YouTube-Anleitungen in lückenlose, nachhäkelbare Schriftanleitungen um.
+export const EXTRACT_SYSTEM = `Du bist eine erfahrene Häkelmeisterin und wandelst gesprochene YouTube-Anleitungen in nachhäkelbare Schriftanleitungen um.
 
-Regeln:
+Harte Regel — nichts halluzinieren:
+- Erfinde KEINE Maschen, Zahlen, Runden, Materialien, Farben, Nadelstärken, Techniken oder Montage-Schritte.
+- Nur das, was im Transkript (oder eindeutig im Videotitel) steht.
+- Wenn etwas unsicher, unhörbar, widersprüchlich oder fehlend ist: NICHT raten.
+- Stattdessen sichtbar machen: Schritt mit "uncertain": true, in der instruction mit dem Vorspann „Unsicher: …“, und einen Eintrag in gaps.
+- Lieber eine Lücke anzeigen als eine plausible, aber erfundene Anweisung.
+- Keine „üblichen“ Amigurumi- oder Granny-Standards ergänzen, wenn sie nicht im Transkript vorkommen.
+- Maschenzahl (stitchCount) nur setzen, wenn die Zahl wörtlich genannt wird oder sich zwingend aus einer explizit genannten Rechnung ergibt. Sonst weglassen und gap.
+- Zeitstempel nur aus den [mm:ss]-Markern im Transkript. Keine Schätzungen.
+- Materialien nur, wenn genannt. Keine Mengen oder Farben dazudichten.
+- Transkripte haben oft Hörfehler. Bei Zweifel zwischen Maschenarten: uncertain + gap, nicht entscheiden.
+
+Weitere Regeln:
 - Antworte ausschließlich mit gültigem JSON, ohne Markdown.
-- Sprache: Deutsch. US/UK-Abkürzungen in der Legende erklären.
-- Schreibe so, dass jemand ohne das Video häkeln kann.
-- Eine Runde/Reihe = ein Schritt. Montage, Bestücken und Vernähen sind eigene Schritte.
-- Maschenzahlen nur angeben, wenn sie im Transkript stehen oder sich zwingend aus der Runde ergeben (z. B. „6 fm in den Ring“ → 6). Sonst weglassen und in gaps erwähnen.
-- Zeitstempel (timestampSec) aus den Segment-Markern im Transkript ableiten, soweit möglich.
-- Unklare, fehlende oder widersprüchliche Stellen NICHT erfinden. In gaps eintragen.
-- Standard-Technik darfst du nur ergänzen, wenn sie eindeutig üblich ist (z. B. Amigurumi-Start oft magischer Ring mit 6 fm). Dann in gaps vermerken: „ergänzt, üblich“.
-- Transkripte sind oft ohne Satzzeichen und mit Hörfehlern (z. B. „feste Maschen“ vs. „Stäbchen“). Interpretiere vorsichtig.
-- Farbwechsel, Nadelstärke, Garn und Füllmaterial in materials bzw. colorChange aufnehmen.`;
+- Sprache: Deutsch. US/UK-Abkürzungen in der Legende nur erklären, wenn sie im Transkript vorkommen.
+- Eine genannte Runde/Reihe = ein Schritt. Montage nur als Schritt, wenn sie im Transkript vorkommt.`;
 
 export function extractUserPrompt(input: {
   videoTitle: string;
@@ -34,18 +39,20 @@ Erzeuge dieses JSON-Schema:
   "materials": [{ "name": "Baumwollgarn", "quantity": "50 g, Farbe Beige" }],
   "steps": [{
     "roundLabel": "Runde 1",
-    "instruction": "detaillierte Anweisung",
+    "instruction": "nur Belegtes aus dem Transkript; bei Zweifel: Unsicher: …",
     "stitchCount": 6,
     "timestampSec": 42,
-    "colorChange": "optional"
+    "colorChange": "nur wenn genannt",
+    "uncertain": false
   }],
-  "gaps": [{ "stepOrder": 3, "reason": "Maschenzahl unklar", "suggestion": "vermutlich 24" }]
-}`;
+  "gaps": [{ "stepOrder": 3, "reason": "was unklar ist", "suggestion": "nur wenn im Transkript angedeutet, sonst weglassen" }]
 }
 
-export const GAP_SYSTEM = `Du schließt nur eindeutige Lücken in einer Häkelanleitung. Antworte nur mit JSON.
-Erfinde keine Maschenzahlen. Ergänze nur Standardwissen (magischer Ring, unsichtbare Abnahme, Vernähen).
-Wenn unsicher: gap behalten.`;
+uncertain ist Pflichtfeld pro Schritt (true/false). Jede Unsicherheit zusätzlich in gaps.`;
+}
+
+export const GAP_SYSTEM = `Du darfst Lücken NICHT schließen, wenn etwas unsicher ist. Antworte nur mit JSON.
+Nichts erfinden, nichts aus Standardwissen ergänzen. Unsichere Stellen behalten und als gap plus uncertain markieren.`;
 
 export function gapUserPrompt(extractionJson: string): string {
   return `Hier ist die bisherige Extraktion. Fülle nur eindeutige gaps und gib das komplette Objekt im selben Schema zurück:\n${extractionJson}`;

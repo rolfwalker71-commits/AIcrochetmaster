@@ -8,3 +8,5 @@ services:
     environment:
       PORT: "3010"
       HOSTNAME: "0.0.0.0"
+      APP_PASSWORD: ${APP_PASSWORD:-}
+      APP_PIN: ${APP_PIN:-}

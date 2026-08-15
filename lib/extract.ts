@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { openAiJson } from "./openai";
-import { EXTRACT_SYSTEM, extractUserPrompt, GAP_SYSTEM, gapUserPrompt } from "./prompts";
+import { EXTRACT_SYSTEM, extractUserPrompt } from "./prompts";
 import type { ExtractedPattern, TextModel, TranscriptResult } from "./types";
 
 const extractedSchema = z.object({
@@ -30,6 +30,7 @@ const extractedSchema = z.object({
         stitchCount: z.number().optional(),
         timestampSec: z.number().optional(),
         colorChange: z.string().optional(),
+        uncertain: z.boolean().optional(),
       }),
     )
     .default([]),
@@ -86,7 +87,7 @@ export async function extractPatternFromTranscript(
       ? `${transcript.fullText.slice(0, MAX_TRANSCRIPT_CHARS)}\n\n[Transkript gekürzt]`
       : transcript.fullText;
 
-  let extracted = await completeJson(
+  const extracted = await completeJson(
     key,
     model,
     EXTRACT_SYSTEM,
@@ -99,19 +100,6 @@ export async function extractPatternFromTranscript(
 
   if (extracted.steps.length === 0) {
     throw new Error("Es konnten keine Häkel-Schritte erkannt werden.");
-  }
-
-  if (extracted.gaps.length > 0) {
-    try {
-      extracted = await completeJson(
-        key,
-        model,
-        GAP_SYSTEM,
-        gapUserPrompt(JSON.stringify(extracted)),
-      );
-    } catch {
-      // keep first pass
-    }
   }
 
   return extracted;

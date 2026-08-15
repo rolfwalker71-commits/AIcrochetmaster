@@ -1,6 +1,9 @@
 "use client";
 
-import { db, deletePattern } from "@/lib/db";
+import { CompanionStrip } from "@/components/companion-cards";
+import { companionCardsForPattern, companionCardsForStep } from "@/lib/companion-cards";
+import { db, deletePattern, getSettings } from "@/lib/db";
+import type { Progress } from "@/lib/types";
 import { formatTimestamp, youtubeEmbedUrl } from "@/lib/youtube";
 import { useLiveQuery } from "dexie-react-hooks";
 import Link from "next/link";
@@ -14,6 +17,18 @@ export function PatternDetail({ id }: { id: string }) {
     [id],
   );
   const materials = useLiveQuery(() => db.materials.where("patternId").equals(id).toArray(), [id]);
+  const progress = useLiveQuery(() => db.progress.get(id), [id]);
+
+  const selectStep = async (index: number) => {
+    const current = progress ?? {
+      patternId: id,
+      currentStepIndex: 0,
+      rowCounter: 0,
+      rowCounterVisible: (await getSettings()).showRowCounter,
+    };
+    const next: Progress = { ...current, currentStepIndex: index };
+    await db.progress.put(next);
+  };
 
   if (pattern === undefined) return <p className="text-muted">Wird geladen …</p>;
   if (!pattern) return <p>Anleitung nicht gefunden.</p>;
@@ -111,19 +126,58 @@ export function PatternDetail({ id }: { id: string }) {
         </section>
       )}
 
+      <CompanionStrip
+        title="Begleitkarten"
+        cards={companionCardsForPattern(pattern.motifTags, steps ?? [])}
+      />
+
       <section className="space-y-2">
         <h3 className="font-display text-xl">Schritte</h3>
-        {(steps ?? []).map((step) => (
-          <article key={step.id} className="rounded-3xl bg-foam p-4">
-            <p className="text-xs uppercase tracking-wide text-terracotta">{step.roundLabel}</p>
-            <p className="mt-1">{step.instruction}</p>
-            <p className="mt-2 text-xs text-muted">
-              {step.stitchCount != null ? `${step.stitchCount} Maschen` : ""}
-              {step.timestampSec != null ? ` · ${formatTimestamp(step.timestampSec)}` : ""}
-              {step.colorChange ? ` · ${step.colorChange}` : ""}
-            </p>
-          </article>
-        ))}
+        <p className="text-sm text-muted">Tippe einen Schritt an, an dem du gerade arbeitest.</p>
+        {(steps ?? []).map((step, index) => {
+          const current = (progress?.currentStepIndex ?? 0) === index;
+          const companions = current ? companionCardsForStep(step) : [];
+          return (
+            <button
+              key={step.id}
+              type="button"
+              onClick={() => void selectStep(index)}
+              className={`w-full rounded-3xl p-4 text-left transition ${
+                current
+                  ? "bg-terracotta text-white shadow-lg ring-4 ring-yarn/70"
+                  : step.uncertain
+                    ? "border border-rose/40 bg-rose/10"
+                    : "bg-foam"
+              }`}
+            >
+              <p
+                className={`text-xs uppercase tracking-wide ${current ? "text-cream" : "text-terracotta"}`}
+              >
+                {current ? "Jetzt dran · " : ""}
+                {step.roundLabel}
+                {step.uncertain ? " · unsicher" : ""}
+              </p>
+              <p className="mt-1">{step.instruction}</p>
+              <p className={`mt-2 text-xs ${current ? "text-cream/80" : "text-muted"}`}>
+                {step.stitchCount != null ? `${step.stitchCount} Maschen` : ""}
+                {step.timestampSec != null ? ` · ${formatTimestamp(step.timestampSec)}` : ""}
+                {step.colorChange ? ` · ${step.colorChange}` : ""}
+              </p>
+              {companions.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {companions.map((card) => (
+                    <span
+                      key={card.id}
+                      className="rounded-full bg-cream px-2 py-0.5 text-xs text-ink"
+                    >
+                      {card.title}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </button>
+          );
+        })}
       </section>
 
       <button

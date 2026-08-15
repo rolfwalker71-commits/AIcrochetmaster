@@ -1,6 +1,5 @@
 "use client";
 
-import { ReviewEditor } from "@/components/review-editor";
 import { apiPost } from "@/lib/api";
 import { db, getSettings } from "@/lib/db";
 import { createId } from "@/lib/id";
@@ -9,15 +8,14 @@ import { extractYoutubeVideoId, youtubeWatchUrl } from "@/lib/youtube";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
-type Phase = "idle" | "transcript" | "extract" | "image" | "review" | "saving";
+type Phase = "idle" | "transcript" | "extract" | "image" | "saving";
 
 const PHASE_LABEL: Record<Phase, string> = {
   idle: "",
   transcript: "Transkript wird geholt …",
   extract: "Anleitung wird extrahiert …",
   image: "Headerbild wird erzeugt …",
-  review: "Bitte prüfen und speichern",
-  saving: "Wird gespeichert …",
+  saving: "Wird in der Bibliothek gespeichert …",
 };
 
 export function ImportWizard({ initialText = "" }: { initialText?: string }) {
@@ -26,15 +24,24 @@ export function ImportWizard({ initialText = "" }: { initialText?: string }) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [error, setError] = useState("");
   const [hasKey, setHasKey] = useState<boolean | null>(null);
-  const [transcript, setTranscript] = useState<(TranscriptResult & { youtubeUrl: string }) | null>(
-    null,
-  );
-  const [draft, setDraft] = useState<ExtractedPattern | null>(null);
-  const [headerImage, setHeaderImage] = useState<string>();
+  const [elapsedSec, setElapsedSec] = useState(0);
 
   useEffect(() => {
     getSettings().then((settings) => setHasKey(Boolean(settings.openaiKey)));
   }, []);
+
+  const busy = phase !== "idle";
+  useEffect(() => {
+    if (!busy) {
+      setElapsedSec(0);
+      return;
+    }
+    const started = Date.now();
+    const timer = window.setInterval(() => {
+      setElapsedSec(Math.floor((Date.now() - started) / 1000));
+    }, 500);
+    return () => window.clearInterval(timer);
+  }, [busy, phase]);
 
   const parsedId = useMemo(() => extractYoutubeVideoId(url), [url]);
 
@@ -56,13 +63,22 @@ export function ImportWizard({ initialText = "" }: { initialText?: string }) {
         "/api/transcript",
         { url },
       );
-      setTranscript(nextTranscript);
-
       setPhase("extract");
-      const extraction = await apiPost<ExtractedPattern>("/api/extract", nextTranscript, settings);
-      setDraft(extraction);
+      const extraction = await apiPost<ExtractedPattern>(
+        "/api/extract",
+        {
+          videoId: nextTranscript.videoId,
+          title: nextTranscript.title,
+          language: nextTranscript.language,
+          fullText: nextTranscript.fullText,
+          segments: [],
+        },
+        settings,
+        180_000,
+      );
 
       setPhase("image");
+      let headerImage: string | undefined;
       try {
         const image = await apiPost<{ image: string }>(
           "/api/image",
@@ -73,75 +89,18 @@ export function ImportWizard({ initialText = "" }: { initialText?: string }) {
           },
           settings,
         );
-        setHeaderImage(image.image);
+        headerImage = image.image;
       } catch {
-        setHeaderImage(undefined);
+        headerImage = undefined;
       }
 
-      setPhase("review");
+      setPhase("saving");
+      const id = await persistPattern(nextTranscript, extraction, headerImage, settings.showRowCounter);
+      router.push(`/pattern/${id}`);
     } catch (err) {
       setPhase("idle");
       setError(err instanceof Error ? err.message : "Import fehlgeschlagen.");
     }
-  };
-
-  const save = async () => {
-    if (!draft || !transcript) return;
-    setPhase("saving");
-    const settings = await getSettings();
-    const id = createId();
-    const now = Date.now();
-
-    await db.patterns.put({
-      id,
-      title: draft.title,
-      description: draft.description,
-      youtubeUrl: transcript.youtubeUrl || youtubeWatchUrl(transcript.videoId),
-      videoId: transcript.videoId,
-      headerImage,
-      difficulty: draft.difficulty,
-      estimatedDuration: draft.estimatedDuration,
-      status: "inbox",
-      abbreviations: draft.abbreviations,
-      motifTags: draft.motifTags,
-      gaps: draft.gaps,
-      createdAt: now,
-      updatedAt: now,
-    });
-
-    await db.steps.bulkPut(
-      draft.steps.map((step, index) => ({
-        id: createId(),
-        patternId: id,
-        order: index,
-        roundLabel: step.roundLabel,
-        instruction: step.instruction,
-        stitchCount: step.stitchCount,
-        timestampSec: step.timestampSec,
-        colorChange: step.colorChange,
-        done: false,
-        note: "",
-      })),
-    );
-
-    await db.materials.bulkPut(
-      draft.materials.map((material) => ({
-        id: createId(),
-        patternId: id,
-        name: material.name,
-        quantity: material.quantity,
-        done: false,
-      })),
-    );
-
-    await db.progress.put({
-      patternId: id,
-      currentStepIndex: 0,
-      rowCounter: 0,
-      rowCounterVisible: settings.showRowCounter,
-    });
-
-    router.push(`/pattern/${id}`);
   };
 
   return (
@@ -170,33 +129,86 @@ export function ImportWizard({ initialText = "" }: { initialText?: string }) {
         <button
           type="button"
           onClick={() => void run()}
-          disabled={phase !== "idle" && phase !== "review"}
+          disabled={busy}
           className="mt-4 w-full rounded-full bg-terracotta py-3 font-semibold text-white disabled:opacity-60"
         >
-          {phase === "idle" || phase === "review" ? "Transkript analysieren" : PHASE_LABEL[phase]}
+          {phase === "idle" ? "Transkript analysieren" : PHASE_LABEL[phase]}
         </button>
       </div>
 
-      {phase !== "idle" && phase !== "review" && (
-        <p className="text-center text-sm text-muted">{PHASE_LABEL[phase]}</p>
-      )}
-
-      {phase === "review" && draft && (
-        <div className="space-y-4">
-          {headerImage && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={headerImage} alt="" className="h-44 w-full rounded-3xl object-cover" />
+      {busy && (
+        <p className="text-center text-sm text-muted">
+          {PHASE_LABEL[phase]} {elapsedSec > 0 ? `${elapsedSec}s` : ""}
+          {phase === "extract" && (
+            <>
+              <br />
+              Lange Videos brauchen oft 1–3 Minuten. Danach liegt die Anleitung in der Bibliothek.
+            </>
           )}
-          <ReviewEditor value={draft} onChange={setDraft} />
-          <button
-            type="button"
-            onClick={() => void save()}
-            className="w-full rounded-full bg-sage py-3 font-semibold text-white"
-          >
-            In die Bibliothek legen
-          </button>
-        </div>
+        </p>
       )}
     </div>
   );
+}
+
+async function persistPattern(
+  transcript: TranscriptResult & { youtubeUrl?: string },
+  draft: ExtractedPattern,
+  headerImage: string | undefined,
+  showRowCounter: boolean,
+): Promise<string> {
+  const id = createId();
+  const now = Date.now();
+
+  await db.patterns.put({
+    id,
+    title: draft.title,
+    description: draft.description,
+    youtubeUrl: transcript.youtubeUrl || youtubeWatchUrl(transcript.videoId),
+    videoId: transcript.videoId,
+    headerImage,
+    difficulty: draft.difficulty,
+    estimatedDuration: draft.estimatedDuration,
+    status: "inbox",
+    abbreviations: draft.abbreviations,
+    motifTags: draft.motifTags,
+    gaps: draft.gaps,
+    createdAt: now,
+    updatedAt: now,
+  });
+
+  await db.steps.bulkPut(
+    draft.steps.map((step, index) => ({
+      id: createId(),
+      patternId: id,
+      order: index,
+      roundLabel: step.roundLabel,
+      instruction: step.instruction,
+      stitchCount: step.stitchCount,
+      timestampSec: step.timestampSec,
+      colorChange: step.colorChange,
+      uncertain: step.uncertain,
+      done: false,
+      note: "",
+    })),
+  );
+
+  await db.materials.bulkPut(
+    draft.materials.map((material) => ({
+      id: createId(),
+      patternId: id,
+      name: material.name,
+      quantity: material.quantity,
+      done: false,
+    })),
+  );
+
+  await db.progress.put({
+    patternId: id,
+    currentStepIndex: 0,
+    rowCounter: 0,
+    rowCounterVisible: showRowCounter,
+  });
+
+  return id;
 }

@@ -4,6 +4,22 @@ PWA, die einen YouTube-Häkel-Link (einfügen oder Android-Share) in eine lücke
 
 Der OpenAI-Key liegt nur im Browser (IndexedDB), nicht im Container.
 
+## Zugangsschutz
+
+Hinter einem Reverse-Proxy ist die App sonst öffentlich. Setze in einer `.env` neben der `docker-compose.yml` ein Passwort **oder** eine PIN:
+
+```bash
+cp .env.example .env
+```
+
+```env
+APP_PASSWORD=bitte-aendern
+# oder
+# APP_PIN=1234
+```
+
+Ohne gesetztes Geheimnis bleibt Production gesperrt (nur Login-Hinweis). Lokal (`npm run dev`) läuft die App ohne Passwort weiter. Abmelden geht unter **Mehr**.
+
 ## Lokal entwickeln
 
 ```bash
