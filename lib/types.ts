@@ -32,6 +32,15 @@ export interface Pattern {
   abbreviations: Abbreviation[];
   motifTags: string[];
   gaps: Gap[];
+  analysisUsage?: {
+    model: string;
+    inputTokens: number;
+    outputTokens: number;
+    calls: number;
+    usd: number;
+    imageUsd?: number;
+    estimated?: boolean;
+  };
   createdAt: number;
   updatedAt: number;
 }
@@ -46,6 +55,9 @@ export interface Step {
   timestampSec?: number;
   colorChange?: string;
   uncertain?: boolean;
+  pdfPage?: number;
+  imageHint?: string;
+  imageDataUrl?: string;
   done: boolean;
   note: string;
 }
@@ -132,6 +144,9 @@ export interface ExtractedPattern {
     timestampSec?: number;
     colorChange?: string;
     uncertain?: boolean;
+    pdfPage?: number;
+    imageHint?: string;
+    imageDataUrl?: string;
   }[];
   gaps: Gap[];
 }

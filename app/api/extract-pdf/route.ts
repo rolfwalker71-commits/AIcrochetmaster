@@ -28,9 +28,15 @@ export async function POST(request: Request) {
     if (bytes[0] !== 0x25 || bytes[1] !== 0x50 || bytes[2] !== 0x44 || bytes[3] !== 0x46) {
       return NextResponse.json({ error: "Die Datei ist keine gültige PDF." }, { status: 400 });
     }
-    const extraction = await extractPatternFromPdf(key, model, file.name || "anleitung.pdf", bytes);
+    const { extraction, usage } = await extractPatternFromPdf(
+      key,
+      model,
+      file.name || "anleitung.pdf",
+      bytes,
+    );
     return NextResponse.json({
       extraction,
+      usage,
       sourceName: file.name || "anleitung.pdf",
     });
   } catch (error) {

@@ -16,8 +16,8 @@ export async function POST(request: Request) {
     if (!transcript?.fullText || !transcript.videoId) {
       return NextResponse.json({ error: "Transkript fehlt." }, { status: 400 });
     }
-    const extraction = await extractPatternFromTranscript(key, model, transcript);
-    return NextResponse.json(extraction);
+    const { extraction, usage } = await extractPatternFromTranscript(key, model, transcript);
+    return NextResponse.json({ extraction, usage });
   } catch (error) {
     return NextResponse.json({ error: errorMessage(error) }, { status: 400 });
   }

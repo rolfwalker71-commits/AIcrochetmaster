@@ -1,6 +1,7 @@
 import { requireApiAccess } from "@/lib/guard";
 import { errorMessage, openAiJson, readImageModel, readOpenAiKey } from "@/lib/openai";
 import { headerImagePrompt } from "@/lib/prompts";
+import { imageUsd } from "@/lib/usage";
 import { NextResponse } from "next/server";
 
 interface ImageResponse {
@@ -30,23 +31,27 @@ export async function POST(request: Request) {
       prompt,
       size: "1024x1024",
       n: 1,
+      quality: model === "dall-e-3" ? "standard" : "low",
     };
 
     if (model === "dall-e-3") {
       payload.response_format = "b64_json";
-      payload.quality = "standard";
     }
 
     const data = await openAiJson<ImageResponse>(key, "images/generations", payload);
     const first = data.data?.[0];
     if (first?.b64_json) {
-      return NextResponse.json({ image: `data:image/png;base64,${first.b64_json}` });
+      return NextResponse.json({
+        image: `data:image/png;base64,${first.b64_json}`,
+        imageUsd: imageUsd(model),
+      });
     }
     if (first?.url) {
       const imageRes = await fetch(first.url);
       const buffer = Buffer.from(await imageRes.arrayBuffer());
       return NextResponse.json({
         image: `data:image/png;base64,${buffer.toString("base64")}`,
+        imageUsd: imageUsd(model),
       });
     }
     return NextResponse.json({ error: "Kein Bild erhalten." }, { status: 400 });

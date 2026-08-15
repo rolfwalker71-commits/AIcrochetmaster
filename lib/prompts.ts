@@ -62,6 +62,7 @@ Harte Regel — nichts halluzinieren:
 - timestampSec weglassen (kein Video).
 - Materialien nur, wenn genannt. Keine Mengen oder Farben dazudichten.
 - Diagramme und Fotos mitlesen: Teile (Kopf, Körper, Ohren …) nacheinander, aber jede Runde trotzdem einzeln. Ein Teil ist KEINE Zusammenfassung — alle Runden dieses Teils ausgeben.
+- Wenn ein Foto oder Diagramm zu einem Teil gehört: pdfPage (1-basierte Seitenzahl) und kurzes imageHint setzen. Dieselbe Seite darf an mehreren Runden desselben Teils hängen. Keine Seite erfinden.
 
 Weitere Regeln:
 - Antworte ausschließlich mit gültigem JSON, ohne Markdown.
@@ -86,12 +87,15 @@ Lies das gesamte PDF (Text und Seitenbilder). Erzeuge dieses JSON-Schema:
     "instruction": "nur DIESE eine Runde aus dem PDF; bei Zweifel: Unsicher: …",
     "stitchCount": 6,
     "colorChange": "nur wenn genannt",
-    "uncertain": false
+    "uncertain": false,
+    "pdfPage": 3,
+    "imageHint": "Foto oder Diagramm auf dieser Seite, z. B. Ohr"
   }],
   "gaps": [{ "stepOrder": 3, "reason": "was unklar ist", "suggestion": "nur wenn im PDF angedeutet, sonst weglassen" }]
 }
 
 Jeder steps-Eintrag = genau eine Runde. Beispiel falsch: drei Blöcke „Kopf / Körper / Montage“ oder "Runden 2–5: 6 fm". Beispiel richtig: „Kopf · Runde 1“, „Kopf · Runde 2“, … bis zur letzten Runde, dann eigene Montage-Schritte.
+pdfPage nur setzen, wenn auf dieser Seite ein Foto oder Diagramm zu diesem Teil/Schritt steht. imageHint kurz, auf Deutsch.
 quantity weglassen oder "" setzen, wenn die Menge nicht genannt ist.
 uncertain ist Pflichtfeld pro Schritt (true/false). Jede Unsicherheit zusätzlich in gaps.`;
 }
@@ -177,6 +181,8 @@ export function gapUserPrompt(extractionJson: string): string {
 
 export function headerImagePrompt(title: string, description: string, tags: string[]): string {
   const subject = [title, ...tags].filter(Boolean).join(", ");
-  return `Soft product photo of a handmade crochet piece: ${subject}. ${description}
-The finished crochet object sits on natural linen, warm afternoon light, shallow depth of field, cozy craft aesthetic, realistic yarn texture, no text, no watermark, no hands, no people, no logo.`;
+  return `Simple cozy illustration of a handmade crochet piece: ${subject}. ${description}
+Flat or soft watercolor style, few warm colors, clear silhouette, small craft poster.
+Not photorealistic, not 3D render, not ultra-detailed, not 4K.
+No text, no watermark, no hands, no people, no logo.`;
 }

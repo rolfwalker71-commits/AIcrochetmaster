@@ -8,10 +8,17 @@ import {
   extractUserPrompt,
 } from "./prompts";
 import type { Difficulty, ExtractedPattern, TextModel, TranscriptResult } from "./types";
+import { addUsageFromResponse, emptyUsage, type AnalysisUsage } from "./usage";
 import { assignStepTimestamps, parseTimestamp } from "./youtube";
+
+export interface ExtractResult {
+  extraction: ExtractedPattern;
+  usage: AnalysisUsage;
+}
 
 interface ChatCompletion {
   choices?: { message?: { content?: string }; finish_reason?: string }[];
+  usage?: { prompt_tokens?: number; completion_tokens?: number };
 }
 
 function asList(value: unknown): unknown[] {
@@ -145,6 +152,11 @@ function normalizeExtracted(raw: unknown): ExtractedPattern {
           timestampSec: parseTimestamp(rec.timestampSec ?? rec.timestamp),
           colorChange: asText(rec.colorChange) || undefined,
           uncertain: asBool(rec.uncertain),
+          pdfPage: (() => {
+            const page = asNumber(rec.pdfPage ?? rec.page);
+            return page && page >= 1 ? Math.floor(page) : undefined;
+          })(),
+          imageHint: asText(rec.imageHint ?? rec.image) || undefined,
         },
       ];
     }),
@@ -177,6 +189,7 @@ async function completeJson(
   model: TextModel,
   system: string,
   user: string,
+  usage: AnalysisUsage,
 ): Promise<ExtractedPattern> {
   const data = await openAiJson<ChatCompletion>(key, "chat/completions", {
     model,
@@ -188,6 +201,7 @@ async function completeJson(
       { role: "user", content: user },
     ],
   });
+  addUsageFromResponse(usage, data);
   const content = data.choices?.[0]?.message?.content;
   if (!content) throw new Error("Das Modell hat keine Anleitung geliefert.");
   return parseContent(content);
@@ -290,7 +304,8 @@ export async function extractPatternFromTranscript(
   key: string,
   model: TextModel,
   transcript: TranscriptResult,
-): Promise<ExtractedPattern> {
+): Promise<ExtractResult> {
+  const usage = emptyUsage(model);
   const text = transcriptText(transcript);
   const chunks = chunkTranscriptText(text);
   const parts: ExtractedPattern[] = [];
@@ -314,7 +329,7 @@ export async function extractPatternFromTranscript(
           });
     let part: ExtractedPattern | undefined;
     try {
-      part = await completeJson(key, model, EXTRACT_SYSTEM, user);
+      part = await completeJson(key, model, EXTRACT_SYSTEM, user, usage);
     } catch {
       try {
         part = await completeJson(
@@ -322,6 +337,7 @@ export async function extractPatternFromTranscript(
           model,
           EXTRACT_SYSTEM,
           `${user}\n\n${extractRetryUserPrompt(0)}`,
+          usage,
         );
       } catch {
         continue;
@@ -334,6 +350,7 @@ export async function extractPatternFromTranscript(
           model,
           EXTRACT_SYSTEM,
           `${user}\n\n${extractRetryUserPrompt(part.steps.length)}`,
+          usage,
         );
         if (again.steps.length >= part.steps.length) part = again;
       } catch {
@@ -354,6 +371,7 @@ export async function extractPatternFromTranscript(
         language: transcript.language,
         transcript: text,
       })}\n\n${extractRetryUserPrompt(extracted.steps.length)}`,
+      usage,
     );
     extracted.steps = expandCombinedSteps(extracted.steps);
   }
@@ -363,12 +381,13 @@ export async function extractPatternFromTranscript(
   }
 
   extracted.steps = assignStepTimestamps(extracted.steps, text);
-  return extracted;
+  return { extraction: extracted, usage };
 }
 
 interface ResponsesResult {
   output_text?: string;
   output?: { content?: { type?: string; text?: string }[] }[];
+  usage?: { input_tokens?: number; output_tokens?: number };
 }
 
 function textFromResponses(data: ResponsesResult): string {
@@ -387,7 +406,8 @@ export async function extractPatternFromPdf(
   model: TextModel,
   fileName: string,
   pdfBytes: Uint8Array,
-): Promise<ExtractedPattern> {
+): Promise<ExtractResult> {
+  const usage = emptyUsage(model);
   const fileData = `data:application/pdf;base64,${Buffer.from(pdfBytes).toString("base64")}`;
   const data = await openAiJson<ResponsesResult>(key, "responses", {
     model,
@@ -411,6 +431,7 @@ export async function extractPatternFromPdf(
       },
     ],
   });
+  addUsageFromResponse(usage, data);
   const content = textFromResponses(data);
   if (!content) throw new Error("Das Modell hat keine Anleitung aus dem PDF geliefert.");
   let extracted = parseContent(content);
@@ -442,6 +463,7 @@ export async function extractPatternFromPdf(
         },
       ],
     });
+    addUsageFromResponse(usage, retry);
     const retryContent = textFromResponses(retry);
     if (retryContent) {
       const again = parseContent(retryContent);
@@ -453,7 +475,7 @@ export async function extractPatternFromPdf(
   if (extracted.steps.length === 0) {
     throw new Error("Es konnten keine Häkel-Schritte im PDF erkannt werden.");
   }
-  return extracted;
+  return { extraction: extracted, usage };
 }
 
 const RANGE_RE =

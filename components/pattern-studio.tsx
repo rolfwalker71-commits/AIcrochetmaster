@@ -2,6 +2,8 @@
 
 import { CompanionStrip } from "@/components/companion-cards";
 import { StepHelpGraphic } from "@/components/step-help-graphic";
+import { StepPhoto } from "@/components/step-photo";
+import { UsageNote } from "@/components/usage-note";
 import { VideoPopout } from "@/components/video-popout";
 import { companionCardsForPattern, companionCardsForStep } from "@/lib/companion-cards";
 import { apiPost } from "@/lib/api";
@@ -229,6 +231,7 @@ export function PatternStudio({
               Video öffnen
             </button>
           )}
+          {pattern.analysisUsage && <UsageNote usage={pattern.analysisUsage} />}
           <button
             type="button"
             className="w-full text-sm text-rose"
@@ -445,6 +448,9 @@ function StepCard({
             .join(" · ")}
         </p>
       </button>
+      {step.imageDataUrl && (
+        <StepPhoto src={step.imageDataUrl} hint={step.imageHint} current={current} />
+      )}
       <StepHelpGraphic step={step} companions={companions} current={current} />
       {canPlayVideo && (
         <button
