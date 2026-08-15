@@ -7,7 +7,7 @@ import type { Progress, Step } from "@/lib/types";
 import { formatTimestamp, youtubeEmbedUrl } from "@/lib/youtube";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type Section = "projekt" | "infos" | "schritte";
 
@@ -32,6 +32,7 @@ export function PatternStudio({
 }) {
   const router = useRouter();
   const [section, setSection] = useState<Section>(initialSection);
+  const jumpedToOpenStep = useRef(false);
   const pattern = useLiveQuery(() => db.patterns.get(id), [id]);
   const steps = useLiveQuery(() => db.steps.where("patternId").equals(id).sortBy("order"), [id]);
   const materials = useLiveQuery(() => db.materials.where("patternId").equals(id).toArray(), [id]);
@@ -79,6 +80,29 @@ export function PatternStudio({
     await db.progress.put(next);
     return next;
   };
+
+  useEffect(() => {
+    if (section !== "schritte") {
+      jumpedToOpenStep.current = false;
+      return;
+    }
+    if (!steps?.length || jumpedToOpenStep.current) return;
+    jumpedToOpenStep.current = true;
+    const nextOpen = steps.findIndex((step) => !step.done);
+    const target = nextOpen === -1 ? steps.length - 1 : nextOpen;
+    void (async () => {
+      const current = await ensureProgress();
+      if (current.currentStepIndex !== target) {
+        await db.progress.put({ ...current, currentStepIndex: target });
+      }
+      window.setTimeout(() => {
+        document.getElementById(`step-${target}`)?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }, 50);
+    })();
+  }, [section, steps, progress, id]);
 
   const go = async (index: number) => {
     if (!steps?.length) return;
@@ -260,6 +284,7 @@ export function PatternStudio({
             <StepCard
               key={step.id}
               step={step}
+              index={index}
               current={index === currentIndex}
               onSelect={() => void go(index)}
               onBack={() => void go(index - 1)}
@@ -324,6 +349,7 @@ export function PatternStudio({
 
 function StepCard({
   step,
+  index,
   current,
   onSelect,
   onBack,
@@ -331,6 +357,7 @@ function StepCard({
   onToggleDone,
 }: {
   step: Step;
+  index: number;
   current: boolean;
   onSelect: () => void;
   onBack: () => void;
@@ -340,6 +367,7 @@ function StepCard({
   const companions = current ? companionCardsForStep(step) : [];
   return (
     <article
+      id={`step-${index}`}
       className={`rounded-3xl p-4 transition ${
         current
           ? "bg-terracotta text-white shadow-lg ring-4 ring-yarn/70"
