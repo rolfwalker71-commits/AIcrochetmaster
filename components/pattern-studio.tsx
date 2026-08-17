@@ -187,7 +187,7 @@ export function PatternStudio({
   };
 
   if (pattern === undefined) return <p className="text-muted-foreground">Wird geladen …</p>;
-  if (!pattern) return <p>Anleitung nicht gefunden.</p>;
+  if (!pattern) return <p>Figur nicht gefunden.</p>;
 
   return (
     <div className={`space-y-4 ${hasVideo && videoStart != null ? "pb-64" : ""}`}>
@@ -232,7 +232,7 @@ export function PatternStudio({
               />
             ) : (
               <div className="flex h-36 items-center justify-center bg-muted font-heading text-3xl text-muted-foreground">
-                Häkel
+                Figur
               </div>
             )}
             <CardHeader className="space-y-2">
@@ -255,7 +255,7 @@ export function PatternStudio({
             <Card className="rounded-3xl">
               <CardHeader>
                 <p className="text-xs uppercase tracking-wide text-primary">Quelle</p>
-                <CardTitle className="font-heading text-xl">PDF-Anleitung</CardTitle>
+                <CardTitle className="font-heading text-xl">PDF-Figur</CardTitle>
                 <CardDescription>{pattern.sourceName || "Hochgeladene Datei"}</CardDescription>
               </CardHeader>
             </Card>
@@ -274,13 +274,13 @@ export function PatternStudio({
           <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
             <DialogTrigger asChild>
               <Button type="button" variant="destructive" className="w-full">
-                Anleitung löschen
+                Figur löschen
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Anleitung löschen?</DialogTitle>
-                <DialogDescription>Anleitung wirklich löschen?</DialogDescription>
+                <DialogTitle>Figur löschen?</DialogTitle>
+                <DialogDescription>Figur wirklich löschen?</DialogDescription>
               </DialogHeader>
               <DialogFooter>
                 <Button type="button" variant="outline" onClick={() => setDeleteOpen(false)}>
@@ -396,7 +396,7 @@ export function PatternStudio({
           {progress && (
             <Card className="rounded-3xl">
               <CardHeader className="flex flex-row items-center justify-between space-y-0">
-                <CardTitle className="font-heading text-xl">Reihenzähler</CardTitle>
+                <CardTitle className="font-heading text-xl">Rundenzähler</CardTitle>
                 <Button
                   type="button"
                   variant="ghost"
@@ -417,7 +417,7 @@ export function PatternStudio({
                       type="button"
                       size="icon-lg"
                       variant="outline"
-                      aria-label="Reihe minus"
+                      aria-label="Runde minus"
                       onClick={() =>
                         void db.progress.put({
                           ...progress,
@@ -431,7 +431,7 @@ export function PatternStudio({
                     <Button
                       type="button"
                       size="icon-lg"
-                      aria-label="Reihe plus"
+                      aria-label="Runde plus"
                       onClick={() =>
                         void db.progress.put({ ...progress, rowCounter: progress.rowCounter + 1 })
                       }

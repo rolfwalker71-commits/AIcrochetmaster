@@ -1,4 +1,5 @@
 import { CardCatalog } from "@/components/card-catalog";
+import { HELP_CARDS, MOTIF_CARDS } from "@/lib/cards";
 
 export default function CardsPage() {
   return (
@@ -6,7 +7,8 @@ export default function CardsPage() {
       <div>
         <h1 className="font-heading text-2xl">Motiv- und Hilfekarten</h1>
         <p className="text-sm text-muted-foreground">
-          32 Motivkarten und 36 Hilfekarten — immer da, kein Import nötig.
+          {MOTIF_CARDS.length} Motivkarten und {HELP_CARDS.length} Hilfekarten nur für Amigurumi —
+          immer da, kein Import nötig.
         </p>
       </div>
       <CardCatalog />

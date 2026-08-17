@@ -37,7 +37,7 @@ export function PatternCard({ pattern, steps }: { pattern: Pattern; steps: Step[
             type="button"
             variant="secondary"
             size="icon"
-            aria-label="Anleitung löschen"
+            aria-label="Figur löschen"
             className="absolute top-3 right-3 z-10 bg-card/95 text-destructive hover:bg-card"
           >
             <Trash2 className="size-5" />
@@ -45,7 +45,7 @@ export function PatternCard({ pattern, steps }: { pattern: Pattern; steps: Step[
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Anleitung löschen?</DialogTitle>
+            <DialogTitle>Figur löschen?</DialogTitle>
             <DialogDescription>
               „{pattern.title}“ wirklich aus der Bibliothek löschen?
             </DialogDescription>
@@ -80,7 +80,7 @@ export function PatternCard({ pattern, steps }: { pattern: Pattern; steps: Step[
             />
           ) : (
             <div className="flex h-full items-center justify-center text-muted-foreground" aria-hidden>
-              <span className="font-heading text-4xl">Häkel</span>
+              <span className="font-heading text-4xl">Figur</span>
             </div>
           )}
           <Badge className="absolute top-3 left-3 bg-card/90 text-foreground hover:bg-card/90">

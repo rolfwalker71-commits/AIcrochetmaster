@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     };
 
     const prompt = headerImagePrompt(
-      body.title || "Häkelstück",
+      body.title || "Amigurumi-Figur",
       body.description || "",
       body.tags || [],
     );

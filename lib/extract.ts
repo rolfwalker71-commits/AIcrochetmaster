@@ -263,7 +263,7 @@ function similarStep(
 
 function mergeExtractions(parts: ExtractedPattern[]): ExtractedPattern {
   if (parts.length === 0) {
-    throw new Error("Es konnten keine Häkel-Schritte erkannt werden.");
+    throw new Error("Es konnten keine Amigurumi-Schritte erkannt werden.");
   }
   const [first, ...rest] = parts;
   const steps = expandCombinedSteps(
@@ -377,7 +377,7 @@ export async function extractPatternFromTranscript(
   }
 
   if (extracted.steps.length === 0) {
-    throw new Error("Es konnten keine Häkel-Schritte erkannt werden.");
+    throw new Error("Es konnten keine Amigurumi-Schritte erkannt werden.");
   }
 
   extracted.steps = assignStepTimestamps(extracted.steps, text);
@@ -473,7 +473,7 @@ export async function extractPatternFromPdf(
   }
 
   if (extracted.steps.length === 0) {
-    throw new Error("Es konnten keine Häkel-Schritte im PDF erkannt werden.");
+    throw new Error("Es konnten keine Amigurumi-Schritte im PDF erkannt werden.");
   }
   return { extraction: extracted, usage };
 }

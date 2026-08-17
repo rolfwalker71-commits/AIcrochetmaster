@@ -41,7 +41,7 @@
     "id": "maschenprobe",
     "title": "Maschenprobe",
     "category": "Material",
-    "body": "Ein 10×10 cm Quadrat in der Arbeitsmasche zeigt, ob Nadel und Garn zur Anleitung passen. Bei Amigurumi zählt eher die Dichte (kein Untergrund sichtbar) als das exakte Maß.",
+    "body": "Bei Amigurumi zählt die Dichte: zwischen den Maschen darf kein Untergrund und keine Füllwatte sichtbar sein. Ein 10×10 cm Quadrat ist weniger wichtig als ein geschlossener 8-fm-Kreis.",
     "tips": [
       "Probe waschen, wenn das fertige Stück gewaschen wird.",
       "Zu grob: kleinere Nadel. Zu steif: größere Nadel."
@@ -52,7 +52,7 @@
     "id": "nadelwahl",
     "title": "Nadelwahl",
     "category": "Material",
-    "body": "Die Banderole ist ein Start, kein Gesetz. Amigurumi meist 0,5–1,0 mm unter der Empfehlung, damit kein Füllmaterial schaut. Decken oft genau auf Empfehlung oder lockerer.",
+    "body": "Die Banderole ist ein Start, kein Gesetz. Amigurumi meist 0,5–1,0 mm unter der Empfehlung, damit kein Füllmaterial schaut.",
     "tips": [
       "Metall gleitet schnell, Bambus bremst und hilft Anfängern.",
       "Häkelnadel-Größe steht in mm, US-Buchstaben sind eine andere Skala."
@@ -83,12 +83,12 @@
   },
   {
     "id": "reihen-lesen",
-    "title": "Reihenanleitungen lesen",
+    "title": "Flache Figurenteile in Reihen",
     "category": "Technik",
-    "body": "Reihen gehen hin und zurück. Am Ende wenden. Die Wendeluftmasche hebt auf die neue Höhe. Die erste echte Masche sitzt oft in der zweiten Masche der Vorreihe — sonst wird die Kante breiter.",
+    "body": "Ohren, Schnauzenklappen oder Sohlen werden oft hin und zurück gehäkelt. Am Ende wenden. Die Wendeluftmasche hebt auf die neue Höhe. Die erste echte Masche sitzt oft in der zweiten Masche der Vorreihe — sonst wird das Teil breiter.",
     "tips": [
       "Rechte und linke Seite merken (Markierer in Reihe 1).",
-      "Kantenmaschen bewusst setzen, dann bleiben Decken gerade."
+      "Beide Ohren mit derselben Randregel häkeln, sonst sitzt eines schief."
     ],
     "color": "#6B8E9F"
   },
@@ -205,12 +205,12 @@
   },
   {
     "id": "kanten-gerade",
-    "title": "Kanten laufen schief",
+    "title": "Flache Teile laufen schief",
     "category": "Fehler",
-    "body": "In Reihen wächst oder schrumpft die Seite, wenn am Rand eine Masche dazukommt oder fehlt. Immer dieselbe Regel: zählt die Wlm oder nicht? Die Regel gilt für das ganze Stück.",
+    "body": "Bei Ohren oder Sohlen in Reihen wächst oder schrumpft die Seite, wenn am Rand eine Masche dazukommt oder fehlt. Immer dieselbe Regel: zählt die Wlm oder nicht? Die Regel gilt für das ganze Teil.",
     "tips": [
       "Erste und letzte Masche markieren.",
-      "Nach 5 Reihen Breite messen, nicht erst am Ende."
+      "Nach ein paar Reihen die Breite mit dem zweiten Ohr vergleichen."
     ],
     "color": "#8B4D4D"
   },
@@ -315,12 +315,12 @@
   },
   {
     "id": "formen-blocken",
-    "title": "Blocken / in Form spannen",
+    "title": "Figuren nicht blocken",
     "category": "Pflege",
-    "body": "Flache Motive (Granny, Blätter, Sterne) nach dem Waschen oder Dämpfen auf Nadeln in Form spannen. Amigurumi nicht blocken — stopfen formt besser.",
+    "body": "Amigurumi nicht nass auf Nadeln spannen. Die Form kommt vom Stopfen und vom dichten Stoff. Nach dem Waschen liegend trocknen und mit den Händen nachformen.",
     "tips": [
-      "Rostfreie Nadeln, Schaumstoffmatte.",
-      "Dampf von oben, Eisen nicht auf das Garn legen."
+      "Nasse Figuren nicht aufhängen — der Kopf dehnt sich.",
+      "Dellen nach dem Trocknen mit etwas extra Füllwatte ausgleichen."
     ],
     "color": "#7A6A53"
   },
@@ -353,7 +353,7 @@
     "body": "Videos spiegeln oder gegenübersitzen. Die Maschen selbst sind dieselben, nur die Fadenhaltung wechselt. Schriftanleitungen musst du nicht spiegeln — nur die Bewegungsrichtung.",
     "tips": [
       "Spiralen drehen sich optisch anders, die Zahlen bleiben.",
-      "Reliefmaschen 'vorn' ist weiterhin die Seite, die dir zugewandt ist."
+      "„Vorn“ bleibt die Seite, die dir zugewandt ist."
     ],
     "color": "#6B8E9F"
   },
@@ -361,7 +361,7 @@
     "id": "spannung-halten",
     "title": "Gleichmäßige Spannung",
     "category": "Technik",
-    "body": "Der Faden läuft über den Zeigefinger, der Knäuel liegt frei. Ruckartige Züge machen hohe und niedrige Maschen. Nach einer Pause die letzte Reihe vergleichen, bevor du weitermachst.",
+    "body": "Der Faden läuft über den Zeigefinger, der Knäuel liegt frei. Ruckartige Züge machen hohe und niedrige Maschen. Nach einer Pause die letzte Runde vergleichen, bevor du weitermachst.",
     "tips": [
       "Immer dasselbe Garn vom selben Knäuelende (innen oder außen).",
       "Müde Hände = festere Maschen — lieber Pause."

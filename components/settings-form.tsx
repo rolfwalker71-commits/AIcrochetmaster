@@ -133,7 +133,7 @@ export function SettingsForm() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex min-h-11 items-center justify-between gap-3">
-            <Label htmlFor="row-counter">Reihenzähler standardmäßig zeigen</Label>
+            <Label htmlFor="row-counter">Rundenzähler standardmäßig zeigen</Label>
             <Switch
               id="row-counter"
               checked={settings.showRowCounter}
@@ -150,7 +150,7 @@ export function SettingsForm() {
           </div>
           <p className="text-sm text-muted-foreground">
             In der Werkstatt kannst du den Zähler zusätzlich ein- und ausblenden. Der Stand bleibt
-            gespeichert.
+            gespeichert — praktisch für gerade Runden am Körper.
           </p>
         </CardContent>
       </Card>
@@ -159,7 +159,7 @@ export function SettingsForm() {
         <CardHeader>
           <CardTitle className="font-heading text-2xl">Zugang</CardTitle>
           <CardDescription>
-            Die App ist mit Passwort oder PIN geschützt. Anleitungen, Fortschritt und Werkstatt
+            Die App ist mit Passwort oder PIN geschützt. Figuren, Fortschritt und Werkstatt
             liegen auf dem Server und sind auf jedem Gerät gleich. Abmelden löscht nur das
             Zugangs-Cookie.
           </CardDescription>

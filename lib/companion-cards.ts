@@ -41,11 +41,12 @@ const RULES: Rule[] = [
   { id: "staebchen", icon: "dc", keywords: ["stäbchen", " stb "] },
   { id: "zunahme", icon: "inc", keywords: ["zunahme", "zunehmen", "zun "] },
   { id: "abnahme", icon: "dec", keywords: ["abnahme", "abnehmen", "abn ", "unsichtbare"] },
-  { id: "granny-square", icon: "square", keywords: ["granny"] },
-  { id: "bluete", icon: "flower", keywords: ["blüte", "blume", "blatt"] },
+  { id: "spirale", icon: "ring", keywords: ["spirale", "spiralig"] },
   { id: "farbwechsel", icon: "color", keywords: ["farbwechsel", "neue farbe", "farbe wechsel"] },
   { id: "faeden-vernaehen-motiv", icon: "sew", keywords: ["vernähen", "annähen", "nähen"] },
   { id: "fuellen-motiv", icon: "fill", keywords: ["füllen", "stopfen", "füllwatte"] },
+  { id: "ohren", icon: "flower", keywords: ["ohr", "ohren"] },
+  { id: "amigurumi-kopf", icon: "ring", keywords: ["kopf"] },
 ];
 
 function matches(text: string, keywords: string[]): boolean {

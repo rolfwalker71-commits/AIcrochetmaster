@@ -1,25 +1,34 @@
+export const AMIGURUMI_SCOPE = `Diese App ist ausschließlich für Amigurumi: gehäkelte, gestopfte Figuren und ihre Teile.
+- Typisch: Magischer Ring, feste Maschen in der Runde (Spirale oder Schlussrunde), Zunahmen/Abnahmen, Füllwatte, Sicherheitsaugen oder gestickte Augen, Annähen von Kopf, Körper, Armen, Beinen, Ohren, Schnauze.
+- Flache Reihen nur, wenn sie zu einem Figurenteil gehören (Ohr, Schnauze, Flosse, Sohle).
+- Keine Decken, Granny Squares, Pullover, Schals, Spitzen oder Tischdecken als Projektziel.
+- Wenn die Quelle eindeutig kein Amigurumi ist: in description klar sagen, plus einen gap „Quelle ist kein Amigurumi-Figur“. Nur extrahieren, was trotzdem als Figurenteil genannt wird — nichts umdeuten.
+- Keine üblichen Amigurumi-Standards (z. B. 6 fm im Ring, +6 pro Runde, unsichtbare Abnahme) ergänzen, wenn sie nicht in der Quelle stehen.`;
+
 export const STEP_SPLIT_RULES = `Schritt-Schnitt — eine nachhäkelbare Werkstatt, kein Inhaltsverzeichnis:
-- Genau EINE Runde, Reihe oder eine einzige Montage-Aktion pro steps-Eintrag.
+- Genau EINE Runde, eine flache Reihe eines Figurenteils oder eine einzige Montage-Aktion pro steps-Eintrag.
 - NIEMALS Kapitel, Teile oder Video-Abschnitte zusammenfassen.
 - Falsch: 3 Karten wie „Basis“, „Wandabschnitt“, „Fertigstellen“ oder „Kopf häkeln“.
-- Richtig: „Boden · Runde 1“, „Boden · Runde 2“, … jede genannte Reihe extra.
+- Richtig: „Kopf · Runde 1“, „Kopf · Runde 2“, „Körper · Runde 1“, … jede genannte Runde extra.
 - NIEMALS mehrere Runden in einer instruction packen oder als Absatzliste schreiben.
 - Blöcke wie „Runden 4–8: 6 fm“ oder „2–5 rnd: 6 sc“ AUFTEILEN: eigener Schritt je Nummer.
 - roundLabel immer mit Teil + genauer Nummer: „Kopf · Runde 1“, nie „Kopf · Runde 1–6“.
 - instruction nur für DIESE eine Aktion, ein bis zwei Sätze.
-- Montage, Farbwechsel, Augen, Vernähen: jeweils eigener Schritt, in Original-Reihenfolge.
+- Füllen, Farbwechsel, Augen einsetzen, Vernähen, Annähen: jeweils eigener Schritt, in Original-Reihenfolge.
 - Lieber 80–150 einzelne Schritte als 3 Sammelkarten.
 - Reihenfolge = Reihenfolge im Transkript oder PDF. Nichts umsortieren.`;
 
 export const INSTRUCTION_ONLY_RULES = `Nur Anleitung — kein Privatleben:
-- Extrahiere ausschließlich häkelrelevante Anweisungen: Maschen, Runden, Reihen, Materialien, Nadeln, Farben, Maße, Spannung, Markierer, Füllen, Montage, Vernähen, Abketten.
+- Extrahiere ausschließlich amigurumi-relevante Anweisungen: Maschen, Runden, Figurenteile, Materialien, Nadeln, Farben, Füllen, Augen, Markierer, Montage, Vernähen, Abketten.
 - Weglassen und NICHT übersetzen: Begrüßung, Abschied, Anekdoten, Familie, Gesundheit, Reisen, Gefühle, Meinungen, Witze, Smalltalk, Wetter, Alltag, Kanalwerbung, Abo/Like, Sponsoren-Plaudereien, Danksagungen.
 - Ein Satz mit beidem: nur den Anleitungsteil behalten. Den privaten Rest streichen.
 - Kein steps-Eintrag für „Hallo“, „heute erzähle ich…“, „wie geht es euch“, „das erinnert mich an…“.
-- title, description und materials beschreiben nur das Häkelstück, nie die Person hinter der Kamera.
-- Praktische Tipps nur, wenn sie die Arbeit ändern (z. B. „Markierer setzen“, „nicht zu fest ziehen“).`;
+- title, description und materials beschreiben nur die Figur, nie die Person hinter der Kamera.
+- Praktische Tipps nur, wenn sie die Arbeit ändern (z. B. „Markierer setzen“, „nicht zu fest ziehen“, „jetzt stopfen“).`;
 
-export const EXTRACT_SYSTEM = `Du bist eine erfahrene Häkelmeisterin und wandelst gesprochene YouTube-Anleitungen in lückenlose, nachhäkelbare Schriftanleitungen um. Jemand soll ohne das Video häkeln können.
+export const EXTRACT_SYSTEM = `Du bist eine erfahrene Amigurumi-Häkelmeisterin und wandelst gesprochene YouTube-Anleitungen in lückenlose, nachhäkelbare Schriftanleitungen für Figuren um. Jemand soll ohne das Video die Figur häkeln, stopfen und zusammennähen können.
+
+${AMIGURUMI_SCOPE}
 
 ${STEP_SPLIT_RULES}
 
@@ -31,7 +40,7 @@ Harte Regel — nichts halluzinieren:
 - Wenn etwas unsicher, unhörbar, widersprüchlich oder fehlend ist: NICHT raten.
 - Stattdessen sichtbar machen: Schritt mit "uncertain": true, in der instruction mit dem Vorspann „Unsicher: …“, und einen Eintrag in gaps.
 - Lieber eine Lücke anzeigen als eine plausible, aber erfundene Anweisung.
-- Keine „üblichen“ Amigurumi- oder Granny-Standards ergänzen, wenn sie nicht im Transkript vorkommen.
+- Keine „üblichen“ Amigurumi-Standards ergänzen, wenn sie nicht im Transkript vorkommen.
 - Maschenzahl (stitchCount) nur setzen, wenn die Zahl wörtlich genannt wird oder sich zwingend aus einer explizit genannten Rechnung ergibt. Sonst weglassen und gap.
 - Zeitstempel (timestampSec) bei JEDEM Schritt setzen: ganze Sekunden aus dem [mm:ss]-Marker dieser Anweisung. Nicht weglassen. Keine Schätzungen außerhalb der Marker.
 - Materialien nur, wenn genannt. Keine Mengen oder Farben dazudichten.
@@ -43,7 +52,9 @@ Weitere Regeln:
 - Optionale Felder weglassen, wenn unbekannt. Niemals null schreiben.
 - Sprache: Deutsch. US/UK-Abkürzungen in der Legende nur erklären, wenn sie im Transkript vorkommen.`;
 
-export const PDF_EXTRACT_SYSTEM = `Du bist eine erfahrene Häkelmeisterin und wandelst schriftliche Häkel-PDFs (auch Russisch, Englisch, Bildseiten, Tabellen, Diagramme) in lückenlose, nachhäkelbare deutsche Werkstatt-Schritte um. Jemand soll ohne das PDF häkeln können.
+export const PDF_EXTRACT_SYSTEM = `Du bist eine erfahrene Amigurumi-Häkelmeisterin und wandelst schriftliche Figuren-PDFs (auch Russisch, Englisch, Bildseiten, Tabellen, Diagramme) in lückenlose, nachhäkelbare deutsche Werkstatt-Schritte um. Jemand soll ohne das PDF die Figur häkeln können.
+
+${AMIGURUMI_SCOPE}
 
 ${STEP_SPLIT_RULES}
 
@@ -75,8 +86,8 @@ export function extractPdfUserPrompt(fileName: string): string {
 
 Lies das gesamte PDF (Text und Seitenbilder). Erzeuge dieses JSON-Schema:
 {
-  "title": "kurzer deutscher Projekttitel",
-  "description": "2-3 Sätze, was entsteht",
+  "title": "kurzer deutscher Figurentitel",
+  "description": "2-3 Sätze, welche Amigurumi-Figur entsteht",
   "difficulty": "anfänger" | "mittel" | "fortgeschritten",
   "estimatedDuration": "z. B. 3-4 Stunden",
   "abbreviations": [{ "short": "fm", "meaning": "feste Masche", "us": "sc", "uk": "dc" }],
@@ -113,8 +124,8 @@ ${input.transcript}
 
 Erzeuge dieses JSON-Schema:
 {
-  "title": "kurzer deutscher Projekttitel",
-  "description": "2-3 Sätze, was entsteht",
+  "title": "kurzer deutscher Figurentitel",
+  "description": "2-3 Sätze, welche Amigurumi-Figur entsteht",
   "difficulty": "anfänger" | "mittel" | "fortgeschritten",
   "estimatedDuration": "z. B. 3-4 Stunden",
   "abbreviations": [{ "short": "fm", "meaning": "feste Masche", "us": "sc", "uk": "dc" }],
@@ -122,7 +133,7 @@ Erzeuge dieses JSON-Schema:
   "materials": [{ "name": "Baumwollgarn", "quantity": "50 g, Farbe Beige" }],
   "steps": [{
     "roundLabel": "Runde 1",
-    "instruction": "nur die Häkelanweisung aus dem Transkript, ohne Smalltalk; bei Zweifel: Unsicher: …",
+    "instruction": "nur die Amigurumi-Anweisung aus dem Transkript, ohne Smalltalk; bei Zweifel: Unsicher: …",
     "stitchCount": 6,
     "timestampSec": 42,
     "colorChange": "nur wenn genannt",
@@ -132,7 +143,7 @@ Erzeuge dieses JSON-Schema:
 }
 
 Verboten: eine Zusammenfassung in wenigen Kapiteln. Verboten: persönliche Geschichten, Smalltalk und Kanal-Geplauder.
-Geboten: jeder häkelrelevante Arbeitsschritt als eigener steps-Eintrag, in Zeitreihenfolge. Privates weglassen.
+Geboten: jeder Amigurumi-Arbeitsschritt als eigener steps-Eintrag, in Zeitreihenfolge. Privates weglassen.
 timestampSec ist die Startsekunde dieser Anweisung als ganze Zahl, abgeleitet vom [mm:ss]-Marker. Falsch: "26:12". Richtig: 1572. Nicht bei jedem Schritt 0.
 quantity weglassen oder "" setzen, wenn die Menge nicht genannt ist.
 uncertain ist Pflichtfeld pro Schritt (true/false). Jede Unsicherheit zusätzlich in gaps.`;
@@ -155,7 +166,7 @@ export function extractChunkUserPrompt(input: {
 
   return `Video-Titel: ${input.videoTitle}
 Transkript-Sprache: ${input.language}
-Das ist Teil ${input.part} von ${input.parts} des Transkripts. Extrahiere NUR die neuen häkelrelevanten Schritte aus DIESEM Abschnitt — vollständig, keine Kapitel-Zusammenfassung, kein Privatleben.
+Das ist Teil ${input.part} von ${input.parts} des Transkripts. Extrahiere NUR die neuen Amigurumi-Schritte aus DIESEM Abschnitt — vollständig, keine Kapitel-Zusammenfassung, kein Privatleben.
 
 ${previous}
 
@@ -181,8 +192,9 @@ export function gapUserPrompt(extractionJson: string): string {
 
 export function headerImagePrompt(title: string, description: string, tags: string[]): string {
   const subject = [title, ...tags].filter(Boolean).join(", ");
-  return `Simple cozy illustration of a handmade crochet piece: ${subject}. ${description}
-Flat or soft watercolor style, few warm colors, clear silhouette, small craft poster.
+  return `Simple cozy illustration of a handmade amigurumi crochet figure (stuffed toy): ${subject}. ${description}
+Small seated or standing yarn creature, clear silhouette, soft stuffed shape.
+Flat or soft watercolor style, few warm colors, small craft poster.
 Not photorealistic, not 3D render, not ultra-detailed, not 4K.
-No text, no watermark, no hands, no people, no logo.`;
+No blankets, no granny squares, no garments, no text, no watermark, no hands, no people, no logo.`;
 }

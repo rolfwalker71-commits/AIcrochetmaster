@@ -16,7 +16,7 @@ const fraunces = Fraunces({
 
 export const metadata: Metadata = {
   title: "AIcrochetmaster",
-  description: "YouTube-Häkelvideos in lückenlose Anleitungen verwandeln.",
+  description: "YouTube-Amigurumi-Videos in lückenlose Figuren-Anleitungen verwandeln.",
   applicationName: "AIcrochetmaster",
   manifest: "/manifest.webmanifest",
   appleWebApp: {

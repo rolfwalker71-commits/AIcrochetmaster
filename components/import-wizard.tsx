@@ -154,7 +154,7 @@ export function ImportWizard({
     setError("");
     const settings = await getSettings();
     if (!pdfFile) {
-      setError("Bitte eine PDF-Anleitung wählen.");
+      setError("Bitte eine Amigurumi-PDF wählen.");
       return;
     }
 
@@ -228,7 +228,7 @@ export function ImportWizard({
         <CardHeader>
           <CardTitle className="font-heading text-2xl">YouTube-Link</CardTitle>
           <CardDescription>
-            Link einfügen oder — nach Installation — ein Video aus YouTube teilen.
+            Amigurumi-Video teilen oder den Link einfügen. Es geht nur um Figuren, nicht um Decken oder Kleidung.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -274,9 +274,9 @@ export function ImportWizard({
 
       <Card id="import-pdf" className="rounded-3xl">
         <CardHeader>
-          <CardTitle className="font-heading text-2xl">PDF-Anleitung</CardTitle>
+          <CardTitle className="font-heading text-2xl">PDF-Figur</CardTitle>
           <CardDescription>
-            Schriftliche Anleitung hochladen. Text, Fotos und Diagramme werden gelesen.
+            Schriftliche Amigurumi-Anleitung hochladen. Text, Fotos und Diagramme werden gelesen.
             Passende Seitenbilder hängen danach am jeweiligen Schritt.
           </CardDescription>
         </CardHeader>

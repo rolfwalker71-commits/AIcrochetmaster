@@ -44,7 +44,7 @@ function LoginForm() {
       <CardHeader>
         <CardTitle className="font-heading text-3xl">Zugang</CardTitle>
         <CardDescription id="login-hint">
-          Die App ist geschützt. Passwort oder PIN eingeben.
+          Die Amigurumi-Werkstatt ist geschützt. Passwort oder PIN eingeben.
         </CardDescription>
       </CardHeader>
       <CardContent>

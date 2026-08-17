@@ -1,7 +1,7 @@
 {
   "name": "AIcrochetmaster",
   "short_name": "Häkelmeister",
-  "description": "YouTube-Häkelvideos in lückenlose Anleitungen verwandeln.",
+  "description": "YouTube-Amigurumi-Videos in lückenlose Figuren-Anleitungen verwandeln.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

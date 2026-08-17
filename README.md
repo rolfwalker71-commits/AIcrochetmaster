@@ -1,11 +1,13 @@
 # AIcrochetmaster
 
-PWA, die einen YouTube-Häkel-Link (einfügen oder Android-Share) in eine lückenlose Schriftanleitung verwandelt. Mit KI-Headerbild, Motiv- und Hilfekarten, Werkstatt, optionalem Reihenzähler und Materialliste.
+PWA, die einen YouTube-Amigurumi-Link (einfügen oder Android-Share) in eine lückenlose Schriftanleitung für gestopfte Figuren verwandelt. Mit KI-Headerbild, Motiv- und Hilfekarten, Werkstatt, optionalem Rundenzähler und Materialliste.
+
+Die App ist ausschließlich für Amigurumi — nicht für Decken, Granny Squares oder Kleidung.
 
 Der OpenAI-Key kommt aus der `.env` (`OPENAI_API_KEY`) und gilt für den Container.
 In der App unter **Mehr** ist er nur noch optional, falls ein anderer Key genutzt werden soll.
 
-Anleitungen, Fortschritt und Werkstatt liegen im Container (`DATA_DIR`, Docker-Volume `crochet-data`). Nach dem Login sieht jedes Gerät dieselbe Bibliothek. Offline bleibt eine lokale Kopie.
+Anleitungen, Fortschritt und Werkstatt liegen im Container (`DATA_DIR`, Docker-Volume `crochet-data`). Nach dem Login sieht jedes Gerät dieselbe Figuren-Bibliothek. Offline bleibt eine lokale Kopie.
 
 ## Zugangsschutz
 

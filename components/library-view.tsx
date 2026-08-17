@@ -48,12 +48,12 @@ export function LibraryView() {
     <div className="space-y-4">
       <h1 className="font-heading text-2xl">Bibliothek</h1>
       <label className="block">
-        <span className="sr-only">Anleitungen suchen</span>
+        <span className="sr-only">Figuren suchen</span>
         <Input
           type="search"
           enterKeyHint="search"
           autoComplete="off"
-          placeholder="Anleitungen suchen …"
+          placeholder="Figuren suchen …"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
         />
@@ -95,10 +95,10 @@ function EmptyState({ hasAny }: { hasAny: boolean }) {
     <Card className="rounded-3xl text-center">
       <CardHeader>
         <CardTitle className="font-heading text-2xl">
-          {hasAny ? "Nichts zu diesem Filter" : "Noch keine Anleitung"}
+          {hasAny ? "Nichts zu diesem Filter" : "Noch keine Figur"}
         </CardTitle>
         <CardDescription>
-          Importierte YouTube- und PDF-Anleitungen erscheinen hier, sobald die Analyse fertig ist.
+          Importierte YouTube- und PDF-Amigurumi-Anleitungen erscheinen hier, sobald die Analyse fertig ist.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-wrap justify-center gap-2 pb-6">

@@ -51,7 +51,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             className="size-12 shrink-0 object-contain"
           />
           <div>
-            <p className="text-xs uppercase tracking-[0.22em] text-primary">AIcrochetmaster</p>
+            <p className="text-xs uppercase tracking-[0.22em] text-primary">Amigurumi</p>
             <p className="font-heading text-3xl font-semibold tracking-tight">Häkelmeister</p>
           </div>
         </Link>
