@@ -19,9 +19,17 @@ export function PatternCard({ pattern, steps }: { pattern: Pattern; steps: Step[
         <div className="relative h-40 bg-line">
           {pattern.headerImage ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={pattern.headerImage} alt="" className="h-full w-full object-cover" />
+            <img
+              src={pattern.headerImage}
+              alt=""
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full object-cover"
+            />
           ) : (
-            <div className="flex h-full items-center justify-center text-5xl">🧶</div>
+            <div className="flex h-full items-center justify-center text-5xl" aria-hidden>
+              🧶
+            </div>
           )}
           <span className="absolute left-3 top-3 rounded-full bg-foam/90 px-2 py-0.5 text-xs font-semibold">
             {STATUS[pattern.status]}
@@ -30,7 +38,14 @@ export function PatternCard({ pattern, steps }: { pattern: Pattern; steps: Step[
         <div className="space-y-2 p-4">
           <h2 className="font-display text-xl leading-tight">{pattern.title}</h2>
           <p className="line-clamp-2 text-sm text-muted">{pattern.description}</p>
-          <div className="h-1.5 overflow-hidden rounded-full bg-line">
+          <div
+            className="h-1.5 overflow-hidden rounded-full bg-line"
+            role="progressbar"
+            aria-label="Fortschritt"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={percent}
+          >
             <div className="h-full bg-sage" style={{ width: `${percent}%` }} />
           </div>
           <p className="text-xs text-muted">{percent}% · {pattern.difficulty}</p>

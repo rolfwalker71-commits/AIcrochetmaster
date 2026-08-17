@@ -42,19 +42,27 @@ export function LibraryView() {
 
   return (
     <div className="space-y-4">
-      <input
-        className="w-full rounded-2xl border border-line bg-foam px-3 py-2"
-        placeholder="Anleitungen suchen …"
-        value={query}
-        onChange={(event) => setQuery(event.target.value)}
-      />
-      <div className="flex gap-2 overflow-x-auto">
+      <h1 className="font-display text-2xl">Bibliothek</h1>
+      <label className="block">
+        <span className="sr-only">Anleitungen suchen</span>
+        <input
+          className="w-full rounded-2xl border border-line bg-foam px-3 py-2"
+          type="search"
+          enterKeyHint="search"
+          autoComplete="off"
+          placeholder="Anleitungen suchen …"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+        />
+      </label>
+      <div className="flex gap-2 overflow-x-auto pb-1" role="group" aria-label="Filter">
         {FILTERS.map((item) => (
           <button
             key={item.id}
             type="button"
+            aria-pressed={filter === item.id}
             onClick={() => setFilter(item.id)}
-            className={`rounded-full px-3 py-1 text-sm ${
+            className={`min-h-11 shrink-0 rounded-full px-4 text-sm font-semibold ${
               filter === item.id ? "bg-ink text-cream" : "bg-foam"
             }`}
           >
@@ -83,7 +91,9 @@ export function LibraryView() {
 function EmptyState({ hasAny }: { hasAny: boolean }) {
   return (
     <div className="rounded-3xl bg-foam p-6 text-center card-shadow">
-      <p className="text-5xl">🧶</p>
+      <p className="text-5xl" aria-hidden>
+        🧶
+      </p>
       <h2 className="mt-3 font-display text-2xl">
         {hasAny ? "Nichts zu diesem Filter" : "Noch keine Anleitung"}
       </h2>
@@ -93,13 +103,13 @@ function EmptyState({ hasAny }: { hasAny: boolean }) {
       <div className="mt-4 flex flex-wrap justify-center gap-2">
         <Link
           href="/import"
-          className="inline-block rounded-full bg-terracotta px-4 py-2 font-semibold text-white"
+          className="inline-flex min-h-11 items-center rounded-full bg-terracotta px-4 py-2 font-semibold text-white"
         >
           Video oder PDF holen
         </Link>
         <Link
           href="/cards"
-          className="inline-block rounded-full border border-line px-4 py-2 font-semibold"
+          className="inline-flex min-h-11 items-center rounded-full border border-line px-4 py-2 font-semibold"
         >
           Motivkarten öffnen
         </Link>

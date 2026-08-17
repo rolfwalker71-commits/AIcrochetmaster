@@ -218,28 +218,38 @@ export function ImportWizard({
 
   return (
     <div className="space-y-5">
+      <h1 className="sr-only">Import</h1>
       <div id="import-video" className="rounded-3xl bg-foam p-4 card-shadow">
-        <p className="font-display text-2xl">YouTube-Link</p>
+        <h2 className="font-display text-2xl">YouTube-Link</h2>
         <p className="mt-1 text-sm text-muted">
           Link einfügen oder — nach Installation — ein Video aus YouTube teilen.
         </p>
-        <textarea
-          className="mt-3 w-full rounded-2xl border border-line bg-cream/40 px-3 py-3"
-          rows={3}
-          placeholder="https://youtu.be/…"
-          value={url}
-          onChange={(event) => setUrl(event.target.value)}
-        />
+        <label className="mt-3 block">
+          <span className="sr-only">YouTube-Link</span>
+          <textarea
+            className="mt-0 w-full rounded-2xl border border-line bg-cream/40 px-3 py-3"
+            rows={3}
+            inputMode="url"
+            autoComplete="url"
+            placeholder="https://youtu.be/…"
+            value={url}
+            onChange={(event) => setUrl(event.target.value)}
+          />
+        </label>
         <p className="mt-2 text-xs text-muted">
           {parsedId ? `Video-ID: ${parsedId}` : "Noch kein gültiger YouTube-Link erkannt."}
         </p>
         {hasKey === false && (
-          <p className="mt-3 rounded-2xl bg-rose/10 px-3 py-2 text-sm">
+          <p className="mt-3 rounded-2xl bg-rose/10 px-3 py-2 text-sm" role="status">
             Ohne OpenAI-Key kein Import. Bitte OPENAI_API_KEY in der .env setzen
             oder optional unter Mehr einen anderen Key hinterlegen.
           </p>
         )}
-        {error && <p className="mt-3 text-sm text-terracotta-dark">{error}</p>}
+        {error && (
+          <p className="mt-3 text-sm text-terracotta-dark" role="alert">
+            {error}
+          </p>
+        )}
         {!usage && !busy && (
           <p className="mt-3 text-xs text-muted">
             YouTube liefert nur den Text. Die Anleitung erzeugt danach OpenAI — Token und Preis
@@ -257,7 +267,7 @@ export function ImportWizard({
       </div>
 
       <div id="import-pdf" className="rounded-3xl bg-foam p-4 card-shadow">
-        <p className="font-display text-2xl">PDF-Anleitung</p>
+        <h2 className="font-display text-2xl">PDF-Anleitung</h2>
         <p className="mt-1 text-sm text-muted">
           Schriftliche Anleitung hochladen. Text, Fotos und Diagramme werden gelesen.
           Passende Seitenbilder hängen danach am jeweiligen Schritt.
@@ -291,7 +301,7 @@ export function ImportWizard({
 
       {usage && <UsageNote usage={usage} />}
       {busy && (
-        <p className="text-center text-sm text-muted">
+        <p className="text-center text-sm text-muted" role="status" aria-live="polite">
           {PHASE_LABEL[phase]} {elapsedSec > 0 ? `${elapsedSec}s` : ""}
           {phase === "extract" && (
             <>

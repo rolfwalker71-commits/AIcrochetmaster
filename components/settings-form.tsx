@@ -61,21 +61,25 @@ export function SettingsForm() {
             />
             <button
               type="button"
-              className="rounded-2xl border border-line px-3 text-sm"
+              className="min-h-11 min-w-11 rounded-2xl border border-line px-3 text-sm font-semibold"
               onClick={() => setShowKey((value) => !value)}
             >
-              {showKey ? "Hide" : "Show"}
+              {showKey ? "Verbergen" : "Zeigen"}
             </button>
           </div>
         </label>
         <button
           type="button"
           onClick={() => void testKey()}
-          className="mt-3 rounded-full bg-terracotta px-4 py-2 text-sm font-semibold text-white"
+          className="mt-3 min-h-11 rounded-full bg-terracotta px-4 py-2 text-sm font-semibold text-white"
         >
           Key testen
         </button>
-        {test && <p className="mt-2 text-sm text-muted">{test}</p>}
+        {test && (
+          <p className="mt-2 text-sm text-muted" role="status">
+            {test}
+          </p>
+        )}
 
         <label className="mt-4 block space-y-1">
           <span className="text-xs uppercase tracking-wide text-muted">Textmodell</span>
@@ -104,7 +108,7 @@ export function SettingsForm() {
 
       <section className="rounded-3xl bg-foam p-4 card-shadow">
         <h2 className="font-display text-2xl">Werkstatt</h2>
-        <label className="mt-3 flex items-center justify-between gap-3">
+        <label className="mt-3 flex min-h-11 items-center justify-between gap-3">
           <span>Reihenzähler standardmäßig zeigen</span>
           <input
             type="checkbox"
@@ -112,7 +116,7 @@ export function SettingsForm() {
             onChange={(event) => void update({ showRowCounter: event.target.checked })}
           />
         </label>
-        <label className="mt-3 flex items-center justify-between gap-3">
+        <label className="mt-3 flex min-h-11 items-center justify-between gap-3">
           <span>Große Schrift</span>
           <input
             type="checkbox"
@@ -135,7 +139,7 @@ export function SettingsForm() {
         </p>
         <button
           type="button"
-          className="mt-3 rounded-full border border-line px-4 py-2 text-sm font-semibold"
+          className="mt-3 min-h-11 rounded-full border border-line px-4 py-2 text-sm font-semibold"
           onClick={async () => {
             await fetch("/api/logout", { method: "POST" });
             window.location.href = "/login";

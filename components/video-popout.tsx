@@ -40,7 +40,7 @@ export function VideoPopout({
       <div className="overflow-hidden rounded-3xl bg-ink shadow-2xl">
         <iframe
           key={`${videoId}-${start}-${loadId}`}
-          title="YouTube"
+          title={`YouTube: ${videoId}`}
           className="aspect-video w-full bg-ink"
           src={youtubeEmbedUrl(videoId, start)}
           allow="autoplay; encrypted-media; picture-in-picture"
@@ -49,6 +49,7 @@ export function VideoPopout({
           <button
             type="button"
             className="rounded-2xl bg-foam py-3 text-sm font-bold text-ink"
+            aria-label={`${SEEK_SEC} Sekunden zurück`}
             onClick={() => seekBy(-SEEK_SEC)}
           >
             −{SEEK_SEC} s
@@ -63,6 +64,7 @@ export function VideoPopout({
           <button
             type="button"
             className="rounded-2xl bg-foam py-3 text-sm font-bold text-ink"
+            aria-label={`${SEEK_SEC} Sekunden vor`}
             onClick={() => seekBy(SEEK_SEC)}
           >
             +{SEEK_SEC} s

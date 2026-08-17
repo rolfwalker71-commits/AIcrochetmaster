@@ -35,9 +35,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className={`mx-auto flex min-h-dvh max-w-lg flex-col px-4 pt-6 ${locked ? "pb-8" : "pb-32"}`}>
+      <a href="#inhalt" className="skip-link">
+        Zum Inhalt
+      </a>
       <RegisterSW />
       <header className="mb-6 flex items-end justify-between">
-        <div className="flex items-center gap-3">
+        <Link href={locked ? "/login" : "/"} className="flex min-h-12 items-center gap-3 rounded-2xl">
           <img
             src="/icons/app.png"
             alt=""
@@ -47,9 +50,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           />
           <div>
             <p className="text-xs uppercase tracking-[0.22em] text-terracotta">AIcrochetmaster</p>
-            <h1 className="font-display text-3xl font-semibold tracking-tight">Häkelmeister</h1>
+            <p className="font-display text-3xl font-semibold tracking-tight">Häkelmeister</p>
           </div>
-        </div>
+        </Link>
         {!locked && (
           <div className="flex shrink-0 gap-2">
             <Link
@@ -69,10 +72,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         )}
       </header>
-      <main className="flex-1">{children}</main>
+      <main id="inhalt" className="flex-1">
+        {children}
+      </main>
       {!locked && (
-      <nav className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-line bg-foam/95 backdrop-blur">
-        <ul className="mx-auto grid max-w-lg grid-cols-4 gap-1 px-2 py-3">
+      <nav
+        className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-line bg-foam/95 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur"
+        aria-label="Hauptnavigation"
+      >
+        <ul className="mx-auto grid max-w-lg grid-cols-4 gap-1 px-2 pt-3">
           {NAV.map((item) => {
             const active =
               item.href === "/"
@@ -82,11 +90,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className={`flex flex-col items-center gap-1 rounded-2xl px-2 py-2.5 ${
+                  aria-current={active ? "page" : undefined}
+                  className={`flex min-h-14 flex-col items-center justify-center gap-1 rounded-2xl px-2 py-2 ${
                     active ? "bg-terracotta text-white" : "text-ink"
                   }`}
                 >
-                  <span className="text-3xl font-bold leading-none">{item.icon}</span>
+                  <span className="text-3xl font-bold leading-none" aria-hidden>
+                    {item.icon}
+                  </span>
                   <span className="text-sm font-bold leading-tight">{item.label}</span>
                 </Link>
               </li>

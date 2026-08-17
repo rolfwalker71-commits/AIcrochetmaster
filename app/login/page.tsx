@@ -36,12 +36,12 @@ function LoginForm() {
 
   return (
     <form onSubmit={(event) => void submit(event)} className="rounded-3xl bg-foam p-5 card-shadow">
-      <p className="font-display text-3xl">Zugang</p>
-      <p className="mt-2 text-sm text-muted">
+      <h1 className="font-display text-3xl">Zugang</h1>
+      <p className="mt-2 text-sm text-muted" id="login-hint">
         Die App ist geschützt. Passwort oder PIN eingeben.
       </p>
       {configured === false && (
-        <p className="mt-3 rounded-2xl bg-rose/10 px-3 py-2 text-sm">
+        <p className="mt-3 rounded-2xl bg-rose/10 px-3 py-2 text-sm" role="status">
           Kein <code>APP_PASSWORD</code> oder <code>APP_PIN</code> gesetzt. In der{" "}
           <code>.env</code> hinterlegen und den Container neu starten.
         </p>
@@ -53,14 +53,21 @@ function LoginForm() {
           type="password"
           autoFocus
           autoComplete="current-password"
+          enterKeyHint="done"
+          aria-describedby={error ? "login-hint login-error" : "login-hint"}
+          aria-invalid={Boolean(error)}
           value={password}
           onChange={(event) => setPassword(event.target.value)}
         />
       </label>
-      {error && <p className="mt-3 text-sm text-terracotta-dark">{error}</p>}
+      {error && (
+        <p id="login-error" className="mt-3 text-sm text-terracotta-dark" role="alert">
+          {error}
+        </p>
+      )}
       <button
         type="submit"
-        className="mt-4 w-full rounded-full bg-terracotta py-3 font-semibold text-white"
+        className="mt-4 min-h-12 w-full rounded-full bg-terracotta py-3 font-semibold text-white"
       >
         Eintreten
       </button>

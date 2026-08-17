@@ -31,10 +31,12 @@ export function CardCatalog() {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-2 rounded-full bg-foam p-1">
+      <div className="grid grid-cols-2 gap-2 rounded-full bg-foam p-1" role="tablist" aria-label="Kartentyp">
         <button
           type="button"
-          className={`rounded-full py-2 text-sm font-semibold ${deck === "motif" ? "bg-terracotta text-white" : ""}`}
+          role="tab"
+          aria-selected={deck === "motif"}
+          className={`min-h-11 rounded-full py-2 text-sm font-semibold ${deck === "motif" ? "bg-terracotta text-white" : ""}`}
           onClick={() => {
             setDeck("motif");
             setCategory("alle");
@@ -44,7 +46,9 @@ export function CardCatalog() {
         </button>
         <button
           type="button"
-          className={`rounded-full py-2 text-sm font-semibold ${deck === "help" ? "bg-terracotta text-white" : ""}`}
+          role="tab"
+          aria-selected={deck === "help"}
+          className={`min-h-11 rounded-full py-2 text-sm font-semibold ${deck === "help" ? "bg-terracotta text-white" : ""}`}
           onClick={() => {
             setDeck("help");
             setCategory("alle");
@@ -54,20 +58,27 @@ export function CardCatalog() {
         </button>
       </div>
 
-      <input
-        className="w-full rounded-2xl border border-line bg-foam px-3 py-2"
-        placeholder="Karten durchsuchen …"
-        value={query}
-        onChange={(event) => setQuery(event.target.value)}
-      />
+      <label className="block">
+        <span className="sr-only">Karten durchsuchen</span>
+        <input
+          className="w-full rounded-2xl border border-line bg-foam px-3 py-2"
+          type="search"
+          enterKeyHint="search"
+          autoComplete="off"
+          placeholder="Karten durchsuchen …"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+        />
+      </label>
 
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-wrap gap-1.5" role="group" aria-label="Kategorie">
         {["alle", ...categories].map((item) => (
           <button
             key={item}
             type="button"
+            aria-pressed={category === item}
             onClick={() => setCategory(item)}
-            className={`rounded-full px-2 py-0.5 text-[11px] leading-tight ${
+            className={`min-h-11 rounded-full px-3 text-sm ${
               category === item ? "bg-ink text-cream" : "bg-foam"
             }`}
           >

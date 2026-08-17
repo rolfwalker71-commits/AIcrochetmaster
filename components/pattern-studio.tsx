@@ -104,10 +104,10 @@ export function PatternStudio({
         await db.progress.put({ ...current, currentStepIndex: target });
       }
       window.setTimeout(() => {
-        document.getElementById(`step-${target}`)?.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
+      document.getElementById(`step-${target}`)?.scrollIntoView({
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+        block: "center",
+      });
       }, 50);
     })();
   }, [section, steps, progress, id]);
@@ -167,15 +167,17 @@ export function PatternStudio({
 
   return (
     <div className={`space-y-4 ${hasVideo && videoStart != null ? "pb-64" : ""}`}>
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-3 gap-2" role="tablist" aria-label="Projektbereiche">
         {SECTIONS.map((item) => {
           const active = section === item.id;
           return (
             <button
               key={item.id}
               type="button"
+              role="tab"
+              aria-selected={active}
               onClick={() => setSection(item.id)}
-              className={`card-shadow overflow-hidden rounded-3xl text-left ${
+              className={`card-shadow min-h-24 overflow-hidden rounded-3xl text-left ${
                 active ? "ring-4 ring-yarn/80" : ""
               }`}
             >
@@ -183,8 +185,8 @@ export function PatternStudio({
                 <SectionIcon icon={item.icon} />
               </div>
               <div className="bg-foam px-2 py-2">
-                <p className="font-display text-[13px] leading-tight">{item.title}</p>
-                <p className="mt-0.5 line-clamp-2 text-[10px] text-muted">{item.hint}</p>
+                <p className="font-display text-sm leading-tight">{item.title}</p>
+                <p className="mt-0.5 line-clamp-2 text-xs text-muted">{item.hint}</p>
               </div>
             </button>
           );
@@ -196,13 +198,19 @@ export function PatternStudio({
           <div className="overflow-hidden rounded-3xl bg-foam card-shadow">
             {pattern.headerImage ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={pattern.headerImage} alt="" className="h-48 w-full object-cover" />
+              <img
+                src={pattern.headerImage}
+                alt=""
+                className="h-48 w-full object-cover"
+              />
             ) : (
-              <div className="flex h-36 items-center justify-center bg-line text-5xl">🧶</div>
+              <div className="flex h-36 items-center justify-center bg-line text-5xl" aria-hidden>
+                🧶
+              </div>
             )}
             <div className="space-y-2 p-4">
               <p className="text-xs uppercase tracking-wide text-terracotta">{pattern.difficulty}</p>
-              <h2 className="font-display text-3xl leading-tight">{pattern.title}</h2>
+              <h1 className="font-display text-3xl leading-tight">{pattern.title}</h1>
               <p className="text-sm text-muted">{pattern.description}</p>
               {pattern.estimatedDuration && (
                 <p className="text-sm text-muted">Dauer: {pattern.estimatedDuration}</p>
@@ -303,7 +311,14 @@ export function PatternStudio({
 
       {section === "schritte" && (
         <section className="space-y-3">
-          <div className="h-2 overflow-hidden rounded-full bg-line">
+          <div
+            className="h-2 overflow-hidden rounded-full bg-line"
+            role="progressbar"
+            aria-label="Schritte erledigt"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={percent}
+          >
             <div className="h-full bg-sage transition-all" style={{ width: `${percent}%` }} />
           </div>
           <p className="text-xs text-muted">
@@ -337,7 +352,7 @@ export function PatternStudio({
                 <h3 className="font-display text-xl">Reihenzähler</h3>
                 <button
                   type="button"
-                  className="text-sm text-terracotta"
+                  className="min-h-11 rounded-full px-3 text-sm font-semibold text-terracotta"
                   onClick={() =>
                     void db.progress.put({
                       ...progress,
@@ -517,6 +532,7 @@ function SectionIcon({ icon }: { icon: "play" | "info" | "steps" }) {
     strokeWidth: 3,
     strokeLinecap: "round" as const,
     strokeLinejoin: "round" as const,
+    "aria-hidden": true,
   };
   if (icon === "play") {
     return (
