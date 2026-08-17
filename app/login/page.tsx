@@ -1,5 +1,10 @@
 "use client";
 
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 
@@ -35,43 +40,48 @@ function LoginForm() {
   };
 
   return (
-    <form onSubmit={(event) => void submit(event)} className="rounded-3xl bg-foam p-5 card-shadow">
-      <h1 className="font-display text-3xl">Zugang</h1>
-      <p className="mt-2 text-sm text-muted" id="login-hint">
-        Die App ist geschützt. Passwort oder PIN eingeben.
-      </p>
-      {configured === false && (
-        <p className="mt-3 rounded-2xl bg-rose/10 px-3 py-2 text-sm" role="status">
-          Kein <code>APP_PASSWORD</code> oder <code>APP_PIN</code> gesetzt. In der{" "}
-          <code>.env</code> hinterlegen und den Container neu starten.
-        </p>
-      )}
-      <label className="mt-4 block space-y-1">
-        <span className="text-xs uppercase tracking-wide text-muted">Passwort / PIN</span>
-        <input
-          className="w-full rounded-2xl border border-line px-3 py-3"
-          type="password"
-          autoFocus
-          autoComplete="current-password"
-          enterKeyHint="done"
-          aria-describedby={error ? "login-hint login-error" : "login-hint"}
-          aria-invalid={Boolean(error)}
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-        />
-      </label>
-      {error && (
-        <p id="login-error" className="mt-3 text-sm text-terracotta-dark" role="alert">
-          {error}
-        </p>
-      )}
-      <button
-        type="submit"
-        className="mt-4 min-h-12 w-full rounded-full bg-terracotta py-3 font-semibold text-white"
-      >
-        Eintreten
-      </button>
-    </form>
+    <Card className="rounded-3xl">
+      <CardHeader>
+        <CardTitle className="font-heading text-3xl">Zugang</CardTitle>
+        <CardDescription id="login-hint">
+          Die App ist geschützt. Passwort oder PIN eingeben.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={(event) => void submit(event)} className="space-y-4">
+          {configured === false && (
+            <Alert>
+              <AlertDescription>
+                Kein <code>APP_PASSWORD</code> oder <code>APP_PIN</code> gesetzt. In der{" "}
+                <code>.env</code> hinterlegen und den Container neu starten.
+              </AlertDescription>
+            </Alert>
+          )}
+          <div className="space-y-2">
+            <Label htmlFor="login-password">Passwort / PIN</Label>
+            <Input
+              id="login-password"
+              type="password"
+              autoFocus
+              autoComplete="current-password"
+              enterKeyHint="done"
+              aria-describedby={error ? "login-hint login-error" : "login-hint"}
+              aria-invalid={Boolean(error)}
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+            />
+          </div>
+          {error && (
+            <Alert variant="destructive">
+              <AlertDescription id="login-error">{error}</AlertDescription>
+            </Alert>
+          )}
+          <Button type="submit" size="lg" className="w-full">
+            Eintreten
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 }
 

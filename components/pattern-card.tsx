@@ -1,8 +1,23 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import type { Pattern, Step } from "@/lib/types";
 import { deletePattern, patternProgressPercent } from "@/lib/db";
+import { Trash2 } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
 const STATUS: Record<Pattern["status"], string> = {
   inbox: "Neu",
@@ -12,68 +27,77 @@ const STATUS: Record<Pattern["status"], string> = {
 
 export function PatternCard({ pattern, steps }: { pattern: Pattern; steps: Step[] }) {
   const percent = patternProgressPercent(steps);
+  const [open, setOpen] = useState(false);
 
   return (
-    <div className="card-shadow yarn-stripe relative overflow-hidden rounded-3xl bg-foam">
+    <Card className="yarn-stripe relative overflow-hidden rounded-3xl py-0">
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Button
+            type="button"
+            variant="secondary"
+            size="icon"
+            aria-label="Anleitung löschen"
+            className="absolute top-3 right-3 z-10 bg-card/95 text-destructive hover:bg-card"
+          >
+            <Trash2 className="size-5" />
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Anleitung löschen?</DialogTitle>
+            <DialogDescription>
+              „{pattern.title}“ wirklich aus der Bibliothek löschen?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              Abbrechen
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={async () => {
+                await deletePattern(pattern.id);
+                setOpen(false);
+              }}
+            >
+              Löschen
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <Link href={`/pattern/${pattern.id}`} className="block">
-        <div className="relative h-40 bg-line">
+        <div className="relative h-40 bg-muted">
           {pattern.headerImage ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={pattern.headerImage}
-              alt=""
+              alt={`Vorschaubild: ${pattern.title}`}
               loading="lazy"
               decoding="async"
               className="h-full w-full object-cover"
             />
           ) : (
-            <div className="flex h-full items-center justify-center text-5xl" aria-hidden>
-              🧶
+            <div className="flex h-full items-center justify-center text-muted-foreground" aria-hidden>
+              <span className="font-heading text-4xl">Häkel</span>
             </div>
           )}
-          <span className="absolute left-3 top-3 rounded-full bg-foam/90 px-2 py-0.5 text-xs font-semibold">
+          <Badge className="absolute top-3 left-3 bg-card/90 text-foreground hover:bg-card/90">
             {STATUS[pattern.status]}
-          </span>
+          </Badge>
         </div>
-        <div className="space-y-2 p-4">
-          <h2 className="font-display text-xl leading-tight">{pattern.title}</h2>
-          <p className="line-clamp-2 text-sm text-muted">{pattern.description}</p>
-          <div
-            className="h-1.5 overflow-hidden rounded-full bg-line"
-            role="progressbar"
-            aria-label="Fortschritt"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={percent}
-          >
-            <div className="h-full bg-sage" style={{ width: `${percent}%` }} />
-          </div>
-          <p className="text-xs text-muted">{percent}% · {pattern.difficulty}</p>
-        </div>
+        <CardHeader className="space-y-2">
+          <CardTitle className="font-heading text-xl leading-tight">{pattern.title}</CardTitle>
+          <CardDescription className="line-clamp-2">{pattern.description}</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-2 pb-4">
+          <Progress value={percent} aria-label="Fortschritt" />
+          <p className="text-xs text-muted-foreground">
+            {percent}% · {pattern.difficulty}
+          </p>
+        </CardContent>
       </Link>
-      <button
-        type="button"
-        aria-label="Anleitung löschen"
-        className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full bg-foam/95 text-rose shadow-sm"
-        onClick={async (event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          if (!confirm(`„${pattern.title}“ wirklich aus der Bibliothek löschen?`)) return;
-          await deletePattern(pattern.id);
-        }}
-      >
-        <TrashGlyph />
-      </button>
-    </div>
-  );
-}
-
-function TrashGlyph() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-      <path d="M5 7h14" />
-      <path d="M10 7V5h4v2" />
-      <path d="M8 7l1 13h6l1-13" />
-    </svg>
+    </Card>
   );
 }

@@ -1,5 +1,10 @@
 "use client";
 
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import type { ExtractedPattern } from "@/lib/types";
 
 export function ReviewEditor({
@@ -18,70 +23,76 @@ export function ReviewEditor({
 
   return (
     <div className="space-y-4">
-      <label className="block space-y-1">
-        <span className="text-xs uppercase tracking-wide text-muted">Titel</span>
-        <input
-          className="w-full rounded-2xl border border-line bg-foam px-3 py-2"
+      <div className="space-y-2">
+        <Label htmlFor="review-title">Titel</Label>
+        <Input
+          id="review-title"
           value={value.title}
           onChange={(event) => onChange({ ...value, title: event.target.value })}
         />
-      </label>
-      <label className="block space-y-1">
-        <span className="text-xs uppercase tracking-wide text-muted">Beschreibung</span>
-        <textarea
-          className="w-full rounded-2xl border border-line bg-foam px-3 py-2"
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="review-description">Beschreibung</Label>
+        <Textarea
+          id="review-description"
           rows={3}
           value={value.description}
           onChange={(event) => onChange({ ...value, description: event.target.value })}
         />
-      </label>
+      </div>
 
       {value.gaps.length > 0 && (
-        <div className="rounded-2xl border border-rose/40 bg-rose/10 p-3 text-sm">
-          <p className="font-semibold">Lücken prüfen</p>
-          <ul className="mt-2 list-disc space-y-1 pl-4">
-            {value.gaps.map((gap, index) => (
-              <li key={`${gap.reason}-${index}`}>
-                {gap.stepOrder != null ? `Schritt ${gap.stepOrder}: ` : ""}
-                {gap.reason}
-                {gap.suggestion ? ` — ${gap.suggestion}` : ""}
-              </li>
-            ))}
-          </ul>
-        </div>
+        <Alert variant="destructive">
+          <AlertTitle>Lücken prüfen</AlertTitle>
+          <AlertDescription>
+            <ul className="mt-2 list-disc space-y-1 pl-4">
+              {value.gaps.map((gap, index) => (
+                <li key={`${gap.reason}-${index}`}>
+                  {gap.stepOrder != null ? `Schritt ${gap.stepOrder}: ` : ""}
+                  {gap.reason}
+                  {gap.suggestion ? ` — ${gap.suggestion}` : ""}
+                </li>
+              ))}
+            </ul>
+          </AlertDescription>
+        </Alert>
       )}
 
       <div className="space-y-2">
-        <p className="text-xs uppercase tracking-wide text-muted">Material</p>
+        <p className="text-xs uppercase tracking-wide text-muted-foreground">Material</p>
         {value.materials.map((material, index) => (
-          <div key={`${material.name}-${index}`} className="rounded-2xl bg-foam px-3 py-2 text-sm">
-            <strong>{material.name}</strong>
-            {material.quantity ? ` · ${material.quantity}` : ""}
-          </div>
+          <Card key={`${material.name}-${index}`} size="sm">
+            <CardContent className="text-sm">
+              <strong>{material.name}</strong>
+              {material.quantity ? ` · ${material.quantity}` : ""}
+            </CardContent>
+          </Card>
         ))}
       </div>
 
       <div className="space-y-3">
-        <p className="text-xs uppercase tracking-wide text-muted">{value.steps.length} Schritte</p>
+        <p className="text-xs uppercase tracking-wide text-muted-foreground">{value.steps.length} Schritte</p>
         {value.steps.map((step, index) => (
-          <div key={`${step.roundLabel}-${index}`} className="rounded-3xl bg-foam p-3">
-            <input
-              className="mb-2 w-full bg-transparent font-display text-lg"
-              value={step.roundLabel}
-              onChange={(event) => updateStep(index, { roundLabel: event.target.value })}
-            />
-            <textarea
-              className="w-full rounded-2xl border border-line bg-cream/50 px-3 py-2 text-sm"
-              rows={3}
-              value={step.instruction}
-              onChange={(event) => updateStep(index, { instruction: event.target.value })}
-            />
-            <div className="mt-2 flex gap-2 text-sm">
-              <label className="flex items-center gap-1">
-                Maschen
-                <input
+          <Card key={`${step.roundLabel}-${index}`} className="rounded-3xl">
+            <CardContent className="space-y-2">
+              <Input
+                className="border-0 bg-transparent font-heading text-lg shadow-none"
+                value={step.roundLabel}
+                onChange={(event) => updateStep(index, { roundLabel: event.target.value })}
+                aria-label={`Rundenbezeichnung Schritt ${index + 1}`}
+              />
+              <Textarea
+                rows={3}
+                value={step.instruction}
+                onChange={(event) => updateStep(index, { instruction: event.target.value })}
+                aria-label={`Anweisung Schritt ${index + 1}`}
+              />
+              <div className="flex items-center gap-2 text-sm">
+                <Label htmlFor={`stitches-${index}`}>Maschen</Label>
+                <Input
+                  id={`stitches-${index}`}
                   type="number"
-                  className="w-20 rounded-xl border border-line px-2 py-1"
+                  className="w-24"
                   value={step.stitchCount ?? ""}
                   onChange={(event) =>
                     updateStep(index, {
@@ -89,9 +100,9 @@ export function ReviewEditor({
                     })
                   }
                 />
-              </label>
-            </div>
-          </div>
+              </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
     </div>

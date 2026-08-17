@@ -1,6 +1,11 @@
 "use client";
 
 import { UsageNote } from "@/components/usage-note";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { apiPost, apiPostForm } from "@/lib/api";
 import { db, getSettings } from "@/lib/db";
 import { createId } from "@/lib/id";
@@ -13,6 +18,7 @@ import {
   type AnalysisUsage,
 } from "@/lib/usage";
 import { extractYoutubeVideoId, youtubeWatchUrl } from "@/lib/youtube";
+import { FileText, LoaderCircle, Video } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
@@ -62,10 +68,7 @@ export function ImportWizard({
 
   const busy = phase !== "idle";
   useEffect(() => {
-    if (!busy) {
-      setElapsedSec(0);
-      return;
-    }
+    if (!busy) return;
     const started = Date.now();
     const timer = window.setInterval(() => {
       setElapsedSec(Math.floor((Date.now() - started) / 1000));
@@ -85,6 +88,7 @@ export function ImportWizard({
 
     try {
       setUsage(null);
+      setElapsedSec(0);
       setPhase("transcript");
       const nextTranscript = await apiPost<TranscriptResult & { youtubeUrl: string }>(
         "/api/transcript",
@@ -156,6 +160,7 @@ export function ImportWizard({
 
     try {
       setUsage(estimateFromPdf(settings.textModel, pdfFile.size));
+      setElapsedSec(0);
       setPhase("extract");
       const form = new FormData();
       form.set("file", pdfFile);
@@ -219,89 +224,90 @@ export function ImportWizard({
   return (
     <div className="space-y-5">
       <h1 className="sr-only">Import</h1>
-      <div id="import-video" className="rounded-3xl bg-foam p-4 card-shadow">
-        <h2 className="font-display text-2xl">YouTube-Link</h2>
-        <p className="mt-1 text-sm text-muted">
-          Link einfügen oder — nach Installation — ein Video aus YouTube teilen.
-        </p>
-        <label className="mt-3 block">
-          <span className="sr-only">YouTube-Link</span>
-          <textarea
-            className="mt-0 w-full rounded-2xl border border-line bg-cream/40 px-3 py-3"
-            rows={3}
-            inputMode="url"
-            autoComplete="url"
-            placeholder="https://youtu.be/…"
-            value={url}
-            onChange={(event) => setUrl(event.target.value)}
-          />
-        </label>
-        <p className="mt-2 text-xs text-muted">
-          {parsedId ? `Video-ID: ${parsedId}` : "Noch kein gültiger YouTube-Link erkannt."}
-        </p>
-        {hasKey === false && (
-          <p className="mt-3 rounded-2xl bg-rose/10 px-3 py-2 text-sm" role="status">
-            Ohne OpenAI-Key kein Import. Bitte OPENAI_API_KEY in der .env setzen
-            oder optional unter Mehr einen anderen Key hinterlegen.
+      <Card id="import-video" className="rounded-3xl">
+        <CardHeader>
+          <CardTitle className="font-heading text-2xl">YouTube-Link</CardTitle>
+          <CardDescription>
+            Link einfügen oder — nach Installation — ein Video aus YouTube teilen.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <label className="block">
+            <span className="sr-only">YouTube-Link</span>
+            <Textarea
+              rows={3}
+              inputMode="url"
+              autoComplete="url"
+              placeholder="https://youtu.be/…"
+              value={url}
+              onChange={(event) => setUrl(event.target.value)}
+            />
+          </label>
+          <p className="text-xs text-muted-foreground">
+            {parsedId ? `Video-ID: ${parsedId}` : "Noch kein gültiger YouTube-Link erkannt."}
           </p>
-        )}
-        {error && (
-          <p className="mt-3 text-sm text-terracotta-dark" role="alert">
-            {error}
-          </p>
-        )}
-        {!usage && !busy && (
-          <p className="mt-3 text-xs text-muted">
-            YouTube liefert nur den Text. Die Anleitung erzeugt danach OpenAI — Token und Preis
-            gelten für diese Analyse, nicht fürs Transkript.
-          </p>
-        )}
-        <button
-          type="button"
-          onClick={() => void run()}
-          disabled={busy}
-          className="mt-4 w-full rounded-full bg-terracotta py-3 font-semibold text-white disabled:opacity-60"
-        >
-          {phase === "idle" ? "Transkript analysieren" : PHASE_LABEL[phase]}
-        </button>
-      </div>
+          {hasKey === false && (
+            <Alert>
+              <AlertDescription>
+                Ohne OpenAI-Key kein Import. Bitte OPENAI_API_KEY in der .env setzen
+                oder optional unter Mehr einen anderen Key hinterlegen.
+              </AlertDescription>
+            </Alert>
+          )}
+          {error && (
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+          {!usage && !busy && (
+            <p className="text-xs text-muted-foreground">
+              YouTube liefert nur den Text. Die Anleitung erzeugt danach OpenAI — Token und Preis
+              gelten für diese Analyse, nicht fürs Transkript.
+            </p>
+          )}
+          <Button type="button" size="lg" className="w-full gap-2" onClick={() => void run()} disabled={busy}>
+            {busy ? <LoaderCircle className="size-4 animate-spin" /> : <Video className="size-4" />}
+            {phase === "idle" ? "Transkript analysieren" : PHASE_LABEL[phase]}
+          </Button>
+        </CardContent>
+      </Card>
 
-      <div id="import-pdf" className="rounded-3xl bg-foam p-4 card-shadow">
-        <h2 className="font-display text-2xl">PDF-Anleitung</h2>
-        <p className="mt-1 text-sm text-muted">
-          Schriftliche Anleitung hochladen. Text, Fotos und Diagramme werden gelesen.
-          Passende Seitenbilder hängen danach am jeweiligen Schritt.
-        </p>
-        <label className="mt-3 block">
-          <span className="sr-only">PDF wählen</span>
-          <input
-            type="file"
-            accept="application/pdf,.pdf"
-            disabled={busy}
-            className="w-full text-sm file:mr-3 file:rounded-full file:border-0 file:bg-terracotta file:px-4 file:py-2 file:font-semibold file:text-white"
-            onChange={(event) => {
-              const file = event.target.files?.[0] ?? null;
-              setPdfFile(file);
-              setPdfName(file?.name ?? "");
-            }}
-          />
-        </label>
-        <p className="mt-2 text-xs text-muted">
-          {pdfName ? `Datei: ${pdfName}` : "Noch keine PDF gewählt. Maximal 12 MB."}
-        </p>
-        <button
-          type="button"
-          onClick={() => void runPdf()}
-          disabled={busy}
-          className="mt-4 w-full rounded-full bg-terracotta py-3 font-semibold text-white disabled:opacity-60"
-        >
-          {phase === "idle" ? "PDF analysieren" : PHASE_LABEL[phase]}
-        </button>
-      </div>
+      <Card id="import-pdf" className="rounded-3xl">
+        <CardHeader>
+          <CardTitle className="font-heading text-2xl">PDF-Anleitung</CardTitle>
+          <CardDescription>
+            Schriftliche Anleitung hochladen. Text, Fotos und Diagramme werden gelesen.
+            Passende Seitenbilder hängen danach am jeweiligen Schritt.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <label className="block">
+            <span className="sr-only">PDF wählen</span>
+            <Input
+              type="file"
+              accept="application/pdf,.pdf"
+              disabled={busy}
+              className="pt-2 file:mr-3 file:rounded-full file:border-0 file:bg-primary file:px-4 file:py-1 file:font-semibold file:text-primary-foreground"
+              onChange={(event) => {
+                const file = event.target.files?.[0] ?? null;
+                setPdfFile(file);
+                setPdfName(file?.name ?? "");
+              }}
+            />
+          </label>
+          <p className="text-xs text-muted-foreground">
+            {pdfName ? `Datei: ${pdfName}` : "Noch keine PDF gewählt. Maximal 12 MB."}
+          </p>
+          <Button type="button" size="lg" className="w-full gap-2" onClick={() => void runPdf()} disabled={busy}>
+            {busy ? <LoaderCircle className="size-4 animate-spin" /> : <FileText className="size-4" />}
+            {phase === "idle" ? "PDF analysieren" : PHASE_LABEL[phase]}
+          </Button>
+        </CardContent>
+      </Card>
 
       {usage && <UsageNote usage={usage} />}
       {busy && (
-        <p className="text-center text-sm text-muted" role="status" aria-live="polite">
+        <p className="text-center text-sm text-muted-foreground" role="status" aria-live="polite">
           {PHASE_LABEL[phase]} {elapsedSec > 0 ? `${elapsedSec}s` : ""}
           {phase === "extract" && (
             <>

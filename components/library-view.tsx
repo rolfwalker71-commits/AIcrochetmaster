@@ -1,9 +1,13 @@
 "use client";
 
 import { PatternCard } from "@/components/pattern-card";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { db } from "@/lib/db";
 import type { PatternStatus, Step } from "@/lib/types";
 import { useLiveQuery } from "dexie-react-hooks";
+import { BookOpen, Plus } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
@@ -42,11 +46,10 @@ export function LibraryView() {
 
   return (
     <div className="space-y-4">
-      <h1 className="font-display text-2xl">Bibliothek</h1>
+      <h1 className="font-heading text-2xl">Bibliothek</h1>
       <label className="block">
         <span className="sr-only">Anleitungen suchen</span>
-        <input
-          className="w-full rounded-2xl border border-line bg-foam px-3 py-2"
+        <Input
           type="search"
           enterKeyHint="search"
           autoComplete="off"
@@ -57,17 +60,16 @@ export function LibraryView() {
       </label>
       <div className="flex gap-2 overflow-x-auto pb-1" role="group" aria-label="Filter">
         {FILTERS.map((item) => (
-          <button
+          <Button
             key={item.id}
             type="button"
+            variant={filter === item.id ? "default" : "outline"}
             aria-pressed={filter === item.id}
             onClick={() => setFilter(item.id)}
-            className={`min-h-11 shrink-0 rounded-full px-4 text-sm font-semibold ${
-              filter === item.id ? "bg-ink text-cream" : "bg-foam"
-            }`}
+            className="shrink-0 rounded-full"
           >
             {item.label}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -90,30 +92,29 @@ export function LibraryView() {
 
 function EmptyState({ hasAny }: { hasAny: boolean }) {
   return (
-    <div className="rounded-3xl bg-foam p-6 text-center card-shadow">
-      <p className="text-5xl" aria-hidden>
-        🧶
-      </p>
-      <h2 className="mt-3 font-display text-2xl">
-        {hasAny ? "Nichts zu diesem Filter" : "Noch keine Anleitung"}
-      </h2>
-      <p className="mt-2 text-sm text-muted">
-        Importierte YouTube- und PDF-Anleitungen erscheinen hier, sobald die Analyse fertig ist.
-      </p>
-      <div className="mt-4 flex flex-wrap justify-center gap-2">
-        <Link
-          href="/import"
-          className="inline-flex min-h-11 items-center rounded-full bg-terracotta px-4 py-2 font-semibold text-white"
-        >
-          Video oder PDF holen
-        </Link>
-        <Link
-          href="/cards"
-          className="inline-flex min-h-11 items-center rounded-full border border-line px-4 py-2 font-semibold"
-        >
-          Motivkarten öffnen
-        </Link>
-      </div>
-    </div>
+    <Card className="rounded-3xl text-center">
+      <CardHeader>
+        <CardTitle className="font-heading text-2xl">
+          {hasAny ? "Nichts zu diesem Filter" : "Noch keine Anleitung"}
+        </CardTitle>
+        <CardDescription>
+          Importierte YouTube- und PDF-Anleitungen erscheinen hier, sobald die Analyse fertig ist.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-wrap justify-center gap-2 pb-6">
+        <Button asChild>
+          <Link href="/import" className="gap-2">
+            <Plus className="size-4" />
+            Video oder PDF holen
+          </Link>
+        </Button>
+        <Button asChild variant="outline">
+          <Link href="/cards" className="gap-2">
+            <BookOpen className="size-4" />
+            Motivkarten öffnen
+          </Link>
+        </Button>
+      </CardContent>
+    </Card>
   );
 }

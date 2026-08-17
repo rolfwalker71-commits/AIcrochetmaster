@@ -1,7 +1,8 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { youtubeEmbedUrl } from "@/lib/youtube";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 const SEEK_SEC = 10;
 
@@ -16,59 +17,55 @@ export function VideoPopout({
 }) {
   const [playhead, setPlayhead] = useState(() => Math.max(0, startSec));
   const [loadId, setLoadId] = useState(0);
-  const startedAt = useRef(Date.now());
+  const startedAt = useRef(0);
 
-  useEffect(() => {
-    setPlayhead(Math.max(0, startSec));
-    startedAt.current = Date.now();
+  const markStart = (next: number) => {
+    setPlayhead(next);
+    startedAt.current = performance.now();
     setLoadId((value) => value + 1);
-  }, [startSec, videoId]);
+  };
 
-  const currentSec = () => playhead + (Date.now() - startedAt.current) / 1000;
+  const currentSec = () => {
+    const elapsed = startedAt.current === 0 ? 0 : (performance.now() - startedAt.current) / 1000;
+    return playhead + elapsed;
+  };
 
   const seekBy = (delta: number) => {
-    const next = Math.max(0, currentSec() + delta);
-    setPlayhead(next);
-    startedAt.current = Date.now();
-    setLoadId((value) => value + 1);
+    markStart(Math.max(0, currentSec() + delta));
   };
 
   const start = Math.floor(playhead);
 
   return (
     <div className="fixed inset-x-0 bottom-[5.75rem] z-30 mx-auto w-full max-w-lg px-4">
-      <div className="overflow-hidden rounded-3xl bg-ink shadow-2xl">
+      <div className="overflow-hidden rounded-3xl bg-foreground shadow-2xl">
         <iframe
           key={`${videoId}-${start}-${loadId}`}
           title={`YouTube: ${videoId}`}
-          className="aspect-video w-full bg-ink"
+          className="aspect-video w-full bg-foreground"
           src={youtubeEmbedUrl(videoId, start)}
           allow="autoplay; encrypted-media; picture-in-picture"
         />
         <div className="grid grid-cols-3 gap-2 p-3">
-          <button
+          <Button
             type="button"
-            className="rounded-2xl bg-foam py-3 text-sm font-bold text-ink"
+            variant="secondary"
             aria-label={`${SEEK_SEC} Sekunden zurück`}
             onClick={() => seekBy(-SEEK_SEC)}
           >
             −{SEEK_SEC} s
-          </button>
-          <button
-            type="button"
-            className="rounded-2xl bg-terracotta py-3 text-sm font-bold text-white"
-            onClick={onClose}
-          >
+          </Button>
+          <Button type="button" onClick={onClose}>
             Schließen
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
-            className="rounded-2xl bg-foam py-3 text-sm font-bold text-ink"
+            variant="secondary"
             aria-label={`${SEEK_SEC} Sekunden vor`}
             onClick={() => seekBy(SEEK_SEC)}
           >
             +{SEEK_SEC} s
-          </button>
+          </Button>
         </div>
       </div>
     </div>

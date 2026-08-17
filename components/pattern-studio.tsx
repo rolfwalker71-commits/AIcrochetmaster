@@ -5,12 +5,29 @@ import { StepHelpGraphic } from "@/components/step-help-graphic";
 import { StepPhoto } from "@/components/step-photo";
 import { UsageNote } from "@/components/usage-note";
 import { VideoPopout } from "@/components/video-popout";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Progress } from "@/components/ui/progress";
 import { companionCardsForPattern, companionCardsForStep } from "@/lib/companion-cards";
 import { apiPost } from "@/lib/api";
 import { db, deletePattern, getSettings, statusFromSteps } from "@/lib/db";
-import type { Progress, Step } from "@/lib/types";
+import { cn } from "@/lib/utils";
+import type { Progress as ProgressState, Step } from "@/lib/types";
 import { assignStepTimestamps, formatTimestamp, parseTimestamp } from "@/lib/youtube";
 import { useLiveQuery } from "dexie-react-hooks";
+import { CirclePlay, Info, ListOrdered, Minus, Play, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -20,13 +37,19 @@ const SECTIONS: {
   id: Section;
   title: string;
   hint: string;
-  color: string;
-  icon: "play" | "info" | "steps";
+  tone: "primary" | "secondary" | "accent";
+  icon: typeof CirclePlay;
 }[] = [
-  { id: "projekt", title: "Projekt", hint: "Überblick und Quelle", color: "#C45C26", icon: "play" },
-  { id: "infos", title: "Material & Infos", hint: "Garn, Lücken, Karten", color: "#4C7A62", icon: "info" },
-  { id: "schritte", title: "Schritte", hint: "Runden häkeln", color: "#D4A04A", icon: "steps" },
+  { id: "projekt", title: "Projekt", hint: "Überblick und Quelle", tone: "primary", icon: CirclePlay },
+  { id: "infos", title: "Material & Infos", hint: "Garn, Lücken, Karten", tone: "secondary", icon: Info },
+  { id: "schritte", title: "Schritte", hint: "Runden häkeln", tone: "accent", icon: ListOrdered },
 ];
+
+const TONE_BG = {
+  primary: "bg-primary text-primary-foreground",
+  secondary: "bg-secondary text-secondary-foreground",
+  accent: "bg-accent text-accent-foreground",
+} as const;
 
 export function PatternStudio({
   id,
@@ -38,6 +61,7 @@ export function PatternStudio({
   const router = useRouter();
   const [section, setSection] = useState<Section>(initialSection);
   const [videoStart, setVideoStart] = useState<number | null>(null);
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const jumpedToOpenStep = useRef(false);
   const repairedTimes = useRef(false);
   const pattern = useLiveQuery(() => db.patterns.get(id), [id]);
@@ -76,10 +100,10 @@ export function PatternStudio({
     return Math.round((steps.filter((step) => step.done).length / steps.length) * 100);
   }, [steps]);
 
-  const ensureProgress = async (): Promise<Progress> => {
+  const ensureProgress = async (): Promise<ProgressState> => {
     if (progress) return progress;
     const settings = await getSettings();
-    const next: Progress = {
+    const next: ProgressState = {
       patternId: id,
       currentStepIndex: 0,
       rowCounter: 0,
@@ -162,7 +186,7 @@ export function PatternStudio({
     );
   };
 
-  if (pattern === undefined) return <p className="text-muted">Wird geladen …</p>;
+  if (pattern === undefined) return <p className="text-muted-foreground">Wird geladen …</p>;
   if (!pattern) return <p>Anleitung nicht gefunden.</p>;
 
   return (
@@ -170,137 +194,169 @@ export function PatternStudio({
       <div className="grid grid-cols-3 gap-2" role="tablist" aria-label="Projektbereiche">
         {SECTIONS.map((item) => {
           const active = section === item.id;
+          const Icon = item.icon;
           return (
-            <button
+            <Button
               key={item.id}
               type="button"
               role="tab"
+              variant="ghost"
               aria-selected={active}
               onClick={() => setSection(item.id)}
-              className={`card-shadow min-h-24 overflow-hidden rounded-3xl text-left ${
-                active ? "ring-4 ring-yarn/80" : ""
-              }`}
+              className={cn(
+                "h-auto min-h-24 flex-col overflow-hidden rounded-3xl p-0 text-left",
+                active && "ring-4 ring-accent/80",
+              )}
             >
-              <div className="flex h-16 items-center justify-center" style={{ background: item.color }}>
-                <SectionIcon icon={item.icon} />
+              <div className={cn("flex h-16 w-full items-center justify-center", TONE_BG[item.tone])}>
+                <Icon className="size-8" aria-hidden />
               </div>
-              <div className="bg-foam px-2 py-2">
-                <p className="font-display text-sm leading-tight">{item.title}</p>
-                <p className="mt-0.5 line-clamp-2 text-xs text-muted">{item.hint}</p>
+              <div className="w-full bg-card px-2 py-2 text-card-foreground">
+                <p className="font-heading text-sm leading-tight">{item.title}</p>
+                <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">{item.hint}</p>
               </div>
-            </button>
+            </Button>
           );
         })}
       </div>
 
       {section === "projekt" && (
         <section className="space-y-4">
-          <div className="overflow-hidden rounded-3xl bg-foam card-shadow">
+          <Card className="overflow-hidden rounded-3xl py-0">
             {pattern.headerImage ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={pattern.headerImage}
-                alt=""
+                alt={`Vorschaubild: ${pattern.title}`}
                 className="h-48 w-full object-cover"
               />
             ) : (
-              <div className="flex h-36 items-center justify-center bg-line text-5xl" aria-hidden>
-                🧶
+              <div className="flex h-36 items-center justify-center bg-muted font-heading text-3xl text-muted-foreground">
+                Häkel
               </div>
             )}
-            <div className="space-y-2 p-4">
-              <p className="text-xs uppercase tracking-wide text-terracotta">{pattern.difficulty}</p>
-              <h1 className="font-display text-3xl leading-tight">{pattern.title}</h1>
-              <p className="text-sm text-muted">{pattern.description}</p>
+            <CardHeader className="space-y-2">
+              <p className="text-xs uppercase tracking-wide text-primary">{pattern.difficulty}</p>
+              <CardTitle className="font-heading text-3xl leading-tight">{pattern.title}</CardTitle>
+              <CardDescription>{pattern.description}</CardDescription>
               {pattern.estimatedDuration && (
-                <p className="text-sm text-muted">Dauer: {pattern.estimatedDuration}</p>
+                <p className="text-sm text-muted-foreground">Dauer: {pattern.estimatedDuration}</p>
               )}
               <div className="flex flex-wrap gap-2">
                 {pattern.motifTags.map((tag) => (
-                  <span key={tag} className="rounded-full bg-cream px-2 py-0.5 text-xs">
+                  <Badge key={tag} variant="secondary">
                     {tag}
-                  </span>
+                  </Badge>
                 ))}
               </div>
-            </div>
-          </div>
+            </CardHeader>
+          </Card>
           {pattern.source === "pdf" || !pattern.videoId ? (
-            <div className="rounded-3xl bg-foam p-4 card-shadow">
-              <p className="text-xs uppercase tracking-wide text-terracotta">Quelle</p>
-              <p className="mt-1 font-display text-xl">PDF-Anleitung</p>
-              <p className="mt-1 text-sm text-muted">{pattern.sourceName || "Hochgeladene Datei"}</p>
-            </div>
+            <Card className="rounded-3xl">
+              <CardHeader>
+                <p className="text-xs uppercase tracking-wide text-primary">Quelle</p>
+                <CardTitle className="font-heading text-xl">PDF-Anleitung</CardTitle>
+                <CardDescription>{pattern.sourceName || "Hochgeladene Datei"}</CardDescription>
+              </CardHeader>
+            </Card>
           ) : (
-            <button
+            <Button
               type="button"
-              className="flex w-full items-center justify-center gap-2 rounded-3xl bg-terracotta py-4 text-sm font-bold text-white"
+              size="lg"
+              className="w-full gap-2"
               onClick={() => setVideoStart(parseTimestamp(currentStep?.timestampSec) ?? 0)}
             >
+              <Play className="size-4" />
               Video öffnen
-            </button>
+            </Button>
           )}
           {pattern.analysisUsage && <UsageNote usage={pattern.analysisUsage} />}
-          <button
-            type="button"
-            className="w-full text-sm text-rose"
-            onClick={async () => {
-              if (!confirm("Anleitung wirklich löschen?")) return;
-              await deletePattern(pattern.id);
-              router.push("/");
-            }}
-          >
-            Anleitung löschen
-          </button>
+          <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+            <DialogTrigger asChild>
+              <Button type="button" variant="destructive" className="w-full">
+                Anleitung löschen
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Anleitung löschen?</DialogTitle>
+                <DialogDescription>Anleitung wirklich löschen?</DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setDeleteOpen(false)}>
+                  Abbrechen
+                </Button>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={async () => {
+                    await deletePattern(pattern.id);
+                    router.push("/");
+                  }}
+                >
+                  Löschen
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </section>
       )}
 
       {section === "infos" && (
         <section className="space-y-4">
           {pattern.gaps.length > 0 && (
-            <div className="rounded-2xl border border-rose/40 bg-rose/10 p-3 text-sm">
-              <p className="font-semibold">Offene Stellen</p>
-              <ul className="mt-2 list-disc pl-4">
-                {pattern.gaps.map((gap, index) => (
-                  <li key={`${gap.reason}-${index}`}>
-                    {gap.reason}
-                    {gap.suggestion ? ` — ${gap.suggestion}` : ""}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <Alert variant="destructive">
+              <AlertTitle>Offene Stellen</AlertTitle>
+              <AlertDescription>
+                <ul className="mt-2 list-disc pl-4">
+                  {pattern.gaps.map((gap, index) => (
+                    <li key={`${gap.reason}-${index}`}>
+                      {gap.reason}
+                      {gap.suggestion ? ` — ${gap.suggestion}` : ""}
+                    </li>
+                  ))}
+                </ul>
+              </AlertDescription>
+            </Alert>
           )}
-          <div className="rounded-3xl bg-foam p-4 card-shadow">
-            <h3 className="font-display text-xl">Material</h3>
-            <ul className="mt-3 space-y-2">
-              {(materials ?? []).map((material) => (
-                <li key={material.id}>
-                  <label className="flex items-start gap-3 text-sm">
-                    <input
-                      type="checkbox"
+          <Card className="rounded-3xl">
+            <CardHeader>
+              <CardTitle className="font-heading text-xl">Material</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-3">
+                {(materials ?? []).map((material) => (
+                  <li key={material.id} className="flex items-start gap-3 text-sm">
+                    <Checkbox
                       checked={material.done}
-                      onChange={() => void toggleMaterial(material.id)}
+                      onCheckedChange={() => void toggleMaterial(material.id)}
+                      aria-label={material.name}
                     />
-                    <span className={material.done ? "text-muted line-through" : ""}>
+                    <span className={material.done ? "text-muted-foreground line-through" : ""}>
                       <strong>{material.name}</strong>
                       {material.quantity ? ` · ${material.quantity}` : ""}
                     </span>
-                  </label>
-                </li>
-              ))}
-            </ul>
-          </div>
-          {pattern.abbreviations.length > 0 && (
-            <div className="rounded-3xl bg-foam p-4 card-shadow">
-              <h3 className="font-display text-xl">Abkürzungen</h3>
-              <ul className="mt-2 space-y-1 text-sm">
-                {pattern.abbreviations.map((item) => (
-                  <li key={item.short}>
-                    <strong>{item.short}</strong> {item.meaning}
-                    {item.us || item.uk ? ` (US ${item.us ?? "–"} / UK ${item.uk ?? "–"})` : ""}
                   </li>
                 ))}
               </ul>
-            </div>
+            </CardContent>
+          </Card>
+          {pattern.abbreviations.length > 0 && (
+            <Card className="rounded-3xl">
+              <CardHeader>
+                <CardTitle className="font-heading text-xl">Abkürzungen</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-1 text-sm">
+                  {pattern.abbreviations.map((item) => (
+                    <li key={item.short}>
+                      <strong>{item.short}</strong> {item.meaning}
+                      {item.us || item.uk ? ` (US ${item.us ?? "–"} / UK ${item.uk ?? "–"})` : ""}
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
           )}
           <CompanionStrip
             title="Begleitkarten"
@@ -311,21 +367,12 @@ export function PatternStudio({
 
       {section === "schritte" && (
         <section className="space-y-3">
-          <div
-            className="h-2 overflow-hidden rounded-full bg-line"
-            role="progressbar"
-            aria-label="Schritte erledigt"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={percent}
-          >
-            <div className="h-full bg-sage transition-all" style={{ width: `${percent}%` }} />
-          </div>
-          <p className="text-xs text-muted">
+          <Progress value={percent} aria-label="Schritte erledigt" />
+          <p className="text-xs text-muted-foreground">
             Schritt {currentIndex + 1} von {steps?.length ?? 0} · {percent}%
           </p>
-          <h3 className="font-display text-xl">Schritte</h3>
-          <p className="text-sm text-muted">
+          <h3 className="font-heading text-xl">Schritte</h3>
+          <p className="text-sm text-muted-foreground">
             Tippe einen Schritt an. Vor, Zurück und Erledigt sitzen darunter.
             {hasVideo ? " Das Kamerasymbol springt zur Stelle im Video." : ""}
           </p>
@@ -347,12 +394,12 @@ export function PatternStudio({
             />
           ))}
           {progress && (
-            <div className="rounded-3xl bg-foam p-4 card-shadow">
-              <div className="flex items-center justify-between">
-                <h3 className="font-display text-xl">Reihenzähler</h3>
-                <button
+            <Card className="rounded-3xl">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0">
+                <CardTitle className="font-heading text-xl">Reihenzähler</CardTitle>
+                <Button
                   type="button"
-                  className="min-h-11 rounded-full px-3 text-sm font-semibold text-terracotta"
+                  variant="ghost"
                   onClick={() =>
                     void db.progress.put({
                       ...progress,
@@ -361,44 +408,50 @@ export function PatternStudio({
                   }
                 >
                   {progress.rowCounterVisible ? "Ausblenden" : "Einblenden"}
-                </button>
-              </div>
-              {progress.rowCounterVisible ? (
-                <div className="mt-3 flex items-center justify-between">
-                  <button
-                    type="button"
-                    className="h-14 w-14 rounded-full bg-cream text-2xl"
-                    onClick={() =>
-                      void db.progress.put({
-                        ...progress,
-                        rowCounter: Math.max(0, progress.rowCounter - 1),
-                      })
-                    }
-                  >
-                    −
-                  </button>
-                  <p className="font-display text-5xl">{progress.rowCounter}</p>
-                  <button
-                    type="button"
-                    className="h-14 w-14 rounded-full bg-terracotta text-2xl text-white"
-                    onClick={() =>
-                      void db.progress.put({ ...progress, rowCounter: progress.rowCounter + 1 })
-                    }
-                  >
-                    +
-                  </button>
-                </div>
-              ) : (
-                <p className="mt-2 text-sm text-muted">
-                  Ausgeblendet — Stand {progress.rowCounter} bleibt gespeichert.
-                </p>
-              )}
-            </div>
+                </Button>
+              </CardHeader>
+              <CardContent>
+                {progress.rowCounterVisible ? (
+                  <div className="flex items-center justify-between">
+                    <Button
+                      type="button"
+                      size="icon-lg"
+                      variant="outline"
+                      aria-label="Reihe minus"
+                      onClick={() =>
+                        void db.progress.put({
+                          ...progress,
+                          rowCounter: Math.max(0, progress.rowCounter - 1),
+                        })
+                      }
+                    >
+                      <Minus className="size-5" />
+                    </Button>
+                    <p className="font-heading text-5xl">{progress.rowCounter}</p>
+                    <Button
+                      type="button"
+                      size="icon-lg"
+                      aria-label="Reihe plus"
+                      onClick={() =>
+                        void db.progress.put({ ...progress, rowCounter: progress.rowCounter + 1 })
+                      }
+                    >
+                      <Plus className="size-5" />
+                    </Button>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    Ausgeblendet — Stand {progress.rowCounter} bleibt gespeichert.
+                  </p>
+                )}
+              </CardContent>
+            </Card>
           )}
         </section>
       )}
       {hasVideo && videoStart != null && pattern.videoId && (
         <VideoPopout
+          key={`${pattern.videoId}-${videoStart}`}
           videoId={pattern.videoId}
           startSec={videoStart}
           onClose={() => setVideoStart(null)}
@@ -433,25 +486,31 @@ function StepCard({
   return (
     <article
       id={`step-${index}`}
-      className={`rounded-3xl p-4 transition ${
+      className={cn(
+        "rounded-3xl p-4 transition",
         current
-          ? "bg-terracotta text-white shadow-lg ring-4 ring-yarn/70"
+          ? "bg-primary text-primary-foreground shadow-lg ring-4 ring-accent/70"
           : step.done
-            ? "bg-foam text-muted"
+            ? "bg-card text-muted-foreground"
             : step.uncertain
-              ? "border border-rose/40 bg-rose/10"
-              : "bg-foam"
-      }`}
+              ? "border border-destructive/40 bg-destructive/10"
+              : "bg-card",
+      )}
     >
-      <button type="button" onClick={onSelect} className="w-full text-left">
-        <p className={`text-xs uppercase tracking-wide ${current ? "text-cream" : "text-terracotta"}`}>
+      <Button
+        type="button"
+        variant="ghost"
+        onClick={onSelect}
+        className="h-auto w-full flex-col items-stretch justify-start p-0 text-left whitespace-normal text-inherit hover:bg-transparent hover:text-inherit"
+      >
+        <p className={cn("text-xs uppercase tracking-wide", current ? "text-primary-foreground/80" : "text-primary")}>
           {current ? "Jetzt dran · " : ""}
           {step.roundLabel}
           {step.done ? " · erledigt" : ""}
           {step.uncertain ? " · unsicher" : ""}
         </p>
-        <p className="mt-1 font-display text-xl leading-snug">{step.instruction}</p>
-        <p className={`mt-2 text-xs ${current ? "text-cream/80" : "text-muted"}`}>
+        <p className="mt-1 font-heading text-xl leading-snug">{step.instruction}</p>
+        <p className={cn("mt-2 text-xs", current ? "text-primary-foreground/80" : "text-muted-foreground")}>
           {[
             step.stitchCount != null ? `${step.stitchCount} Maschen` : "",
             parseTimestamp(step.timestampSec) != null
@@ -462,103 +521,42 @@ function StepCard({
             .filter(Boolean)
             .join(" · ")}
         </p>
-      </button>
+      </Button>
       {step.imageDataUrl && (
         <StepPhoto src={step.imageDataUrl} hint={step.imageHint} current={current} />
       )}
       <StepHelpGraphic step={step} companions={companions} current={current} />
       {canPlayVideo && (
-        <button
+        <Button
           type="button"
+          variant={current ? "secondary" : "default"}
+          className={cn("mt-3 gap-2", current && "bg-card text-card-foreground hover:bg-card/90")}
           aria-label={
             parseTimestamp(step.timestampSec) != null
               ? `Video bei ${formatTimestamp(parseTimestamp(step.timestampSec))} öffnen`
               : "Video öffnen"
           }
-          className={`mt-3 inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-bold ${
-            current ? "bg-cream text-ink" : "bg-terracotta text-white"
-          }`}
           onClick={onPlayVideo}
         >
-          <PlayGlyph />
+          <Play className="size-4" />
           {parseTimestamp(step.timestampSec) != null
             ? formatTimestamp(parseTimestamp(step.timestampSec))
             : "Video"}
-        </button>
+        </Button>
       )}
       {current && (
         <div className="mt-4 flex gap-2">
-          <button
-            type="button"
-            className="flex-1 rounded-full bg-cream/95 py-3 text-sm font-semibold text-ink"
-            onClick={onBack}
-          >
+          <Button type="button" variant="secondary" className="flex-1 bg-card text-card-foreground hover:bg-card/90" onClick={onBack}>
             Zurück
-          </button>
-          <button
-            type="button"
-            className="flex-1 rounded-full bg-sage py-3 text-sm font-semibold text-white"
-            onClick={onToggleDone}
-          >
+          </Button>
+          <Button type="button" variant="secondary" className="flex-1" onClick={onToggleDone}>
             {step.done ? "Offen" : "Erledigt"}
-          </button>
-          <button
-            type="button"
-            className="flex-1 rounded-full bg-cream/95 py-3 text-sm font-semibold text-ink"
-            onClick={onNext}
-          >
+          </Button>
+          <Button type="button" variant="secondary" className="flex-1 bg-card text-card-foreground hover:bg-card/90" onClick={onNext}>
             Weiter
-          </button>
+          </Button>
         </div>
       )}
     </article>
-  );
-}
-
-function PlayGlyph() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden>
-      <path d="M8 5.5v13l11-6.5L8 5.5Z" />
-    </svg>
-  );
-}
-
-function SectionIcon({ icon }: { icon: "play" | "info" | "steps" }) {
-  const common = {
-    viewBox: "0 0 64 64",
-    className: "h-10 w-10",
-    fill: "none",
-    stroke: "#FFF8EE",
-    strokeWidth: 3,
-    strokeLinecap: "round" as const,
-    strokeLinejoin: "round" as const,
-    "aria-hidden": true,
-  };
-  if (icon === "play") {
-    return (
-      <svg {...common}>
-        <rect x="10" y="16" width="44" height="32" rx="6" />
-        <path d="M28 24l14 8-14 8z" fill="#FFF8EE" stroke="none" />
-      </svg>
-    );
-  }
-  if (icon === "info") {
-    return (
-      <svg {...common}>
-        <path d="M16 20h32" />
-        <path d="M16 32h32" />
-        <path d="M16 44h20" />
-      </svg>
-    );
-  }
-  return (
-    <svg {...common}>
-      <path d="M18 18h28" />
-      <path d="M18 32h28" />
-      <path d="M18 46h28" />
-      <circle cx="14" cy="18" r="2" fill="#FFF8EE" />
-      <circle cx="14" cy="32" r="2" fill="#FFF8EE" />
-      <circle cx="14" cy="46" r="2" fill="#FFF8EE" />
-    </svg>
   );
 }

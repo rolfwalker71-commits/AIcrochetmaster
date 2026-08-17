@@ -1,42 +1,150 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-@theme {
-  --color-cream: #f4ead8;
-  --color-foam: #fffaf2;
-  --color-ink: #2b2118;
-  --color-muted: #58483c;
-  --color-line: #e4d4be;
-  --color-terracotta: #c45c26;
-  --color-terracotta-dark: #9a4318;
-  --color-sage: #4c7a62;
-  --color-yarn: #d4a04a;
-  --color-rose: #c97b7b;
-  --font-display: var(--font-fraunces), "Fraunces", serif;
-  --font-sans: var(--font-nunito), "Nunito", sans-serif;
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: var(--font-nunito), "Nunito", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-fraunces), "Fraunces", ui-serif, serif;
+  --font-display: var(--font-heading);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-html,
-body {
-  min-height: 100%;
+:root {
+  --background: #f4ead8;
+  --foreground: #2b2118;
+  --card: #fffaf2;
+  --card-foreground: #2b2118;
+  --popover: #fffaf2;
+  --popover-foreground: #2b2118;
+  --primary: #c45c26;
+  --primary-foreground: #fffaf2;
+  --secondary: #4c7a62;
+  --secondary-foreground: #fffaf2;
+  --muted: #e4d4be;
+  --muted-foreground: #58483c;
+  --accent: #d4a04a;
+  --accent-foreground: #2b2118;
+  --destructive: #9a4318;
+  --border: #e4d4be;
+  --input: #e4d4be;
+  --ring: #c45c26;
+  --chart-1: #c45c26;
+  --chart-2: #4c7a62;
+  --chart-3: #d4a04a;
+  --chart-4: #c97b7b;
+  --chart-5: #58483c;
+  --radius: 1rem;
+  --sidebar: #fffaf2;
+  --sidebar-foreground: #2b2118;
+  --sidebar-primary: #c45c26;
+  --sidebar-primary-foreground: #fffaf2;
+  --sidebar-accent: #f4ead8;
+  --sidebar-accent-foreground: #2b2118;
+  --sidebar-border: #e4d4be;
+  --sidebar-ring: #c45c26;
 }
 
-html {
-  -webkit-text-size-adjust: 100%;
+.dark {
+  --background: #2b2118;
+  --foreground: #fffaf2;
+  --card: #3a2e22;
+  --card-foreground: #fffaf2;
+  --popover: #3a2e22;
+  --popover-foreground: #fffaf2;
+  --primary: #e07a42;
+  --primary-foreground: #2b2118;
+  --secondary: #6a9a7e;
+  --secondary-foreground: #2b2118;
+  --muted: #4a3c30;
+  --muted-foreground: #d4c4b0;
+  --accent: #d4a04a;
+  --accent-foreground: #2b2118;
+  --destructive: #c97b7b;
+  --border: #5a4a3c;
+  --input: #5a4a3c;
+  --ring: #e07a42;
+  --chart-1: #e07a42;
+  --chart-2: #6a9a7e;
+  --chart-3: #d4a04a;
+  --chart-4: #c97b7b;
+  --chart-5: #d4c4b0;
+  --sidebar: #3a2e22;
+  --sidebar-foreground: #fffaf2;
+  --sidebar-primary: #e07a42;
+  --sidebar-primary-foreground: #2b2118;
+  --sidebar-accent: #4a3c30;
+  --sidebar-accent-foreground: #fffaf2;
+  --sidebar-border: #5a4a3c;
+  --sidebar-ring: #e07a42;
 }
 
-body {
-  margin: 0;
-  color: var(--color-ink);
-  line-height: 1.55;
-  background:
-    radial-gradient(1200px 500px at 10% -10%, #f8d9b8 0%, transparent 55%),
-    radial-gradient(900px 400px at 110% 0%, #e7d7b0 0%, transparent 50%),
-    var(--color-cream);
-  font-family: var(--font-sans);
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply font-sans;
+    min-height: 100%;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply min-h-full text-foreground antialiased;
+    margin: 0;
+    line-height: 1.55;
+    background:
+      radial-gradient(1200px 500px at 10% -10%, color-mix(in srgb, var(--accent) 35%, var(--background)) 0%, transparent 55%),
+      radial-gradient(900px 400px at 110% 0%, color-mix(in srgb, var(--muted) 80%, var(--background)) 0%, transparent 50%),
+      var(--background);
+  }
+
+  a {
+    color: inherit;
+  }
 }
 
 :focus-visible {
-  outline: 3px solid var(--color-terracotta);
+  outline: 3px solid var(--ring);
   outline-offset: 3px;
 }
 
@@ -46,29 +154,14 @@ body {
   top: -5rem;
   z-index: 60;
   border-radius: 999px;
-  background: var(--color-ink);
-  color: var(--color-cream);
+  background: var(--foreground);
+  color: var(--background);
   padding: 0.65rem 1rem;
   font-weight: 700;
 }
 
 .skip-link:focus {
   top: 0.75rem;
-}
-
-input:not([type="checkbox"]):not([type="file"]):not([type="hidden"]):not([type="radio"]),
-select {
-  min-height: 2.75rem;
-}
-
-textarea {
-  min-height: 5.5rem;
-}
-
-input[type="checkbox"] {
-  width: 1.35rem;
-  height: 1.35rem;
-  accent-color: var(--color-terracotta);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -95,20 +188,12 @@ body.large-text h1 {
 }
 
 ::selection {
-  background: #f0c9a0;
-}
-
-a {
-  color: inherit;
+  background: color-mix(in srgb, var(--accent) 55%, var(--background));
 }
 
 .font-display {
-  font-family: var(--font-display);
+  font-family: var(--font-heading);
   font-optical-sizing: auto;
-}
-
-.card-shadow {
-  box-shadow: 0 12px 32px -18px rgba(80, 48, 20, 0.35);
 }
 
 .yarn-stripe {
@@ -116,7 +201,7 @@ a {
     -18deg,
     transparent,
     transparent 10px,
-    rgba(196, 92, 38, 0.05) 10px,
-    rgba(196, 92, 38, 0.05) 11px
+    color-mix(in srgb, var(--primary) 8%, transparent) 10px,
+    color-mix(in srgb, var(--primary) 8%, transparent) 11px
   );
 }

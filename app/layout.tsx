@@ -1,4 +1,5 @@
 import { AppShell } from "@/components/app-shell";
+import { cn } from "@/lib/utils";
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Nunito } from "next/font/google";
 import "./globals.css";
@@ -33,8 +34,8 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="de">
-      <body className={`${nunito.variable} ${fraunces.variable} antialiased`}>
+    <html lang="de" className={cn("font-sans", nunito.variable, fraunces.variable)}>
+      <body className="antialiased">
         <AppShell>{children}</AppShell>
       </body>
     </html>

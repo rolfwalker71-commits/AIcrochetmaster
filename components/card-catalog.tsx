@@ -1,6 +1,10 @@
 "use client";
 
 import { MotifGraphic } from "@/components/motif-graphic";
+import { Button } from "@/components/ui/button";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HELP_CARDS, MOTIF_CARDS, uniqueCategories } from "@/lib/cards";
 import type { HelpCard, MotifCard } from "@/lib/types";
 import Link from "next/link";
@@ -31,37 +35,26 @@ export function CardCatalog() {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-2 rounded-full bg-foam p-1" role="tablist" aria-label="Kartentyp">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={deck === "motif"}
-          className={`min-h-11 rounded-full py-2 text-sm font-semibold ${deck === "motif" ? "bg-terracotta text-white" : ""}`}
-          onClick={() => {
-            setDeck("motif");
-            setCategory("alle");
-          }}
-        >
-          Motivkarten
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={deck === "help"}
-          className={`min-h-11 rounded-full py-2 text-sm font-semibold ${deck === "help" ? "bg-terracotta text-white" : ""}`}
-          onClick={() => {
-            setDeck("help");
-            setCategory("alle");
-          }}
-        >
-          Hilfekarten
-        </button>
-      </div>
+      <Tabs
+        value={deck}
+        onValueChange={(value) => {
+          setDeck(value as Deck);
+          setCategory("alle");
+        }}
+      >
+        <TabsList className="grid h-12 w-full grid-cols-2" aria-label="Kartentyp">
+          <TabsTrigger value="motif" className="min-h-10">
+            Motivkarten
+          </TabsTrigger>
+          <TabsTrigger value="help" className="min-h-10">
+            Hilfekarten
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
 
       <label className="block">
         <span className="sr-only">Karten durchsuchen</span>
-        <input
-          className="w-full rounded-2xl border border-line bg-foam px-3 py-2"
+        <Input
           type="search"
           enterKeyHint="search"
           autoComplete="off"
@@ -73,21 +66,21 @@ export function CardCatalog() {
 
       <div className="flex flex-wrap gap-1.5" role="group" aria-label="Kategorie">
         {["alle", ...categories].map((item) => (
-          <button
+          <Button
             key={item}
             type="button"
+            size="sm"
+            variant={category === item ? "default" : "outline"}
             aria-pressed={category === item}
             onClick={() => setCategory(item)}
-            className={`min-h-11 rounded-full px-3 text-sm ${
-              category === item ? "bg-ink text-cream" : "bg-foam"
-            }`}
+            className="rounded-full"
           >
             {item}
-          </button>
+          </Button>
         ))}
       </div>
 
-      <p className="text-xs text-muted">{filtered.length} Karten</p>
+      <p className="text-xs text-muted-foreground">{filtered.length} Karten</p>
 
       <div className="grid gap-3">
         {filtered.map((card) => (
@@ -108,16 +101,15 @@ function CatalogCard({
   const href = deck === "motif" ? `/cards/motif/${card.id}` : `/cards/help/${card.id}`;
   const text = "summary" in card ? card.summary : card.body;
   return (
-    <Link
-      href={href}
-      className="card-shadow block overflow-hidden rounded-3xl bg-foam"
-    >
-      <MotifGraphic id={card.id} color={card.color} />
-      <div className="p-4">
-        <p className="text-xs uppercase tracking-wide text-muted">{card.category}</p>
-        <h2 className="font-display text-xl">{card.title}</h2>
-        <p className="mt-1 line-clamp-2 text-sm text-muted">{text}</p>
-      </div>
+    <Link href={href} className="block">
+      <Card className="overflow-hidden rounded-3xl py-0">
+        <MotifGraphic id={card.id} color={card.color} />
+        <CardHeader className="pb-4">
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">{card.category}</p>
+          <CardTitle className="font-heading text-xl">{card.title}</CardTitle>
+          <CardDescription className="line-clamp-2">{text}</CardDescription>
+        </CardHeader>
+      </Card>
     </Link>
   );
 }

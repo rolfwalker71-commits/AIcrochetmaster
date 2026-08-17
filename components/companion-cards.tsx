@@ -1,4 +1,5 @@
 import type { CompanionIcon, CompanionMatch } from "@/lib/companion-cards";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 
 export function CompanionStrip({
@@ -12,7 +13,7 @@ export function CompanionStrip({
 
   return (
     <section className="space-y-2">
-      <h3 className="font-display text-xl">{title}</h3>
+      <h3 className="font-heading text-xl">{title}</h3>
       <div className="flex gap-3 overflow-x-auto pb-1">
         {cards.map((card) => (
           <CompanionCard key={card.id} card={card} />
@@ -24,17 +25,19 @@ export function CompanionStrip({
 
 export function CompanionCard({ card }: { card: CompanionMatch }) {
   return (
-    <Link
-      href={card.href}
-      className="card-shadow w-36 shrink-0 overflow-hidden rounded-3xl bg-foam"
-    >
-      <div className="flex h-24 items-center justify-center" style={{ background: card.color }}>
-        <CompanionIconMark icon={card.icon} />
-      </div>
-      <div className="p-3">
-        <p className="font-display text-sm leading-tight">{card.title}</p>
-        <p className="mt-1 line-clamp-2 text-[11px] text-muted">{card.hint}</p>
-      </div>
+    <Link href={card.href} className="w-36 shrink-0">
+      <Card className="overflow-hidden rounded-3xl py-0">
+        <div
+          className="flex h-24 items-center justify-center text-primary-foreground"
+          style={{ background: card.color }}
+        >
+          <CompanionIconMark icon={card.icon} />
+        </div>
+        <CardHeader className="p-3">
+          <CardTitle className="font-heading text-sm leading-tight">{card.title}</CardTitle>
+          <CardDescription className="line-clamp-2 text-[11px]">{card.hint}</CardDescription>
+        </CardHeader>
+      </Card>
     </Link>
   );
 }
@@ -42,9 +45,9 @@ export function CompanionCard({ card }: { card: CompanionMatch }) {
 function CompanionIconMark({ icon }: { icon: CompanionIcon }) {
   const common = {
     viewBox: "0 0 64 64",
-    className: "h-14 w-14",
+    className: "size-14",
     fill: "none",
-    stroke: "#FFF8EE",
+    stroke: "currentColor",
     strokeWidth: 3,
     strokeLinecap: "round" as const,
     strokeLinejoin: "round" as const,
@@ -149,6 +152,6 @@ function CompanionIconMark({ icon }: { icon: CompanionIcon }) {
         </svg>
       );
     default:
-      return <span className="text-3xl text-white">🧶</span>;
+      return <span className="text-3xl">*</span>;
   }
 }

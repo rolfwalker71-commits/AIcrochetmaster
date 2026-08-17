@@ -46,13 +46,13 @@ export function StepHelpGraphic({
     <div className="mt-3 space-y-2">
       {schema && marks.length > 0 && (
         <div
-          className={`overflow-hidden rounded-2xl ${current ? "bg-terracotta-dark/40" : "bg-cream"}`}
+          className={`overflow-hidden rounded-2xl ${current ? "bg-primary/40" : "bg-muted"}`}
           role="img"
           aria-label={summary || "Maschenschema"}
         >
           <SchemaCanvas marks={marks} layout={schema.layout} current={current} />
           {summary && (
-            <p className={`px-3 pb-2 text-center text-[11px] ${current ? "text-cream/80" : "text-muted"}`}>
+            <p className={`px-3 pb-2 text-center text-[11px] ${current ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
               {summary}
             </p>
           )}
@@ -64,7 +64,7 @@ export function StepHelpGraphic({
             <Link
               key={card.id}
               href={card.href}
-              className="w-28 shrink-0 overflow-hidden rounded-2xl bg-foam text-ink"
+              className="w-28 shrink-0 overflow-hidden rounded-2xl bg-card text-card-foreground"
             >
               <MotifGraphic id={card.id} color={card.color} size="step" />
               <p className="px-2 py-1.5 text-center text-[11px] font-semibold leading-tight">{card.title}</p>
@@ -85,7 +85,7 @@ function SchemaCanvas({
   layout: "round" | "row";
   current: boolean;
 }) {
-  const stroke = current ? "#FFF8EE" : "#C45C26";
+  const stroke = current ? "var(--primary-foreground)" : "var(--primary)";
   const width = 220;
   const height = layout === "round" ? 120 : 56;
   const cx = width / 2;
