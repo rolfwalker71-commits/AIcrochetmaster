@@ -42,13 +42,9 @@ export function CardCatalog() {
           setCategory("alle");
         }}
       >
-        <TabsList className="grid h-12 w-full grid-cols-2" aria-label="Kartentyp">
-          <TabsTrigger value="motif" className="min-h-10">
-            Motivkarten
-          </TabsTrigger>
-          <TabsTrigger value="help" className="min-h-10">
-            Hilfekarten
-          </TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2" aria-label="Kartentyp">
+          <TabsTrigger value="motif">Motivkarten</TabsTrigger>
+          <TabsTrigger value="help">Hilfekarten</TabsTrigger>
         </TabsList>
       </Tabs>
 
@@ -69,7 +65,6 @@ export function CardCatalog() {
           <Button
             key={item}
             type="button"
-            size="sm"
             variant={category === item ? "default" : "outline"}
             aria-pressed={category === item}
             onClick={() => setCategory(item)}
